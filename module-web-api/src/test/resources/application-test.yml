@@ -13,10 +13,57 @@ spring:
         format_sql: true
         default_batch_fetch_size: 1000
     open-in-view: false
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          kakao:
+            registration:
+              client-id: kauth.kakao.com
+              client-name: kakao
+              client-authentication-methods:
+                - private_key_jwt
+                - none
+              authorization-grant-types:
+                - client_credentials
+                - refresh_token
+              scopes:
+                - user.read
+                - user.write
+                - post.read
+                - post.write
+                - file.write
+            token-endpoint-authentication-signing-algorithm: RS256
+            jwk-set-uri: https://kauth.kakao.com/.well-known/jwks.json
+            token:
+              reuse-refresh-tokens: false
+              refresh-token-time-to-live: 43200
+          apple:
+            registration:
+              client-id: appleid.apple.com
+              client-name: apple
+              client-authentication-methods:
+                - private_key_jwt
+              authorization-grant-types:
+                - client_credentials
+                - refresh_token
+              scopes:
+                - user.read
+                - user.write
+                - post.read
+                - post.write
+                - file.write
+            token-endpoint-authentication-signing-algorithm: RS256
+            jwk-set-uri: https://appleid.apple.com/auth/oauth2/v2/keys
+            token:
+              reuse-refresh-tokens: false
+              refresh-token-time-to-live: 43200
 
 logging:
   level:
     org:
+      springframework:
+        security: DEBUG
       hibernate:
         SQL: DEBUG
         type:
