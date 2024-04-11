@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 @DataJpaTest
 @Import(value = JpaConfiguration.class)
 @ActiveProfiles(value = "test")
-public abstract class AbstractDataJpaTestContext {
+abstract class AbstractDataJpaTestContext {
 
     @Autowired
     EntityManager entityManager;

@@ -1,5 +1,6 @@
 package com.pp.api.configuration;
 
+import com.pp.api.service.OauthUsersService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -38,7 +39,8 @@ public class AuthorizationServerConfiguration {
     public SecurityFilterChain authorizationServerSecurityFilterChain(
             HttpSecurity httpSecurity,
             CorsConfigurationSource corsConfigurationSource,
-            RegisteredClientRepository registeredClientRepository
+            RegisteredClientRepository registeredClientRepository,
+            OauthUsersService oauthUsersService
     ) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer()
                 .tokenEndpoint((tokenEndpoint) -> tokenEndpoint.accessTokenRequestConverter(
@@ -63,7 +65,10 @@ public class AuthorizationServerConfiguration {
 
         SecurityFilterChain securityFilterChain = httpSecurity.build();
 
-        addJwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(httpSecurity);
+        addJwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
+                httpSecurity,
+                oauthUsersService
+        );
 
         return securityFilterChain;
     }
@@ -102,13 +107,17 @@ public class AuthorizationServerConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    private void addJwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(HttpSecurity http) {
+    private void addJwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
+            HttpSecurity httpSecurity,
+            OauthUsersService oauthUsersService
+    ) {
         JwtClientAssertionOauth2ClientCredentialsAuthenticationProvider provider = new JwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
-                http.getSharedObject(OAuth2AuthorizationService.class),
-                http.getSharedObject(OAuth2TokenGenerator.class)
+                httpSecurity.getSharedObject(OAuth2AuthorizationService.class),
+                httpSecurity.getSharedObject(OAuth2TokenGenerator.class),
+                oauthUsersService
         );
 
-        http.authenticationProvider(provider);
+        httpSecurity.authenticationProvider(provider);
     }
 
 }

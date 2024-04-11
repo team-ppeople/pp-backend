@@ -6,7 +6,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -21,8 +20,7 @@ public class ResourceServerConfiguration {
     @Order(value = HIGHEST_PRECEDENCE + 1)
     public SecurityFilterChain resourceServerSecurityFilterChain(
             HttpSecurity httpSecurity,
-            CorsConfigurationSource corsConfigurationSource,
-            JwtDecoder jwtDecoder
+            CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
         return httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
