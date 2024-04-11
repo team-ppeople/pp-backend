@@ -75,15 +75,8 @@ public class AuthorizationServerConfiguration {
                 .build();
     }
 
-    private Consumer<List<AuthenticationProvider>> configureJwtClientAssertionValidator() {
-        return (authenticationProviders) -> authenticationProviders.forEach(authenticationProvider -> {
-            if (authenticationProvider instanceof JwtClientAssertionAuthenticationProvider jwtClientAssertionAuthenticationProvider) {
-                jwtClientAssertionAuthenticationProvider.setJwtDecoderFactory(jwtDecoderFactory());
-            }
-        });
-    }
-
-    private JwtDecoderFactory<RegisteredClient> jwtDecoderFactory() {
+    @Bean
+    public JwtDecoderFactory<RegisteredClient> jwtDecoderFactory() {
         JwtClientAssertionDecoderFactory jwtDecoderFactory = new JwtClientAssertionDecoderFactory();
 
         Function<RegisteredClient, OAuth2TokenValidator<Jwt>> jwtValidatorFactory = (registeredClient) ->
@@ -98,6 +91,14 @@ public class AuthorizationServerConfiguration {
         jwtDecoderFactory.setJwtValidatorFactory(jwtValidatorFactory);
 
         return jwtDecoderFactory;
+    }
+
+    private Consumer<List<AuthenticationProvider>> configureJwtClientAssertionValidator() {
+        return (authenticationProviders) -> authenticationProviders.forEach(authenticationProvider -> {
+            if (authenticationProvider instanceof JwtClientAssertionAuthenticationProvider jwtClientAssertionAuthenticationProvider) {
+                jwtClientAssertionAuthenticationProvider.setJwtDecoderFactory(jwtDecoderFactory());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
