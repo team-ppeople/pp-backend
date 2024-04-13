@@ -65,8 +65,6 @@ logging:
       springframework:
         security: DEBUG
       hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        orm:
+          jdbc:
+            bind: TRACE

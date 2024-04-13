@@ -10,6 +10,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        show_sql: true
         format_sql: true
         default_batch_fetch_size: 1000
     open-in-view: false
@@ -65,8 +66,6 @@ logging:
       springframework:
         security: DEBUG
       hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        orm:
+          jdbc:
+            bind: TRACE
