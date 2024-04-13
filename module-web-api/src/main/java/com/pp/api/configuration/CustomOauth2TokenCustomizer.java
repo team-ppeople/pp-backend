@@ -1,9 +1,5 @@
 package com.pp.api.configuration;
 
-import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
-import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.SERVER_ERROR;
-import static org.springframework.security.oauth2.server.authorization.OAuth2TokenType.ACCESS_TOKEN;
-
 import com.pp.api.entity.OauthUsers;
 import com.pp.api.entity.enums.OauthUserClient;
 import com.pp.api.service.OauthUsersService;
@@ -16,6 +12,11 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
+import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.SERVER_ERROR;
+import static org.springframework.security.oauth2.jwt.JwtClaimNames.*;
+import static org.springframework.security.oauth2.server.authorization.OAuth2TokenType.ACCESS_TOKEN;
+
 @Component
 @RequiredArgsConstructor
 public final class CustomOauth2TokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
@@ -25,7 +26,7 @@ public final class CustomOauth2TokenCustomizer implements OAuth2TokenCustomizer<
     @Override
     public void customize(JwtEncodingContext context) {
         try {
-            JwtClaimsSet.Builder claims = context.getClaims();
+            JwtClaimsSet.Builder builder = context.getClaims();
 
             if (context.getTokenType().equals(ACCESS_TOKEN)) {
                 if (
@@ -43,7 +44,10 @@ public final class CustomOauth2TokenCustomizer implements OAuth2TokenCustomizer<
 
                     OauthUsers oauthUser = oauthUsersService.findByClientSubject(clientSubject);
 
-                    claims.claim("user_id", oauthUser.getUser().getId());
+                    builder.claims(claims -> {
+                        claims.put(SUB, oauthUser.getUser().getId());
+                        claims.put(AUD, claims.get(ISS));
+                    });
                 }
             }
         } catch (Exception e) {

@@ -14,15 +14,15 @@ import java.util.Map;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.NONE;
 import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_REQUEST;
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.CLIENT_ID;
 import static org.springframework.util.StringUtils.hasText;
 
-public final class RefreshTokenEndpointPublicClientAuthenticationConverter implements AuthenticationConverter {
+public final class RevacationTokenEndpointPublicClientAuthenticationConverter implements AuthenticationConverter {
 
-    private final String tokenEndpoint;
+    private final String tokenRevocationEndpoint;
 
-    public RefreshTokenEndpointPublicClientAuthenticationConverter(String tokenEndpoint) {
-        this.tokenEndpoint = tokenEndpoint;
+    public RevacationTokenEndpointPublicClientAuthenticationConverter(String tokenRevocationEndpoint) {
+        this.tokenRevocationEndpoint = tokenRevocationEndpoint;
     }
 
     public Authentication convert(HttpServletRequest request) {
@@ -30,15 +30,11 @@ public final class RefreshTokenEndpointPublicClientAuthenticationConverter imple
             return null;
         }
 
-        if (!request.getRequestURI().equals(this.tokenEndpoint)) {
+        if (!request.getRequestURI().equals(this.tokenRevocationEndpoint)) {
             return null;
         }
 
         MultiValueMap<String, String> parameters = extractFormParameters(request);
-
-        if (!REFRESH_TOKEN.equals(parameters.getFirst(GRANT_TYPE))) {
-            return null;
-        }
 
         String clientId = parameters.getFirst(CLIENT_ID);
 

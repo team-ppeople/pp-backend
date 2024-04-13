@@ -16,13 +16,13 @@ import static org.springframework.security.oauth2.core.ClientAuthenticationMetho
 import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_CLIENT;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.CLIENT_ID;
 
-public final class RefreshTokenEndpointPublicClientAuthenticationProvider implements AuthenticationProvider {
+public final class NoneClientAuthenticationMethodPublicClientAuthenticationProvider implements AuthenticationProvider {
 
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-3.2.1";
     private final Logger logger = getLogger(this.getClass());
     private final RegisteredClientRepository registeredClientRepository;
 
-    public RefreshTokenEndpointPublicClientAuthenticationProvider(RegisteredClientRepository registeredClientRepository) {
+    public NoneClientAuthenticationMethodPublicClientAuthenticationProvider(RegisteredClientRepository registeredClientRepository) {
         Assert.notNull(registeredClientRepository, "registeredClientRepository cannot be null");
         this.registeredClientRepository = registeredClientRepository;
     }

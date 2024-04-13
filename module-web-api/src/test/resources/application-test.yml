@@ -44,6 +44,7 @@ spring:
               client-name: apple
               client-authentication-methods:
                 - private_key_jwt
+                - none
               authorization-grant-types:
                 - client_credentials
                 - refresh_token
