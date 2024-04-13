@@ -18,11 +18,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
 import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenType.BEARER;
@@ -177,11 +180,24 @@ public final class JwtClientAssertionOauth2ClientCredentialsAuthenticationProvid
             this.logger.trace("Authenticated token request");
         }
 
+        Map<String, Object> additionalParameters = new HashMap<>();
+
+        clientCredentialsAuthentication.getAdditionalParameters()
+                .forEach((key, value) -> {
+                    if (AUTHORIZATION_CODE.getValue().equals(key)) {
+                        additionalParameters.put(
+                                key,
+                                value
+                        );
+                    }
+                });
+
         return new OAuth2AccessTokenAuthenticationToken(
                 registeredClient,
                 clientPrincipal,
                 accessToken,
-                refreshToken
+                refreshToken,
+                additionalParameters
         );
     }
 
