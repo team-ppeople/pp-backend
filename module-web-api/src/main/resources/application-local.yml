@@ -10,6 +10,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        show_sql: true
         format_sql: true
         default_batch_fetch_size: 1000
     open-in-view: false
@@ -44,6 +45,7 @@ spring:
               client-name: apple
               client-authentication-methods:
                 - private_key_jwt
+                - none
               authorization-grant-types:
                 - client_credentials
                 - refresh_token
@@ -59,14 +61,26 @@ spring:
               reuse-refresh-tokens: false
               refresh-token-time-to-live: 43200
 
+client:
+  apple:
+    base-url: ${CLIENT_APPLE_BASE_URL}
+    private-key: ${CLIENT_APPLE_PRIVATE_KEY}
+    client-id: ${CLIENT_APPLE_CLIENT_ID}
+    client-secret-kid: ${CLIENT_APPLE_SECRET_KID}
+    client-secret-issuer: ${CLIENT_APPLE_SECRET_ISSUER}
+    client-secret-expiration-days: 30
+    token-endpoint: /auth/oauth2/v2/token
+    revoke-endpoint: /auth/oauth2/v2/revoke
+    connection-timeout: 2000
+    read-timeout: 4000
+    write-timeout: 3000
+
 logging:
   level:
     org:
       springframework:
         security: DEBUG
       hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        orm:
+          jdbc:
+            bind: TRACE
