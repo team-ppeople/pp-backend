@@ -40,7 +40,8 @@ public class AuthorizationServerConfiguration {
             HttpSecurity httpSecurity,
             CorsConfigurationSource corsConfigurationSource,
             RegisteredClientRepository registeredClientRepository,
-            OauthUsersService oauthUsersService
+            OauthUsersService oauthUsersService,
+            AuthorizationServerSettings authorizationServerSettings
     ) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer()
                 .tokenEndpoint((tokenEndpoint) -> tokenEndpoint.accessTokenRequestConverter(
@@ -58,8 +59,17 @@ public class AuthorizationServerConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .clientAuthentication(clientAuthentication -> {
-                    clientAuthentication.authenticationConverter(new RefreshTokenEndpointPublicClientAuthenticationConverter());
-                    clientAuthentication.authenticationProvider(new RefreshTokenEndpointPublicClientAuthenticationProvider(registeredClientRepository));
+                    clientAuthentication.authenticationConverter(
+                            new RefreshTokenEndpointPublicClientAuthenticationConverter(
+                                    authorizationServerSettings.getTokenEndpoint()
+                            )
+                    );
+                    clientAuthentication.authenticationConverter(
+                            new RevacationTokenEndpointPublicClientAuthenticationConverter(
+                                    authorizationServerSettings.getTokenRevocationEndpoint()
+                            )
+                    );
+                    clientAuthentication.authenticationProvider(new NoneClientAuthenticationMethodPublicClientAuthenticationProvider(registeredClientRepository));
                     clientAuthentication.authenticationProviders(configureJwtClientAssertionValidator());
                 });
 
