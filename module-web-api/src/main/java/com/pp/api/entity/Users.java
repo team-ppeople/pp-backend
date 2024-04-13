@@ -23,10 +23,10 @@ public class Users extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 20, unique = true)
     private String nickname;
 
-    @Column(length = 350, unique = true)
+    @Column(length = 350)
     private String email;
 
     @OneToMany(fetch = LAZY, mappedBy = "user")

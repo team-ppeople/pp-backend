@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -34,17 +35,22 @@ public class OauthUserTokens {
     @Column(nullable = false, length = 1500)
     private String refreshToken;
 
+    @ManyToOne(fetch = LAZY, optional = false)
+    private OauthUsers oauthUser;
+
     @Builder
     private OauthUserTokens(
             OauthUserClient client,
             String accessToken,
             Integer expiresIn,
-            String refreshToken
+            String refreshToken,
+            OauthUsers oauthUser
     ) {
         this.client = client;
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
+        this.oauthUser = oauthUser;
     }
 
 }

@@ -24,12 +24,12 @@ class OauthUsersRepositoryTest extends AbstractDataJpaTestContext {
     @EnumSource(value = OauthUserClient.class)
     void Oauth_유저_엔티티를_영속화한다(OauthUserClient client) {
         // given
-        String clientSubject = client.name() + ":" + randomUUID();
+        String subject = randomUUID().toString();
 
         // when
         OauthUsers oauthUser = OauthUsers.builder()
                 .client(client)
-                .clientSubject(clientSubject)
+                .subject(subject)
                 .user(createAndSaveUser())
                 .build();
 
@@ -38,7 +38,7 @@ class OauthUsersRepositoryTest extends AbstractDataJpaTestContext {
         // then
         assertThat(oauthUser.getId()).isNotNull();
         assertThat(oauthUser.getClient()).isSameAs(client);
-        assertThat(oauthUser.getClientSubject()).isEqualTo(clientSubject);
+        assertThat(oauthUser.getClientSubject()).isEqualTo(client.parseClientSubject(subject));
         assertThat(oauthUser.getUser()).isEqualTo(savedOauthUser.getUser());
         assertThat(oauthUser.getCreatedDate()).isNotNull();
         assertThat(oauthUser.getUpdatedDate()).isNotNull();
@@ -48,12 +48,12 @@ class OauthUsersRepositoryTest extends AbstractDataJpaTestContext {
     @EnumSource(value = OauthUserClient.class)
     void Oauth_유저_엔티티를_조회한다(OauthUserClient client) {
         // given
-        String clientSubject = client.name() + ":" + randomUUID();
+        String subject = randomUUID().toString();
 
         // when
         OauthUsers oauthUser = OauthUsers.builder()
                 .client(client)
-                .clientSubject(clientSubject)
+                .subject(subject)
                 .user(createAndSaveUser())
                 .build();
 
@@ -72,6 +72,31 @@ class OauthUsersRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundOauthUser.getUser()).isEqualTo(savedOauthUser.getUser());
         assertThat(foundOauthUser.getCreatedDate()).isEqualTo(savedOauthUser.getCreatedDate());
         assertThat(foundOauthUser.getUpdatedDate()).isEqualTo(savedOauthUser.getUpdatedDate());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = OauthUserClient.class)
+    void Oauth_유저_엔티티를_클라이언트의_유저정보로_조회한다(OauthUserClient client) {
+        // given
+        String subject = randomUUID().toString();
+
+        // when
+        OauthUsers oauthUser = OauthUsers.builder()
+                .client(client)
+                .subject(subject)
+                .user(createAndSaveUser())
+                .build();
+
+        OauthUsers savedOauthUser = oauthUsersRepository.save(oauthUser);
+
+        entityManager.clear();
+
+        boolean exists = oauthUsersRepository.existsByClientSubject(savedOauthUser.getClientSubject());
+        boolean notExists = oauthUsersRepository.existsByClientSubject("not-exists-client-subject");
+
+        // then
+        assertThat(exists).isTrue();
+        assertThat(notExists).isFalse();
     }
 
     Users createAndSaveUser() {

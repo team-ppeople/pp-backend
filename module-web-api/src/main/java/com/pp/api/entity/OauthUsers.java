@@ -35,10 +35,10 @@ public class OauthUsers extends BaseEntity {
     @Builder
     private OauthUsers(
             OauthUserClient client,
-            String clientSubject,
+            String subject,
             Users user) {
         this.client = client;
-        this.clientSubject = clientSubject;
+        this.clientSubject = this.client.parseClientSubject(subject);
         this.user = user;
     }
 
