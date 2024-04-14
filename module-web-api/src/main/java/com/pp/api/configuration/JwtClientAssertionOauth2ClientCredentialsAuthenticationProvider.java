@@ -1,14 +1,10 @@
 package com.pp.api.configuration;
 
-import com.pp.api.entity.enums.OauthUserClient;
-import com.pp.api.service.OauthUsersService;
-import com.pp.api.service.command.RegisterOauthUserCommand;
 import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.*;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
@@ -27,18 +23,14 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
 import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenType.BEARER;
 import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.*;
-import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
-import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.NICKNAME;
 import static org.springframework.security.oauth2.server.authorization.OAuth2Authorization.Token.CLAIMS_METADATA_NAME;
 import static org.springframework.security.oauth2.server.authorization.OAuth2Authorization.withRegisteredClient;
 import static org.springframework.security.oauth2.server.authorization.OAuth2TokenType.ACCESS_TOKEN;
 import static org.springframework.security.oauth2.server.authorization.OAuth2TokenType.REFRESH_TOKEN;
-import static org.springframework.util.StringUtils.hasText;
 
 public final class JwtClientAssertionOauth2ClientCredentialsAuthenticationProvider implements AuthenticationProvider {
 
@@ -50,19 +42,19 @@ public final class JwtClientAssertionOauth2ClientCredentialsAuthenticationProvid
 
     private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 
-    private final OauthUsersService oauthUsersService;
+    private final JwtClientAssertionOauth2UserRegisterProcessor jwtClientAssertionOauth2UserRegisterProcessor;
 
     public JwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
             OAuth2AuthorizationService authorizationService,
             OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
-            OauthUsersService oauthUsersService
+            JwtClientAssertionOauth2UserRegisterProcessor jwtClientAssertionOauth2UserRegisterProcessor
     ) {
         Assert.notNull(authorizationService, "authorizationService cannot be null");
         Assert.notNull(tokenGenerator, "tokenGenerator cannot be null");
-        Assert.notNull(tokenGenerator, "oauthUsersService cannot be null");
+        Assert.notNull(jwtClientAssertionOauth2UserRegisterProcessor, "jwtClientAssertionOauth2UserRegisterProcessor cannot be null");
         this.authorizationService = authorizationService;
         this.tokenGenerator = tokenGenerator;
-        this.oauthUsersService = oauthUsersService;
+        this.jwtClientAssertionOauth2UserRegisterProcessor = jwtClientAssertionOauth2UserRegisterProcessor;
     }
 
     @Override
@@ -101,7 +93,7 @@ public final class JwtClientAssertionOauth2ClientCredentialsAuthenticationProvid
         }
 
         try {
-            registerOauthUser(clientCredentialsAuthentication);
+            jwtClientAssertionOauth2UserRegisterProcessor.process(clientCredentialsAuthentication);
         } catch (Exception e) {
             logger.error(
                     "Oauth 인증 로그인 유저 등록 처리 실패",
@@ -230,76 +222,6 @@ public final class JwtClientAssertionOauth2ClientCredentialsAuthenticationProvid
         }
 
         throw new OAuth2AuthenticationException(INVALID_CLIENT);
-    }
-
-    private void registerOauthUser(JwtClientAssertionOauth2ClientCredentialsAuthenticationToken authentication) {
-        OAuth2ClientAuthenticationToken clientAuthentication = getAuthenticatedClientElseThrowInvalidClient(authentication);
-
-        RegisteredClient registeredClient = clientAuthentication.getRegisteredClient();
-
-        if (registeredClient == null) {
-            throw new OAuth2AuthenticationException(INVALID_REQUEST);
-        }
-
-        OauthUserClient client = OauthUserClient.valueOfIgnoreCase(registeredClient.getClientName());
-
-        Jwt jwt = (Jwt) clientAuthentication.getCredentials();
-
-        if (jwt == null) {
-            throw new OAuth2AuthenticationException(INVALID_REQUEST);
-        }
-
-        RegisterOauthUserCommand command;
-
-        switch (client) {
-            case KAKAO -> {
-                String subject = jwt.getSubject();
-
-                String nickname = jwt.getClaimAsString(NICKNAME);
-
-                String email = jwt.getClaimAsString(EMAIL);
-
-                command = RegisterOauthUserCommand.of(
-                        client,
-                        subject,
-                        nickname,
-                        email,
-                        null
-                );
-            }
-            case APPLE -> {
-                String subject = jwt.getSubject();
-
-                String email = jwt.getClaimAsString(EMAIL);
-
-                String nickname = "유저" + subject.substring(
-                        0,
-                        subject.indexOf(".")
-                );
-
-                String authorizationCode = (String) authentication.getAdditionalParameters()
-                        .get(AUTHORIZATION_CODE.getValue());
-
-                if (!hasText(authorizationCode)) {
-                    throw new OAuth2AuthenticationException(INVALID_REQUEST);
-                }
-
-                command = RegisterOauthUserCommand.of(
-                        client,
-                        subject,
-                        nickname,
-                        email,
-                        authorizationCode
-                );
-            }
-            default -> throw new OAuth2AuthenticationException(INVALID_REQUEST);
-        }
-
-        if (oauthUsersService.existsByClientSubject(client.parseClientSubject(command.getSubject()))) {
-            return;
-        }
-
-        oauthUsersService.registerIfNotRegistered(command);
     }
 
 }
