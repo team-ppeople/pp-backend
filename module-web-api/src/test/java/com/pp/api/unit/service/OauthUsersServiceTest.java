@@ -7,16 +7,12 @@ import com.pp.api.repository.UsersRepository;
 import com.pp.api.service.OauthUsersService;
 import com.pp.api.service.command.IsRegisteredOauthUserQuery;
 import com.pp.api.service.command.RegisterOauthUserCommand;
-import java.util.Optional;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -24,6 +20,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+
+import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,9 +42,6 @@ class OauthUsersServiceTest {
 
     @Mock
     private UsersRepository usersRepository;
-
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private OauthUsersService oauthUsersService;
@@ -171,34 +166,6 @@ class OauthUsersServiceTest {
 
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
-    void Oauth_로그인_subject로_회원등록여부를_확인한다(OauthUserClient client) {
-        // given
-        String subject = randomUUID().toString();
-
-        String clientSubject = client.parseClientSubject(subject);
-
-        // when
-        when(oauthUsersRepository.existsByClientSubject(clientSubject))
-                .thenReturn(true);
-
-        // then
-        boolean exists = oauthUsersService.existsByClientSubject(clientSubject);
-
-        assertThat(exists).isTrue();
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @EmptySource
-    void Oauth_로그인_subject값이_없으면_회원등록여부를_확인할수없다(String clientSubject) {
-        // then
-        boolean exists = oauthUsersService.existsByClientSubject(clientSubject);
-
-        assertThat(exists).isFalse();
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_subject로_회원등록정보를_조회한다(OauthUserClient client) {
         // given
         String subject = randomUUID().toString();
@@ -227,7 +194,7 @@ class OauthUsersServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() ->oauthUsersService.findByClientSubject(clientSubject))
+        assertThatThrownBy(() -> oauthUsersService.findByClientSubject(clientSubject))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -238,15 +205,13 @@ class OauthUsersServiceTest {
         String subject = randomUUID().toString();
         String nickname = "sinbom";
         String email = "dev.sinbom@gmail.com";
-        String authorizationCode = randomUUID().toString();
         String clientSubject = client.parseClientSubject(subject);
 
         RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
                 client,
                 subject,
                 nickname,
-                email,
-                authorizationCode
+                email
         );
 
         // when
@@ -258,7 +223,6 @@ class OauthUsersServiceTest {
         // then
         verify(usersRepository, times(1)).save(any());
         verify(oauthUsersRepository, times(1)).save(any());
-        verify(eventPublisher, times(1)).publishEvent(any(Object.class));
     }
 
     @ParameterizedTest
@@ -268,15 +232,13 @@ class OauthUsersServiceTest {
         String subject = randomUUID().toString();
         String nickname = "sinbom";
         String email = "dev.sinbom@gmail.com";
-        String authorizationCode = randomUUID().toString();
         String clientSubject = client.parseClientSubject(subject);
 
         RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
                 client,
                 subject,
                 nickname,
-                email,
-                authorizationCode
+                email
         );
 
         // when
@@ -288,7 +250,6 @@ class OauthUsersServiceTest {
         // then
         verify(usersRepository, never()).save(any());
         verify(oauthUsersRepository, never()).save(any());
-        verify(eventPublisher, never()).publishEvent(any(Object.class));
     }
 
 }

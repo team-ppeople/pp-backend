@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
-public class OauthUserTokens {
+public class OauthUserTokens extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -51,6 +51,18 @@ public class OauthUserTokens {
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.oauthUser = oauthUser;
+    }
+
+    public void updateAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateExpiresIn(Integer expiresIn) {
+        this.expiresIn = expiresIn;
     }
 
 }

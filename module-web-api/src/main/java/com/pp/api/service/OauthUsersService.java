@@ -2,21 +2,17 @@ package com.pp.api.service;
 
 import com.pp.api.entity.OauthUsers;
 import com.pp.api.entity.Users;
-import com.pp.api.event.handler.OauthUserRegisteredEvent;
 import com.pp.api.repository.OauthUsersRepository;
 import com.pp.api.repository.UsersRepository;
 import com.pp.api.service.command.IsRegisteredOauthUserQuery;
 import com.pp.api.service.command.RegisterOauthUserCommand;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.springframework.util.StringUtils.hasText;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +25,6 @@ public class OauthUsersService {
     private final OauthUsersRepository oauthUsersRepository;
 
     private final UsersRepository usersRepository;
-
-    private final ApplicationEventPublisher eventPublisher;
 
     public boolean isRegistered(IsRegisteredOauthUserQuery query) {
         RegisteredClient registeredClient = registeredClientRepository.findById(query.getClient());
@@ -70,20 +64,12 @@ public class OauthUsersService {
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 Oauth 인증 로그인 회원입니다."));
     }
 
-    public boolean existsByClientSubject(String clientSubject) {
-        if (!hasText(clientSubject)) {
-            return false;
-        }
-
-        return oauthUsersRepository.existsByClientSubject(clientSubject);
-    }
-
     @Transactional
     public void registerIfNotRegistered(RegisterOauthUserCommand command) {
         String clientSubject = command.getClient()
                 .parseClientSubject(command.getSubject());
 
-        if (existsByClientSubject(clientSubject)) {
+        if (oauthUsersRepository.existsByClientSubject(clientSubject)) {
             return;
         }
 
@@ -101,14 +87,6 @@ public class OauthUsersService {
         usersRepository.save(user);
 
         oauthUsersRepository.save(oauthUser);
-
-        OauthUserRegisteredEvent event = OauthUserRegisteredEvent.of(
-                command.getClient(),
-                command.getAuthorizationCode(),
-                oauthUser.getId()
-        );
-
-        eventPublisher.publishEvent(event);
     }
 
 }
