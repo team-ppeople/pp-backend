@@ -1,6 +1,5 @@
 package com.pp.api.configuration;
 
-import com.pp.api.service.OauthUsersService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -40,7 +39,7 @@ public class AuthorizationServerConfiguration {
             HttpSecurity httpSecurity,
             CorsConfigurationSource corsConfigurationSource,
             RegisteredClientRepository registeredClientRepository,
-            OauthUsersService oauthUsersService,
+            JwtClientAssertionOauth2UserRegisterProcessor jwtClientAssertionOauth2UserRegisterProcessor,
             AuthorizationServerSettings authorizationServerSettings
     ) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer()
@@ -77,7 +76,7 @@ public class AuthorizationServerConfiguration {
 
         addJwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
                 httpSecurity,
-                oauthUsersService
+                jwtClientAssertionOauth2UserRegisterProcessor
         );
 
         return securityFilterChain;
@@ -119,12 +118,12 @@ public class AuthorizationServerConfiguration {
     @SuppressWarnings("unchecked")
     private void addJwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
             HttpSecurity httpSecurity,
-            OauthUsersService oauthUsersService
+            JwtClientAssertionOauth2UserRegisterProcessor jwtClientAssertionOauth2UserRegisterProcessor
     ) {
         JwtClientAssertionOauth2ClientCredentialsAuthenticationProvider provider = new JwtClientAssertionOauth2ClientCredentialsAuthenticationProvider(
                 httpSecurity.getSharedObject(OAuth2AuthorizationService.class),
                 httpSecurity.getSharedObject(OAuth2TokenGenerator.class),
-                oauthUsersService
+                jwtClientAssertionOauth2UserRegisterProcessor
         );
 
         httpSecurity.authenticationProvider(provider);
