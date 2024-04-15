@@ -1,5 +1,6 @@
 server:
   forward-headers-strategy: native
+  shutdown: graceful
 
 spring:
   datasource:
@@ -12,7 +13,6 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 1000
