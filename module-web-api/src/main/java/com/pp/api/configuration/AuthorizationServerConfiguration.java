@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.Collections.singletonList;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Configuration
@@ -37,7 +39,6 @@ public class AuthorizationServerConfiguration {
     @SuppressWarnings("removal")
     public SecurityFilterChain authorizationServerSecurityFilterChain(
             HttpSecurity httpSecurity,
-            CorsConfigurationSource corsConfigurationSource,
             RegisteredClientRepository registeredClientRepository,
             JwtClientAssertionOauth2UserRegisterProcessor jwtClientAssertionOauth2UserRegisterProcessor,
             AuthorizationServerSettings authorizationServerSettings
@@ -54,8 +55,8 @@ public class AuthorizationServerConfiguration {
                 .apply(authorizationServerConfigurer);
 
         httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.ignoringRequestMatchers(authorizationServerConfigurer.getEndpointsMatcher()))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .clientAuthentication(clientAuthentication -> {
                     clientAuthentication.authenticationConverter(
@@ -127,6 +128,19 @@ public class AuthorizationServerConfiguration {
         );
 
         httpSecurity.authenticationProvider(provider);
+    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+
+            configuration.setAllowedHeaders(singletonList("*"));
+            configuration.setAllowedMethods(singletonList("*"));
+            configuration.setAllowCredentials(true);
+            configuration.setAllowedOriginPatterns(List.of("https://team-ppeople.github.io"));
+
+            return configuration;
+        };
     }
 
 }
