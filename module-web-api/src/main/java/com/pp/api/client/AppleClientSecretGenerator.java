@@ -1,58 +1,58 @@
 package com.pp.api.client;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.pp.api.configuration.properties.AppleClientProperties;
-import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.text.ParseException;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static io.jsonwebtoken.Jwts.SIG.ES256;
-import static java.time.ZoneId.systemDefault;
-import static org.springframework.security.oauth2.jwt.JwtClaimNames.EXP;
+import static com.nimbusds.jose.JWSAlgorithm.ES256;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static org.springframework.util.StringUtils.hasText;
 
 @Component
 public class AppleClientSecretGenerator {
 
     private static final Map<String, String> CLIENT_SECRETS_CACHE = new ConcurrentHashMap<>();
 
-    private final PrivateKey privateKey;
+    private final JWSSigner jwsSigner;
 
     private final AppleClientProperties appleClientProperties;
 
-    private final ObjectMapper objectMapper;
-
-    public AppleClientSecretGenerator(
-            AppleClientProperties appleClientProperties,
-            ObjectMapper objectMapper
-    ) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public AppleClientSecretGenerator(AppleClientProperties appleClientProperties)
+            throws InvalidKeySpecException, JOSEException, NoSuchAlgorithmException {
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
 
         byte[] decode = Base64.getDecoder()
                 .decode(appleClientProperties.privateKey());
 
-        this.privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decode));
+        PrivateKey privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decode));
+
+        this.jwsSigner = new ECDSASigner((ECPrivateKey) privateKey);
         this.appleClientProperties = appleClientProperties;
-        this.objectMapper = objectMapper;
     }
 
     public String getOrGenerate() {
         String clientSecret = CLIENT_SECRETS_CACHE.get(appleClientProperties.clientSecretKid());
 
-        if (!StringUtils.hasText(clientSecret)) {
+        if (!hasText(clientSecret)) {
             return generateAndCache();
         }
 
@@ -64,49 +64,50 @@ public class AppleClientSecretGenerator {
     }
 
     private boolean isAlive(String clientSecret) {
-        if (!StringUtils.hasText(clientSecret)) {
+        if (!hasText(clientSecret)) {
             return false;
         }
 
-        byte[] decode = Base64.getDecoder()
-                .decode(clientSecret.split("\\.")[1]);
-
-        Map<String, Object> claims;
+        Date expiration;
 
         try {
-            claims = objectMapper.readValue(decode, new TypeReference<>() {
-            });
-        } catch (IOException e) {
-            return false;
+            expiration = SignedJWT.parse(clientSecret)
+                    .getJWTClaimsSet()
+                    .getExpirationTime();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
 
-        LocalDateTime expiration = LocalDateTime.ofInstant(
-                Instant.ofEpochSecond((Integer) claims.get(EXP)),
-                systemDefault()
-        );
-
-        return LocalDateTime.now()
-                .plusHours(1)
-                .isBefore(expiration);
+        return createAliveCheckDate().before(expiration);
     }
 
     private String generateAndCache() {
-        String clientSecret = Jwts.builder()
-                .header()
-                .keyId(appleClientProperties.clientSecretKid())
-                .and()
+        JWSHeader jwsHeader = new JWSHeader.Builder(ES256)
+                .keyID(appleClientProperties.clientSecretKid())
+                .build();
+
+        Date now = new Date();
+
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .issuer(appleClientProperties.clientSecretIssuer())
                 .subject(appleClientProperties.clientId())
-                .issuedAt(new Date())
-                .expiration(createExpiration())
-                .audience()
-                .add(appleClientProperties.baseUrl())
-                .and()
-                .signWith(
-                        privateKey,
-                        ES256
-                )
-                .compact();
+                .issueTime(now)
+                .expirationTime(createExpiration(now))
+                .audience(appleClientProperties.baseUrl())
+                .build();
+
+        SignedJWT signedJWT = new SignedJWT(
+                jwsHeader,
+                jwtClaimsSet
+        );
+
+        try {
+            signedJWT.sign(jwsSigner);
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+
+        String clientSecret = signedJWT.serialize();
 
         CLIENT_SECRETS_CACHE.put(
                 appleClientProperties.clientSecretKid(),
@@ -116,11 +117,21 @@ public class AppleClientSecretGenerator {
         return clientSecret;
     }
 
-    private Date createExpiration() {
-        Instant instant = LocalDateTime.now()
-                .plusDays(appleClientProperties.clientSecretExpirationDays())
-                .atZone(systemDefault())
-                .toInstant();
+    private Date createExpiration(Date date) {
+        Instant instant = date.toInstant()
+                .plus(
+                        appleClientProperties.clientSecretExpirationDays(),
+                        DAYS
+                );
+
+        return Date.from(instant);
+    }
+
+    private Date createAliveCheckDate() {
+        Date now = new Date();
+
+        Instant instant = now.toInstant()
+                .plus(1, HOURS);
 
         return Date.from(instant);
     }
