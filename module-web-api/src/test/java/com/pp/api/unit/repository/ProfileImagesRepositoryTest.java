@@ -26,10 +26,13 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_프로필이미지_엔티티를_영속화한다() {
+        // given
+        Users user = createAndSaveUser();
+
         // when
         ProfileImages profileImage = ProfileImages.builder()
-                .uploadFile(createAndSaveUploadFile())
-                .user(createAndSaveUser())
+                .user(user)
+                .uploadFile(createAndSaveUploadFile(user))
                 .build();
 
         ProfileImages savedProfileImage = profileImagesRepository.save(profileImage);
@@ -46,10 +49,13 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_프로필이미지_엔티티를_조회한다() {
+        // given
+        Users user = createAndSaveUser();
+
         // when
         ProfileImages profileImage = ProfileImages.builder()
-                .uploadFile(createAndSaveUploadFile())
-                .user(createAndSaveUser())
+                .user(user)
+                .uploadFile(createAndSaveUploadFile(user))
                 .build();
 
         ProfileImages savedProfileImage = profileImagesRepository.save(profileImage);
@@ -77,12 +83,13 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
         return usersRepository.save(user);
     }
 
-    UploadFiles createAndSaveUploadFile() {
+    UploadFiles createAndSaveUploadFile(Users user) {
         UploadFiles uploadFile = UploadFiles.builder()
                 .fileType(PROFILE_IMAGE)
                 .url("https://avatars.githubusercontent.com/u/52724515")
                 .contentType(IMAGE_JPEG)
                 .contentLength(1048576L)
+                .uploader(user)
                 .build();
 
         return uploadFilesRepository.save(uploadFile);
