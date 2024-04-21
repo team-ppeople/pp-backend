@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -37,17 +38,22 @@ public class UploadFiles extends BaseEntity {
     @Column(nullable = false)
     private Long contentLength;
 
+    @ManyToOne(fetch = LAZY, optional = false)
+    private Users uploader;
+
     @Builder
     private UploadFiles(
             UploadFileTypes fileType,
             String url,
             UploadFileContentTypes contentType,
-            Long contentLength
+            Long contentLength,
+            Users uploader
     ) {
         this.fileType = fileType;
         this.url = url;
         this.contentType = contentType;
         this.contentLength = contentLength;
+        this.uploader = uploader;
     }
 
 }

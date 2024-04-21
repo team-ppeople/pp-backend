@@ -1,9 +1,11 @@
 package com.pp.api.unit.repository;
 
 import com.pp.api.entity.UploadFiles;
+import com.pp.api.entity.Users;
 import com.pp.api.entity.enums.UploadFileContentTypes;
 import com.pp.api.entity.enums.UploadFileTypes;
 import com.pp.api.repository.UploadFilesRepository;
+import com.pp.api.repository.UsersRepository;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,6 +19,9 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
 
     @Autowired
     private UploadFilesRepository uploadFilesRepository;
+
+    @Autowired
+    private UsersRepository usersRepository;
 
     @ParameterizedTest
     @MethodSource(value = "generateFileTypeAndContentType")
@@ -34,6 +39,7 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
                 .url(url)
                 .contentType(contentType)
                 .contentLength(contentLength)
+                .uploader(createAndSaveUser())
                 .build();
 
         UploadFiles savedUploadFile = uploadFilesRepository.save(uploadFile);
@@ -43,10 +49,10 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(savedUploadFile.getFileType()).isSameAs(fileType);
         assertThat(savedUploadFile.getContentType()).isSameAs(contentType);
         assertThat(savedUploadFile.getContentLength()).isEqualTo(contentLength);
+        assertThat(savedUploadFile.getUploader()).isEqualTo(uploadFile.getUploader());
         assertThat(savedUploadFile.getCreatedDate()).isNotNull();
         assertThat(savedUploadFile.getUpdatedDate()).isNotNull();
     }
-
 
     @ParameterizedTest
     @MethodSource(value = "generateFileTypeAndContentType")
@@ -64,6 +70,7 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
                 .url(url)
                 .contentType(contentType)
                 .contentLength(contentLength)
+                .uploader(createAndSaveUser())
                 .build();
 
         UploadFiles savedUploadFile = uploadFilesRepository.save(uploadFile);
@@ -80,8 +87,18 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundUploadFile.getUrl()).isEqualTo(savedUploadFile.getUrl());
         assertThat(foundUploadFile.getContentType()).isSameAs(savedUploadFile.getContentType());
         assertThat(foundUploadFile.getContentLength()).isEqualTo(savedUploadFile.getContentLength());
+        assertThat(foundUploadFile.getUploader()).isEqualTo(savedUploadFile.getUploader());
         assertThat(foundUploadFile.getCreatedDate()).isEqualTo(savedUploadFile.getCreatedDate());
         assertThat(foundUploadFile.getUpdatedDate()).isEqualTo(savedUploadFile.getUpdatedDate());
+    }
+
+    Users createAndSaveUser() {
+        Users user = Users.builder()
+                .nickname("sinbom")
+                .email("dev.sinbom@gmail.com")
+                .build();
+
+        return usersRepository.save(user);
     }
 
     static Stream<Arguments> generateFileTypeAndContentType() {

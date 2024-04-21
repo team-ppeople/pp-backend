@@ -23,11 +23,10 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static com.nimbusds.jose.jwk.KeyType.RSA;
+import static org.springframework.security.oauth2.jose.jws.SignatureAlgorithm.from;
 
 @Configuration
 @EnableConfigurationProperties(value = Oauth2KeyProperties.class)
@@ -43,30 +42,32 @@ public class JwtConfiguration {
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
-        JWKSet jwkSet = new JWKSet(generateJwks());
+        JWKSet jwkSet = new JWKSet(createJwks());
 
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
 
-    private List<JWK> generateJwks() {
-        List<JWK> keys = new ArrayList<>();
-
-        for (Oauth2Key key : oauth2KeyProperties.jwk()) {
-            if (RSA.getValue().equals(key.type())) {
-                JWK rsaKey = new RSAKey
-                        .Builder((RSAPublicKey) generatePublicKey(key.publicKey()))
-                        .privateKey((RSAPrivateKey) generatePrivateKey(key.privateKey()))
-                        .keyID(key.id())
-                        .build();
-
-                keys.add(rsaKey);
-            }
-        }
-
-        return keys;
+    private List<JWK> createJwks() {
+        return oauth2KeyProperties.jwk()
+                .stream()
+                .map(this::createJwk)
+                .toList();
     }
 
-    private PublicKey generatePublicKey(String encodedPublicKey) {
+    private JWK createJwk(Oauth2Key key) {
+        switch (from(key.type())) {
+            case RS256, RS384, RS512 -> {
+                return new RSAKey
+                        .Builder((RSAPublicKey) createPublicKey(key.publicKey()))
+                        .privateKey((RSAPrivateKey) createPrivateKey(key.privateKey()))
+                        .keyID(key.id())
+                        .build();
+            }
+            default -> throw new UnsupportedOperationException("Unsupported key type: " + key.type());
+        }
+    }
+
+    private PublicKey createPublicKey(String encodedPublicKey) {
         byte[] decode = Base64.getDecoder()
                 .decode(encodedPublicKey);
 
@@ -79,7 +80,7 @@ public class JwtConfiguration {
         }
     }
 
-    private PrivateKey generatePrivateKey(String encodedPrivateKey) {
+    private PrivateKey createPrivateKey(String encodedPrivateKey) {
         byte[] decode = Base64.getDecoder()
                 .decode(encodedPrivateKey);
 
