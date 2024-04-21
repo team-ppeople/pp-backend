@@ -1,13 +1,12 @@
 package com.pp.api.service.command;
 
-import com.pp.api.controller.dto.IsRegisteredOauthUserResponse;
 import com.pp.api.controller.validator.AllowedOauthUserClient;
 import com.pp.api.entity.enums.OauthUserClient;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class IsRegisteredOauthUserQuery extends CommandSelfValidator<IsRegisteredOauthUserResponse> {
+public class IsRegisteredOauthUserQuery extends CommandSelfValidator<IsRegisteredOauthUserQuery> {
 
     @AllowedOauthUserClient
     @NotBlank(message = "Oauth 유저 클라이언트 값이 없습니다.")

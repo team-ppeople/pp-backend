@@ -59,13 +59,6 @@ spring:
               reuse-refresh-tokens: false
               refresh-token-time-to-live: 30d
 
-oauth2:
-  jwk:
-    - id: ${OAUTH2_JWK_ID}
-      type: ${OAUTH2_JWK_TYPE}
-      public-key: ${OAUTH2_JWK_PUBLIC_KEY}
-      private-key: ${OAUTH2_JWK_PRIVATE_KEY}
-
 client:
   apple:
     base-url: https://appleid.apple.com
@@ -85,6 +78,7 @@ logging:
       springframework:
         security: DEBUG
       hibernate:
+        SQL: DEBUG
         orm:
           jdbc:
             bind: TRACE
