@@ -1,13 +1,12 @@
 package com.pp.api.service.command;
 
-import com.pp.api.controller.dto.IsRegisteredOauthUserResponse;
 import com.pp.api.entity.enums.OauthUserClient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class SaveOauthUserTokenCommand extends CommandSelfValidator<IsRegisteredOauthUserResponse> {
+public class SaveOauthUserTokenCommand extends CommandSelfValidator<SaveOauthUserTokenCommand> {
 
     @NotNull(message = "Oauth 유저 클라이언트 값이 없습니다.")
     private final OauthUserClient client;

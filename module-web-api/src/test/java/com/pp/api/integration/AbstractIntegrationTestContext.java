@@ -1,7 +1,9 @@
 package com.pp.api.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pp.api.config.JwtTestUtils;
 import org.junit.jupiter.api.Disabled;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,9 +20,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 
 import static com.nimbusds.jose.jwk.Curve.P_256;
-import static com.nimbusds.jose.jwk.KeyType.RSA;
 import static java.security.KeyPairGenerator.getInstance;
 import static java.util.UUID.randomUUID;
+import static org.springframework.security.oauth2.jose.jws.SignatureAlgorithm.RS256;
 
 @Disabled
 @AutoConfigureMockMvc
@@ -28,9 +30,14 @@ import static java.util.UUID.randomUUID;
 @ActiveProfiles(value = "test")
 public abstract class AbstractIntegrationTestContext {
 
+    @Autowired
     protected MockMvc mockMvc;
 
+    @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected JwtTestUtils jwtTestUtils;
 
     @DynamicPropertySource
     static void registerDynamicProperty(DynamicPropertyRegistry registry) {
@@ -56,23 +63,23 @@ public abstract class AbstractIntegrationTestContext {
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
         registry.add(
-                "oauth2.jwk.id",
+                "oauth2.jwk[0].id",
                 () -> randomUUID().toString()
         );
 
         registry.add(
-                "oauth2.jwk.type",
-                RSA::getValue
+                "oauth2.jwk[0].type",
+                RS256::getName
         );
 
         registry.add(
-                "oauth2.jwk.public-key",
+                "oauth2.jwk[0].public-key",
                 () -> Base64.getEncoder()
                         .encodeToString(publicKey.getEncoded())
         );
 
         registry.add(
-                "oauth2.jwk.private-key",
+                "oauth2.jwk[0].private-key",
                 () -> Base64.getEncoder()
                         .encodeToString(privateKey.getEncoded())
         );
