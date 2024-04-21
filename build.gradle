@@ -30,6 +30,9 @@ subprojects {
     dependencies {
         annotationProcessor 'org.projectlombok:lombok'
         compileOnly 'org.projectlombok:lombok'
+
+        implementation(platform("software.amazon.awssdk:bom:2.25.35"))
+        implementation("software.amazon.awssdk:s3")
     }
 
     jar {
