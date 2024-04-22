@@ -1,2 +1,6 @@
 server:
   port: 8080
+
+aws:
+  s3:
+    bucket: pp-public-bucket
