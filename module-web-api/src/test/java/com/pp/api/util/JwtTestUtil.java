@@ -1,4 +1,4 @@
-package com.pp.api.config;
+package com.pp.api.util;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
@@ -17,7 +17,7 @@ import static java.util.UUID.randomUUID;
 import static org.springframework.security.oauth2.jose.jws.SignatureAlgorithm.from;
 
 @Component
-public class JwtTestUtils {
+public class JwtTestUtil {
 
     private static final Set<String> ALLOWED_SCOPES = Set.of(
             "user.read",
@@ -31,7 +31,7 @@ public class JwtTestUtils {
 
     private final Oauth2KeyProperties oauth2KeyProperties;
 
-    public JwtTestUtils(
+    public JwtTestUtil(
             JWKSource<SecurityContext> jwkSource,
             Oauth2KeyProperties oauth2KeyProperties
     ) {

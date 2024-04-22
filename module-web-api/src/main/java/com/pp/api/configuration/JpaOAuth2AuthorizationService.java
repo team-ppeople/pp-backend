@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pp.api.configuration.module.JwtClientAssertionOauth2AuthorizationServerJackson2Module;
 import com.pp.api.entity.OauthFrameworkAuthorization;
-import com.pp.api.repository.Oauth2FrameworkAuthorizationRepository;
+import com.pp.api.repository.OauthFrameworkAuthorizationRepository;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -39,15 +39,17 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 @Component
 public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
-    private final Oauth2FrameworkAuthorizationRepository authorizationRepository;
+    private final OauthFrameworkAuthorizationRepository authorizationRepository;
+
     private final RegisteredClientRepository registeredClientRepository;
+
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModules(getModules(this.getClass().getClassLoader()))
             .registerModule(new OAuth2AuthorizationServerJackson2Module())
             .registerModule(new JwtClientAssertionOauth2AuthorizationServerJackson2Module());
 
     public JpaOAuth2AuthorizationService(
-            Oauth2FrameworkAuthorizationRepository authorizationRepository,
+            OauthFrameworkAuthorizationRepository authorizationRepository,
             RegisteredClientRepository registeredClientRepository
     ) {
         Assert.notNull(authorizationRepository, "authorizationRepository cannot be null");
