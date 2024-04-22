@@ -1,6 +1,7 @@
 package com.pp.api.unit.repository;
 
 import com.pp.api.entity.Users;
+import com.pp.api.fixture.UserFixture;
 import com.pp.api.repository.UsersRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +15,13 @@ class UsersRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_엔티티를_영속화한다() {
-        // given
-        String nickname = "sinbom";
-        String email = "dev.sinbom@gmail.com";
-
-        // when
-        Users user = Users.builder()
-                .nickname(nickname)
-                .email(email)
-                .build();
+        Users user = UserFixture.of();
 
         Users savedUser = usersRepository.save(user);
 
-        // then
         assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.getNickname()).isEqualTo(nickname);
-        assertThat(savedUser.getEmail()).isEqualTo(email);
+        assertThat(savedUser.getNickname()).isEqualTo(user.getNickname());
+        assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
         assertThat(savedUser.getProfileImages()).isNotNull();
         assertThat(savedUser.getProfileImages()).isEmpty();
         assertThat(savedUser.getPosts()).isNotNull();
@@ -40,15 +32,7 @@ class UsersRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_엔티티를_조회한다() {
-        // given
-        String nickname = "sinbom";
-        String email = "dev.sinbom@gmail.com";
-
-        // when
-        Users user = Users.builder()
-                .nickname(nickname)
-                .email(email)
-                .build();
+        Users user = UserFixture.of();
 
         Users savedUser = usersRepository.save(user);
 
@@ -57,7 +41,6 @@ class UsersRepositoryTest extends AbstractDataJpaTestContext {
         Users foundUser = usersRepository.findById(savedUser.getId())
                 .orElseThrow();
 
-        // then
         assertThat(foundUser).isNotSameAs(savedUser);
         assertThat(foundUser.getId()).isEqualTo(savedUser.getId());
         assertThat(foundUser.getNickname()).isEqualTo(savedUser.getNickname());

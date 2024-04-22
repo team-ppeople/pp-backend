@@ -2,6 +2,8 @@ package com.pp.api.unit.repository;
 
 import com.pp.api.entity.Posts;
 import com.pp.api.entity.Users;
+import com.pp.api.fixture.PostFixture;
+import com.pp.api.fixture.UserFixture;
 import com.pp.api.repository.PostsRepository;
 import com.pp.api.repository.UsersRepository;
 import org.junit.jupiter.api.Test;
@@ -19,23 +21,15 @@ class PostsRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 게시글_엔티티를_영속화한다() {
-        // given
-        String title = "[HBD] 🎂저의 29번째 생일을 축하합니다.🥳";
-        String content = "yo~ 모두들 10002 10002 축하해주세요 😄";
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        Posts post = Posts.builder()
-                .title(title)
-                .content(content)
-                .creator(createAndSaveUser())
-                .build();
+        Posts post = postsRepository.save(PostFixture.ofCreator(user));
 
         Posts savedPost = postsRepository.save(post);
 
-        // then
         assertThat(savedPost.getId()).isNotNull();
-        assertThat(savedPost.getTitle()).isEqualTo(title);
-        assertThat(savedPost.getContent()).isEqualTo(content);
+        assertThat(savedPost.getTitle()).isEqualTo(post.getTitle());
+        assertThat(savedPost.getContent()).isEqualTo(post.getContent());
         assertThat(savedPost.getCreator()).isEqualTo(post.getCreator());
         assertThat(savedPost.getImages()).isNotNull();
         assertThat(savedPost.getImages()).isEmpty();
@@ -49,16 +43,9 @@ class PostsRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 게시글_엔티티를_조회한다() {
-        // given
-        String title = "[HBD] 🎂저의 29번째 생일을 축하합니다.🥳";
-        String content = "yo~ 모두들 10002 10002 축하해주세요 😄";
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        Posts post = Posts.builder()
-                .title(title)
-                .content(content)
-                .creator(createAndSaveUser())
-                .build();
+        Posts post = postsRepository.save(PostFixture.ofCreator(user));
 
         Posts savedPost = postsRepository.save(post);
 
@@ -67,7 +54,6 @@ class PostsRepositoryTest extends AbstractDataJpaTestContext {
         Posts foundPost = postsRepository.findById(savedPost.getId())
                 .orElseThrow();
 
-        // then
         assertThat(foundPost).isNotSameAs(savedPost);
         assertThat(foundPost.getId()).isEqualTo(savedPost.getId());
         assertThat(foundPost.getTitle()).isEqualTo(savedPost.getTitle());
@@ -78,15 +64,6 @@ class PostsRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundPost.getReports()).hasSameElementsAs(savedPost.getReports());
         assertThat(foundPost.getCreatedDate()).isEqualTo(savedPost.getCreatedDate());
         assertThat(foundPost.getUpdatedDate()).isEqualTo(savedPost.getUpdatedDate());
-    }
-
-    Users createAndSaveUser() {
-        Users user = Users.builder()
-                .nickname("sinbom")
-                .email("dev.sinbom@gmail.com")
-                .build();
-
-        return usersRepository.save(user);
     }
 
 }

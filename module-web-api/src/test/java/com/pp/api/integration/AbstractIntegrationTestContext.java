@@ -1,7 +1,9 @@
 package com.pp.api.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pp.api.config.JwtTestUtils;
+import com.pp.api.util.DatabaseCleanUtil;
+import com.pp.api.util.JwtTestUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,7 +39,15 @@ public abstract class AbstractIntegrationTestContext {
     protected ObjectMapper objectMapper;
 
     @Autowired
-    protected JwtTestUtils jwtTestUtils;
+    protected JwtTestUtil jwtTestUtil;
+
+    @Autowired
+    private DatabaseCleanUtil databaseCleanUtil;
+
+    @AfterEach
+    void tearDown() {
+        databaseCleanUtil.clear();
+    }
 
     @DynamicPropertySource
     static void registerDynamicProperty(DynamicPropertyRegistry registry) {
