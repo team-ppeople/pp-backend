@@ -1,31 +1,31 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.UploadFiles;
-import com.pp.api.entity.Users;
-import com.pp.api.entity.enums.UploadFileContentTypes;
-import com.pp.api.entity.enums.UploadFileTypes;
+import com.pp.api.entity.UploadFile;
+import com.pp.api.entity.User;
+import com.pp.api.entity.enums.UploadFileContentType;
+import com.pp.api.entity.enums.UploadFileType;
 
-import static com.pp.api.entity.enums.UploadFileContentTypes.IMAGE_JPEG;
-import static com.pp.api.entity.enums.UploadFileTypes.POST_IMAGE;
-import static com.pp.api.entity.enums.UploadFileTypes.PROFILE_IMAGE;
+import static com.pp.api.entity.enums.UploadFileContentType.IMAGE_JPEG;
+import static com.pp.api.entity.enums.UploadFileType.POST_IMAGE;
+import static com.pp.api.entity.enums.UploadFileType.PROFILE_IMAGE;
 
 public class UploadFileFixture {
 
     private static final String DEFAULT_URL = "https://avatars.githubusercontent.com/u/52724515";
 
-    private static final UploadFileContentTypes DEFAULT_CONTENT_TYPE = IMAGE_JPEG;
+    private static final UploadFileContentType DEFAULT_CONTENT_TYPE = IMAGE_JPEG;
 
     private static final Long DEFAULT_CONTENT_LENGTH = 1048576L;
 
 
-    public static UploadFiles from(
-            UploadFileTypes fileType,
+    public static UploadFile from(
+            UploadFileType fileType,
             String url,
-            UploadFileContentTypes contentType,
+            UploadFileContentType contentType,
             Long contentLength,
-            Users uploader
+            User uploader
     ) {
-        return UploadFiles.builder()
+        return UploadFile.builder()
                 .fileType(fileType)
                 .url(url)
                 .contentType(contentType)
@@ -34,12 +34,12 @@ public class UploadFileFixture {
                 .build();
     }
 
-    public static UploadFiles fromFileTypeAndContentType(
-            UploadFileTypes fileType,
-            UploadFileContentTypes contentType,
-            Users uploader
+    public static UploadFile fromFileTypeAndContentType(
+            UploadFileType fileType,
+            UploadFileContentType contentType,
+            User uploader
     ) {
-        return UploadFiles.builder()
+        return UploadFile.builder()
                 .fileType(fileType)
                 .url(DEFAULT_URL)
                 .contentType(contentType)
@@ -48,8 +48,8 @@ public class UploadFileFixture {
                 .build();
     }
 
-    public static UploadFiles postImageFileOfUploader(Users uploader) {
-        return UploadFiles.builder()
+    public static UploadFile postImageFileOfUploader(User uploader) {
+        return UploadFile.builder()
                 .fileType(POST_IMAGE)
                 .url(DEFAULT_URL)
                 .contentType(DEFAULT_CONTENT_TYPE)
@@ -58,8 +58,8 @@ public class UploadFileFixture {
                 .build();
     }
 
-    public static UploadFiles profileImageFileOfUploader(Users uploader) {
-        return UploadFiles.builder()
+    public static UploadFile profileImageFileOfUploader(User uploader) {
+        return UploadFile.builder()
                 .fileType(PROFILE_IMAGE)
                 .url(DEFAULT_URL)
                 .contentType(DEFAULT_CONTENT_TYPE)

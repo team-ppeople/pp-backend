@@ -1,16 +1,16 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.Posts;
-import com.pp.api.entity.ReportedPosts;
-import com.pp.api.entity.Users;
+import com.pp.api.entity.Post;
+import com.pp.api.entity.ReportedPost;
+import com.pp.api.entity.User;
 
 public class ReportedPostFixture {
 
-    public static ReportedPosts from(
-            Posts post,
-            Users reporter
+    public static ReportedPost from(
+            Post post,
+            User reporter
     ) {
-        return ReportedPosts.builder()
+        return ReportedPost.builder()
                 .post(post)
                 .reporter(reporter)
                 .build();

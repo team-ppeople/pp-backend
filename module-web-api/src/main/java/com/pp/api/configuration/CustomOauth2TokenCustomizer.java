@@ -1,8 +1,8 @@
 package com.pp.api.configuration;
 
-import com.pp.api.entity.OauthUsers;
+import com.pp.api.entity.OauthUser;
 import com.pp.api.entity.enums.OauthUserClient;
-import com.pp.api.service.OauthUsersService;
+import com.pp.api.service.OauthUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -21,7 +21,7 @@ import static org.springframework.security.oauth2.server.authorization.OAuth2Tok
 @RequiredArgsConstructor
 public final class CustomOauth2TokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
-    private final OauthUsersService oauthUsersService;
+    private final OauthUserService oauthUserService;
 
     @Override
     public void customize(JwtEncodingContext context) {
@@ -42,7 +42,7 @@ public final class CustomOauth2TokenCustomizer implements OAuth2TokenCustomizer<
                     String clientSubject = OauthUserClient.valueOfIgnoreCase(clientName)
                             .parseClientSubject(subject);
 
-                    OauthUsers oauthUser = oauthUsersService.findByClientSubject(clientSubject);
+                    OauthUser oauthUser = oauthUserService.findByClientSubject(clientSubject);
 
                     builder.claims(claims -> {
                         claims.put(SUB, oauthUser.getUser().getId());

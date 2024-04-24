@@ -1,7 +1,7 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.Posts;
-import com.pp.api.entity.Users;
+import com.pp.api.entity.Post;
+import com.pp.api.entity.User;
 
 public class PostFixture {
 
@@ -9,42 +9,42 @@ public class PostFixture {
 
     private static final String DEFAULT_CONTENT = "yo~ 모두들 10002 10002 축하해주세요 😄";
 
-    public static Posts from(
+    public static Post from(
             String title,
             String content,
-            Users creator
+            User creator
     ) {
-        return Posts.builder()
+        return Post.builder()
                 .title(title)
                 .content(content)
                 .creator(creator)
                 .build();
     }
 
-    public static Posts fromTitle(
+    public static Post fromTitle(
             String title,
-            Users creator
+            User creator
     ) {
-        return Posts.builder()
+        return Post.builder()
                 .title(title)
                 .content(DEFAULT_CONTENT)
                 .creator(creator)
                 .build();
     }
 
-    public static Posts fromContent(
+    public static Post fromContent(
             String content,
-            Users creator
+            User creator
     ) {
-        return Posts.builder()
+        return Post.builder()
                 .title(DEFAULT_TITLE)
                 .content(content)
                 .creator(creator)
                 .build();
     }
 
-    public static Posts ofCreator(Users creator) {
-        return Posts.builder()
+    public static Post ofCreator(User creator) {
+        return Post.builder()
                 .title(DEFAULT_TITLE)
                 .content(DEFAULT_CONTENT)
                 .creator(creator)

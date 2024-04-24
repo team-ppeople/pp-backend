@@ -5,8 +5,8 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.pp.api.configuration.properties.Oauth2KeyProperties;
-import com.pp.api.configuration.properties.Oauth2KeyProperties.Oauth2Key;
+import com.pp.api.configuration.property.Oauth2KeyProperty;
+import com.pp.api.configuration.property.Oauth2KeyProperty.Oauth2Key;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +29,11 @@ import java.util.List;
 import static org.springframework.security.oauth2.jose.jws.SignatureAlgorithm.from;
 
 @Configuration
-@EnableConfigurationProperties(value = Oauth2KeyProperties.class)
+@EnableConfigurationProperties(value = Oauth2KeyProperty.class)
 @RequiredArgsConstructor
 public class JwtConfiguration {
 
-    private final Oauth2KeyProperties oauth2KeyProperties;
+    private final Oauth2KeyProperty oauth2KeyProperty;
 
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
@@ -48,7 +48,7 @@ public class JwtConfiguration {
     }
 
     private List<JWK> createJwks() {
-        return oauth2KeyProperties.jwk()
+        return oauth2KeyProperty.jwk()
                 .stream()
                 .map(this::createJwk)
                 .toList();

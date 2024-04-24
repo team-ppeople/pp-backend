@@ -2,9 +2,9 @@ package com.pp.api.util;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.pp.api.configuration.properties.Oauth2KeyProperties;
-import com.pp.api.configuration.properties.Oauth2KeyProperties.Oauth2Key;
-import com.pp.api.entity.Users;
+import com.pp.api.configuration.property.Oauth2KeyProperty;
+import com.pp.api.configuration.property.Oauth2KeyProperty.Oauth2Key;
+import com.pp.api.entity.User;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
@@ -29,30 +29,30 @@ public class JwtTestUtil {
 
     private final JwtEncoder jwtEncoder;
 
-    private final Oauth2KeyProperties oauth2KeyProperties;
+    private final Oauth2KeyProperty oauth2KeyProperty;
 
     public JwtTestUtil(
             JWKSource<SecurityContext> jwkSource,
-            Oauth2KeyProperties oauth2KeyProperties
+            Oauth2KeyProperty oauth2KeyProperty
     ) {
         this.jwtEncoder = new NimbusJwtEncoder(jwkSource);
-        this.oauth2KeyProperties = oauth2KeyProperties;
+        this.oauth2KeyProperty = oauth2KeyProperty;
     }
 
-    public String createBearerToken(Users users) {
-        return createBearerToken(String.valueOf(users.getId()));
+    public String createBearerToken(User user) {
+        return createBearerToken(String.valueOf(user.getId()));
     }
 
     public String createBearerToken(String subject) {
         return "Bearer " + createJwt(subject).getTokenValue();
     }
 
-    public Jwt createJwt(Users user) {
+    public Jwt createJwt(User user) {
         return createJwt(String.valueOf(user.getId()));
     }
 
     public Jwt createJwt(String subject) {
-        Oauth2Key oauth2Key = oauth2KeyProperties.jwk()
+        Oauth2Key oauth2Key = oauth2KeyProperty.jwk()
                 .get(0);
 
         JwsHeader jwsHeader = JwsHeader.with(from(oauth2Key.type()))
