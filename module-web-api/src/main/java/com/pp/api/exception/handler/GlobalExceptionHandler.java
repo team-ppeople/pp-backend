@@ -1,5 +1,6 @@
 package com.pp.api.exception.handler;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -41,6 +42,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex,
                 headers,
                 status,
+                request
+        );
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResponseEntity<?> handle(
+            ConstraintViolationException ex,
+            WebRequest request
+    ) {
+        ProblemDetail body = this.createProblemDetail(
+                ex,
+                BAD_REQUEST,
+                BAD_REQUEST.getReasonPhrase(),
+                null,
+                null,
+                request
+        );
+
+        ex.getConstraintViolations()
+                .stream()
+                .findFirst()
+                .ifPresent(constraintViolation -> body.setDetail(constraintViolation.getMessage()));
+
+        return super.handleExceptionInternal(
+                ex,
+                body,
+                EMPTY,
+                BAD_REQUEST,
                 request
         );
     }
