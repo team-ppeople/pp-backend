@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor(access = PRIVATE)
 public class IsRegisteredOauthUserResponse {
 
-    private final boolean isRegistered;
+    private final Boolean isRegistered;
 
     public static IsRegisteredOauthUserResponse from(boolean isRegistered) {
         return new IsRegisteredOauthUserResponse(isRegistered);
