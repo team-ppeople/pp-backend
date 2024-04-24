@@ -6,7 +6,7 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.pp.api.configuration.properties.AppleClientProperties;
+import com.pp.api.configuration.property.AppleClientProperty;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyFactory;
@@ -34,23 +34,23 @@ public class AppleClientSecretGenerator {
 
     private final JWSSigner jwsSigner;
 
-    private final AppleClientProperties appleClientProperties;
+    private final AppleClientProperty appleClientProperty;
 
-    public AppleClientSecretGenerator(AppleClientProperties appleClientProperties)
+    public AppleClientSecretGenerator(AppleClientProperty appleClientProperty)
             throws InvalidKeySpecException, JOSEException, NoSuchAlgorithmException {
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
 
         byte[] decode = Base64.getDecoder()
-                .decode(appleClientProperties.privateKey());
+                .decode(appleClientProperty.privateKey());
 
         PrivateKey privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decode));
 
         this.jwsSigner = new ECDSASigner((ECPrivateKey) privateKey);
-        this.appleClientProperties = appleClientProperties;
+        this.appleClientProperty = appleClientProperty;
     }
 
     public String getOrGenerate() {
-        String clientSecret = CLIENT_SECRETS_CACHE.get(appleClientProperties.clientSecretKid());
+        String clientSecret = CLIENT_SECRETS_CACHE.get(appleClientProperty.clientSecretKid());
 
         if (!hasText(clientSecret)) {
             return generateAndCache();
@@ -83,17 +83,17 @@ public class AppleClientSecretGenerator {
 
     private String generateAndCache() {
         JWSHeader jwsHeader = new JWSHeader.Builder(ES256)
-                .keyID(appleClientProperties.clientSecretKid())
+                .keyID(appleClientProperty.clientSecretKid())
                 .build();
 
         Date now = new Date();
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .issuer(appleClientProperties.clientSecretIssuer())
-                .subject(appleClientProperties.clientId())
+                .issuer(appleClientProperty.clientSecretIssuer())
+                .subject(appleClientProperty.clientId())
                 .issueTime(now)
                 .expirationTime(createExpiration(now))
-                .audience(appleClientProperties.baseUrl())
+                .audience(appleClientProperty.baseUrl())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(
@@ -110,7 +110,7 @@ public class AppleClientSecretGenerator {
         String clientSecret = signedJWT.serialize();
 
         CLIENT_SECRETS_CACHE.put(
-                appleClientProperties.clientSecretKid(),
+                appleClientProperty.clientSecretKid(),
                 clientSecret
         );
 
@@ -120,7 +120,7 @@ public class AppleClientSecretGenerator {
     private Date createExpiration(Date date) {
         Instant instant = date.toInstant()
                 .plus(
-                        appleClientProperties.clientSecretExpirationDays(),
+                        appleClientProperty.clientSecretExpirationDays(),
                         DAYS
                 );
 

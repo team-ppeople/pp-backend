@@ -1,14 +1,13 @@
 package com.pp.api.integration.controller;
 
-import com.pp.api.entity.UploadFiles;
-import com.pp.api.entity.Users;
+import com.pp.api.entity.UploadFile;
+import com.pp.api.entity.User;
 import com.pp.api.fixture.UploadFileFixture;
 import com.pp.api.fixture.UserFixture;
 import com.pp.api.integration.AbstractIntegrationTestContext;
 import com.pp.api.integration.WithMockUserJwt;
-import com.pp.api.repository.ProfileImagesRepository;
-import com.pp.api.repository.UploadFilesRepository;
-import com.pp.api.repository.UsersRepository;
+import com.pp.api.repository.UploadFileRepository;
+import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.UpdateUserCommand;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +22,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest extends AbstractIntegrationTestContext {
 
     @Autowired
-    private UsersRepository usersRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UploadFilesRepository uploadFilesRepository;
-
-    @Autowired
-    private ProfileImagesRepository profileImagesRepository;
+    private UploadFileRepository uploadFileRepository;
 
     @Test
     void 유저_정보를_수정한다() throws Exception {
-        Users user = usersRepository.save(UserFixture.of());
+        User user = userRepository.save(UserFixture.of());
 
-        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+        UploadFile uploadFile = uploadFileRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
 
         String nickname = "신봄";
 
@@ -60,9 +56,9 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
     @Test
     void 토큰이없으면_유저_정보를_수정할수없다() throws Exception {
-        Users user = usersRepository.save(UserFixture.of());
+        User user = userRepository.save(UserFixture.of());
 
-        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+        UploadFile uploadFile = uploadFileRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
 
         String nickname = "신봄";
 
@@ -87,9 +83,9 @@ class UserControllerTest extends AbstractIntegrationTestContext {
     @WithMockUserJwt
     @Test
     void 권한이없는_토큰으로_유저_정보를_수정할수없다() throws Exception {
-        Users user = usersRepository.save(UserFixture.of());
+        User user = userRepository.save(UserFixture.of());
 
-        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+        UploadFile uploadFile = uploadFileRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
 
         String nickname = "신봄";
 
@@ -113,9 +109,9 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
     @Test
     void 권한이없는_유저_정보를_수정할수없다() throws Exception {
-        Users user = usersRepository.save(UserFixture.of());
+        User user = userRepository.save(UserFixture.of());
 
-        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+        UploadFile uploadFile = uploadFileRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
 
         String nickname = "신봄";
 
@@ -166,7 +162,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
     @Test
     void 존재하지않는_파일을_프로필_이미지로_수정할수없다() throws Exception {
-        Users user = usersRepository.save(UserFixture.of());
+        User user = userRepository.save(UserFixture.of());
 
         String nickname = "신봄";
 
@@ -191,16 +187,16 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
     @Test
     void 권한이_없는_파일을_프로필_이미지로_수정할수없다() throws Exception {
-        Users user = usersRepository.save(UserFixture.of());
+        User user = userRepository.save(UserFixture.of());
 
-        Users otherUser = usersRepository.save(
+        User otherUser = userRepository.save(
                 UserFixture.from(
                         "바다거북맘",
                         "sea-turtles@gmail.com"
                 )
         );
 
-        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(otherUser));
+        UploadFile uploadFile = uploadFileRepository.save(UploadFileFixture.profileImageFileOfUploader(otherUser));
 
         String nickname = "신봄";
 

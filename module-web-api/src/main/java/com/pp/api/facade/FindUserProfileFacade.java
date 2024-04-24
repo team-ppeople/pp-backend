@@ -2,8 +2,8 @@ package com.pp.api.facade;
 
 import com.pp.api.controller.dto.FindUserProfileResponse;
 import com.pp.api.controller.dto.FindUserProfileResponse.UserCreatedPostResponse;
-import com.pp.api.service.PostsService;
-import com.pp.api.service.UsersService;
+import com.pp.api.service.PostService;
+import com.pp.api.service.UserService;
 import com.pp.api.service.command.FindPostOfListByNoOffsetQuery;
 import com.pp.api.service.domain.UserWithProfile;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +15,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FindUserProfileFacade {
 
-    private final UsersService usersService;
+    private final UserService userService;
 
-    private final PostsService postsService;
+    private final PostService postService;
 
     public FindUserProfileResponse findUserProfile(Long userId) {
-        UserWithProfile userWithProfile = usersService.findWithProfileByUserId(userId);
+        UserWithProfile userWithProfile = userService.findWithProfileByUserId(userId);
 
-        long postCount = postsService.countByCreateId(userId);
+        long postCount = postService.countByCreateId(userId);
 
         FindPostOfListByNoOffsetQuery query = FindPostOfListByNoOffsetQuery.firstPage(20);
 
-        List<UserCreatedPostResponse> userCreatedPostResponses = postsService.findPostOfListByCreateId(
+        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreateId(
                         userId,
                         query
                 )

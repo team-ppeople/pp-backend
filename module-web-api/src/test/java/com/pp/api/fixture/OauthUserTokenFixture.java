@@ -1,7 +1,7 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.OauthUserTokens;
-import com.pp.api.entity.OauthUsers;
+import com.pp.api.entity.OauthUserToken;
+import com.pp.api.entity.OauthUser;
 import com.pp.api.entity.enums.OauthUserClient;
 
 import static com.pp.api.entity.enums.OauthUserClient.KAKAO;
@@ -18,14 +18,14 @@ public class OauthUserTokenFixture {
 
     private static final int DEFAULT_EXPIRES_IN = MAX_VALUE;
 
-    public static OauthUserTokens from(
+    public static OauthUserToken from(
             OauthUserClient client,
             String accessToken,
             String refreshToken,
             int expiresIn,
-            OauthUsers oauthUser
+            OauthUser oauthUser
     ) {
-        return OauthUserTokens.builder()
+        return OauthUserToken.builder()
                 .client(client)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -34,11 +34,11 @@ public class OauthUserTokenFixture {
                 .build();
     }
 
-    public static OauthUserTokens ofClient(
+    public static OauthUserToken ofClient(
             OauthUserClient client,
-            OauthUsers oauthUser
+            OauthUser oauthUser
     ) {
-        return OauthUserTokens.builder()
+        return OauthUserToken.builder()
                 .client(client)
                 .accessToken(DEFAULT_ACCESS_TOKEN)
                 .refreshToken(DEFAULT_REFRESH_TOKEN)
@@ -47,8 +47,8 @@ public class OauthUserTokenFixture {
                 .build();
     }
 
-    public static OauthUserTokens ofOauthUser(OauthUsers oauthUser) {
-        return OauthUserTokens.builder()
+    public static OauthUserToken ofOauthUser(OauthUser oauthUser) {
+        return OauthUserToken.builder()
                 .client(DEFAULT_CLIENT)
                 .accessToken(DEFAULT_ACCESS_TOKEN)
                 .refreshToken(DEFAULT_REFRESH_TOKEN)

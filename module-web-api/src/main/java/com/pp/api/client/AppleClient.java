@@ -1,7 +1,7 @@
 package com.pp.api.client;
 
 import com.pp.api.client.dto.AppleTokenResponse;
-import com.pp.api.configuration.properties.AppleClientProperties;
+import com.pp.api.configuration.property.AppleClientProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.stereotype.Component;
@@ -20,18 +20,18 @@ public class AppleClient {
 
     private final AppleClientSecretGenerator appleClientSecretGenerator;
 
-    private final AppleClientProperties appleClientProperties;
+    private final AppleClientProperty appleClientProperty;
 
     public AppleTokenResponse token(String code) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
-        formData.add("client_id", appleClientProperties.clientId());
+        formData.add("client_id", appleClientProperty.clientId());
         formData.add("client_secret", appleClientSecretGenerator.getOrGenerate());
         formData.add("code", code);
         formData.add("grant_type", AUTHORIZATION_CODE.getValue());
 
         return appliWebClient.post()
-                .uri(appleClientProperties.tokenEndpoint())
+                .uri(appleClientProperty.tokenEndpoint())
                 .contentType(APPLICATION_FORM_URLENCODED)
                 .bodyValue(formData)
                 .retrieve()
@@ -45,13 +45,13 @@ public class AppleClient {
     ) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
-        formData.add("client_id", appleClientProperties.clientId());
+        formData.add("client_id", appleClientProperty.clientId());
         formData.add("client_secret", appleClientSecretGenerator.getOrGenerate());
         formData.add("token", token);
         formData.add("token_type_hint", tokenType.getValue());
 
         appliWebClient.post()
-                .uri(appleClientProperties.tokenEndpoint())
+                .uri(appleClientProperty.tokenEndpoint())
                 .contentType(APPLICATION_FORM_URLENCODED)
                 .bodyValue(formData)
                 .retrieve()

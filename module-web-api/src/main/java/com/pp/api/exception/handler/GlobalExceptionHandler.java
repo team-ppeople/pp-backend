@@ -31,9 +31,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         ProblemDetail body = ex.getBody();
 
-        List<ProblemDetailFieldErrors> fieldErrors = ex.getFieldErrors()
+        List<ProblemDetailFieldError> fieldErrors = ex.getFieldErrors()
                 .stream()
-                .map(ProblemDetailFieldErrors::from)
+                .map(ProblemDetailFieldError::from)
                 .toList();
 
         body.setProperty("fieldErrors", fieldErrors);

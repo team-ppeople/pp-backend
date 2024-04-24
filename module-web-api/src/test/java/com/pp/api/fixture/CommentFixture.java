@@ -1,24 +1,24 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.Comments;
-import com.pp.api.entity.Posts;
+import com.pp.api.entity.Comment;
+import com.pp.api.entity.Post;
 
 public class CommentFixture {
 
     private static final String DEFAULT_CONTENT = "WOW! 29번째 생일 넘우 넘우 축하드려요~ 👏";
 
-    public static Comments from(
+    public static Comment from(
             String content,
-            Posts post
+            Post post
     ) {
-        return Comments.builder()
+        return Comment.builder()
                 .content(content)
                 .post(post)
                 .build();
     }
 
-    public static Comments ofPost(Posts post) {
-        return Comments.builder()
+    public static Comment ofPost(Post post) {
+        return Comment.builder()
                 .content(DEFAULT_CONTENT)
                 .post(post)
                 .build();

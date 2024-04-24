@@ -1,22 +1,22 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.Posts;
-import com.pp.api.entity.UserActionsOfPost;
-import com.pp.api.entity.Users;
-import com.pp.api.entity.enums.UserActions;
+import com.pp.api.entity.Post;
+import com.pp.api.entity.UserActionOfPost;
+import com.pp.api.entity.User;
+import com.pp.api.entity.enums.UserAction;
 
-import static com.pp.api.entity.enums.UserActions.THUMBS_UP;
+import static com.pp.api.entity.enums.UserAction.THUMBS_UP;
 
 public class UserActionOfPostFixture {
 
-    private static final UserActions DEFAULT_ACTION = THUMBS_UP;
+    private static final UserAction DEFAULT_ACTION = THUMBS_UP;
 
-    public static UserActionsOfPost from(
-            Posts post,
-            Users user,
-            UserActions action
+    public static UserActionOfPost from(
+            Post post,
+            User user,
+            UserAction action
     ) {
-        return UserActionsOfPost.builder()
+        return UserActionOfPost.builder()
                 .post(post)
                 .user(user)
                 .userAction(action)
