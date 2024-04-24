@@ -1,6 +1,6 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.Notices;
+import com.pp.api.entity.Notice;
 
 public class NoticeFixture {
 
@@ -8,36 +8,36 @@ public class NoticeFixture {
 
     private static final String DEFAULT_CONTENT = "hi~ 모두들 10002 10002 이용해주세요 🙇🏻‍";
 
-    public static Notices createNotice(
+    public static Notice createNotice(
             String title,
             String content
     ) {
-        return Notices.builder()
+        return Notice.builder()
                 .title(title)
                 .content(content)
                 .build();
     }
 
-    public static Notices ofTitle(
+    public static Notice ofTitle(
             String title
     ) {
-        return Notices.builder()
+        return Notice.builder()
                 .title(title)
                 .content(DEFAULT_CONTENT)
                 .build();
     }
 
-    public static Notices ofContent(
+    public static Notice ofContent(
             String content
     ) {
-        return Notices.builder()
+        return Notice.builder()
                 .title(DEFAULT_TITLE)
                 .content(content)
                 .build();
     }
 
-    public static Notices of() {
-        return Notices.builder()
+    public static Notice of() {
+        return Notice.builder()
                 .title(DEFAULT_TITLE)
                 .content(DEFAULT_CONTENT)
                 .build();

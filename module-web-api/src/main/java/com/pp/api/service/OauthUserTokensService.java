@@ -1,9 +1,9 @@
 package com.pp.api.service;
 
-import com.pp.api.entity.OauthUserTokens;
-import com.pp.api.entity.OauthUsers;
-import com.pp.api.repository.OauthUserTokensRepository;
-import com.pp.api.repository.OauthUsersRepository;
+import com.pp.api.entity.OauthUserToken;
+import com.pp.api.entity.OauthUser;
+import com.pp.api.repository.OauthUserTokenRepository;
+import com.pp.api.repository.OauthUserRepository;
 import com.pp.api.service.command.SaveOauthUserTokenCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,19 +13,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OauthUserTokensService {
 
-    private final OauthUsersRepository oauthUsersRepository;
+    private final OauthUserRepository oauthUserRepository;
 
-    private final OauthUserTokensRepository oauthUserTokensRepository;
+    private final OauthUserTokenRepository oauthUserTokenRepository;
 
     @Transactional
     public void save(SaveOauthUserTokenCommand command) {
         String clientSubject = command.getClient()
                 .parseClientSubject(command.getSubject());
 
-        OauthUsers oauthUser = oauthUsersRepository.findByClientSubject(clientSubject)
+        OauthUser oauthUser = oauthUserRepository.findByClientSubject(clientSubject)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 Oauth 인증 로그인 회원입니다."));
 
-        oauthUserTokensRepository.findByOauthUserIdAndClient(
+        oauthUserTokenRepository.findByOauthUserIdAndClient(
                         oauthUser.getId(),
                         command.getClient()
                 )
@@ -36,7 +36,7 @@ public class OauthUserTokensService {
                             oauthUserToken.updateExpiresIn(command.getExpiresIn());
                         },
                         () -> {
-                            OauthUserTokens oauthUserToken = OauthUserTokens.builder()
+                            OauthUserToken oauthUserToken = OauthUserToken.builder()
                                     .client(command.getClient())
                                     .accessToken(command.getAccessToken())
                                     .expiresIn(command.getExpiresIn())
@@ -44,7 +44,7 @@ public class OauthUserTokensService {
                                     .oauthUser(oauthUser)
                                     .build();
 
-                            oauthUserTokensRepository.save(oauthUserToken);
+                            oauthUserTokenRepository.save(oauthUserToken);
                         }
                 );
     }

@@ -1,7 +1,7 @@
 package com.pp.api.configuration;
 
 import com.pp.api.entity.enums.OauthUserClient;
-import com.pp.api.service.OauthUsersService;
+import com.pp.api.service.OauthUserService;
 import com.pp.api.service.command.RegisterOauthUserCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -19,7 +19,7 @@ import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.N
 @RequiredArgsConstructor
 public class KakaoJwtClientAssertionOauth2UserRegisterProcessor implements JwtClientAssertionOauth2UserRegisterProcessor {
 
-    private final OauthUsersService oauthUsersService;
+    private final OauthUserService oauthUserService;
 
     @Override
     public void process(JwtClientAssertionOauth2ClientCredentialsAuthenticationToken authentication) {
@@ -52,7 +52,7 @@ public class KakaoJwtClientAssertionOauth2UserRegisterProcessor implements JwtCl
                 email
         );
 
-        oauthUsersService.registerIfNotRegistered(command);
+        oauthUserService.registerIfNotRegistered(command);
     }
 
     @Override

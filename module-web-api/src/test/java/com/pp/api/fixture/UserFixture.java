@@ -1,6 +1,6 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.Users;
+import com.pp.api.entity.User;
 
 public class UserFixture {
 
@@ -8,32 +8,32 @@ public class UserFixture {
 
     private static final String DEFAULT_EMAIL = "dev.sinbom@gmail.com";
 
-    public static Users from(
+    public static User from(
             String nickname,
             String email
     ) {
-        return Users.builder()
+        return User.builder()
                 .nickname(nickname)
                 .email(email)
                 .build();
     }
 
-    public static Users ofNickname(String nickname) {
-        return Users.builder()
+    public static User ofNickname(String nickname) {
+        return User.builder()
                 .nickname(nickname)
                 .email(DEFAULT_EMAIL)
                 .build();
     }
 
-    public static Users ofEmail(String email) {
-        return Users.builder()
+    public static User ofEmail(String email) {
+        return User.builder()
                 .nickname(DEFAULT_NICKNAME)
                 .email(email)
                 .build();
     }
 
-    public static Users of() {
-        return Users.builder()
+    public static User of() {
+        return User.builder()
                 .nickname(DEFAULT_NICKNAME)
                 .email(DEFAULT_EMAIL)
                 .build();

@@ -1,6 +1,6 @@
 package com.pp.api.configuration;
 
-import com.pp.api.configuration.properties.AppleClientProperties;
+import com.pp.api.configuration.property.AppleClientProperty;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
@@ -28,20 +28,20 @@ public class WebClientConfiguration {
 
     @Configuration
     @RequiredArgsConstructor
-    @EnableConfigurationProperties(value = AppleClientProperties.class)
+    @EnableConfigurationProperties(value = AppleClientProperty.class)
     public static class AppleClientConfiguration {
 
-        private final AppleClientProperties appleClientProperties;
+        private final AppleClientProperty appleClientProperty;
 
         @Bean
         public ReactorClientHttpConnector appleClientHttpConnector(ReactorResourceFactory resourceFactory) {
             Function<HttpClient, HttpClient> mapper = httpClient -> httpClient.option(
                             CONNECT_TIMEOUT_MILLIS,
-                            appleClientProperties.connectionTimeout()
+                            appleClientProperty.connectionTimeout()
                     )
                     .doOnConnected(
-                            conn -> conn.addHandlerLast(new ReadTimeoutHandler(appleClientProperties.readTimeout()))
-                                    .addHandlerLast(new WriteTimeoutHandler(appleClientProperties.writeTimeout()))
+                            conn -> conn.addHandlerLast(new ReadTimeoutHandler(appleClientProperty.readTimeout()))
+                                    .addHandlerLast(new WriteTimeoutHandler(appleClientProperty.writeTimeout()))
                     );
 
             return new ReactorClientHttpConnector(resourceFactory, mapper);
@@ -51,7 +51,7 @@ public class WebClientConfiguration {
         public WebClient appleWebClient(ReactorClientHttpConnector appleClientHttpConnector) {
             return WebClient
                     .builder()
-                    .baseUrl(appleClientProperties.baseUrl())
+                    .baseUrl(appleClientProperty.baseUrl())
                     .clientConnector(appleClientHttpConnector)
                     .defaultRequest(requestHeadersSpec -> requestHeadersSpec.accept(APPLICATION_JSON)
                             .acceptCharset(UTF_8)

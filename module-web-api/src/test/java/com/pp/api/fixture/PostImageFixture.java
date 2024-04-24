@@ -1,16 +1,16 @@
 package com.pp.api.fixture;
 
-import com.pp.api.entity.PostImages;
-import com.pp.api.entity.Posts;
-import com.pp.api.entity.UploadFiles;
+import com.pp.api.entity.PostImage;
+import com.pp.api.entity.Post;
+import com.pp.api.entity.UploadFile;
 
 public class PostImageFixture {
 
-    public static PostImages from(
-            Posts post,
-            UploadFiles uploadFile
+    public static PostImage from(
+            Post post,
+            UploadFile uploadFile
     ) {
-        return PostImages.builder()
+        return PostImage.builder()
                 .post(post)
                 .uploadFile(uploadFile)
                 .build();

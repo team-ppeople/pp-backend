@@ -4,7 +4,7 @@ import com.pp.api.client.AppleClient;
 import com.pp.api.client.dto.AppleTokenResponse;
 import com.pp.api.entity.enums.OauthUserClient;
 import com.pp.api.service.OauthUserTokensService;
-import com.pp.api.service.OauthUsersService;
+import com.pp.api.service.OauthUserService;
 import com.pp.api.service.command.RegisterOauthUserCommand;
 import com.pp.api.service.command.SaveOauthUserTokenCommand;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import static org.springframework.util.StringUtils.hasText;
 @RequiredArgsConstructor
 public class AppleJwtClientAssertionOauth2UserRegisterProcessor implements JwtClientAssertionOauth2UserRegisterProcessor {
 
-    private final OauthUsersService oauthUsersService;
+    private final OauthUserService oauthUserService;
 
     private final OauthUserTokensService oauthUserTokensService;
 
@@ -92,7 +92,7 @@ public class AppleJwtClientAssertionOauth2UserRegisterProcessor implements JwtCl
                 email
         );
 
-        oauthUsersService.registerIfNotRegistered(registerOauthUserCommand);
+        oauthUserService.registerIfNotRegistered(registerOauthUserCommand);
         oauthUserTokensService.save(saveOauthUserTokenCommand);
     }
 
