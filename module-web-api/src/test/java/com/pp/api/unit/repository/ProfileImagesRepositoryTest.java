@@ -3,14 +3,15 @@ package com.pp.api.unit.repository;
 import com.pp.api.entity.ProfileImages;
 import com.pp.api.entity.UploadFiles;
 import com.pp.api.entity.Users;
+import com.pp.api.fixture.ProfileImageFixture;
+import com.pp.api.fixture.UploadFileFixture;
+import com.pp.api.fixture.UserFixture;
 import com.pp.api.repository.ProfileImagesRepository;
 import com.pp.api.repository.UploadFilesRepository;
 import com.pp.api.repository.UsersRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.pp.api.entity.enums.UploadFileContentTypes.IMAGE_JPEG;
-import static com.pp.api.entity.enums.UploadFileTypes.PROFILE_IMAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
@@ -26,18 +27,17 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_프로필이미지_엔티티를_영속화한다() {
-        // given
-        Users user = createAndSaveUser();
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        ProfileImages profileImage = ProfileImages.builder()
-                .user(user)
-                .uploadFile(createAndSaveUploadFile(user))
-                .build();
+        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+
+        ProfileImages profileImage = ProfileImageFixture.from(
+                user,
+                uploadFile
+        );
 
         ProfileImages savedProfileImage = profileImagesRepository.save(profileImage);
 
-        // then
         assertThat(savedProfileImage.getId()).isNotNull();
         assertThat(savedProfileImage.getUploadFile()).isEqualTo(profileImage.getUploadFile());
         assertThat(savedProfileImage.getUser()).isSameAs(profileImage.getUser());
@@ -49,14 +49,14 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_프로필이미지_엔티티를_조회한다() {
-        // given
-        Users user = createAndSaveUser();
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        ProfileImages profileImage = ProfileImages.builder()
-                .user(user)
-                .uploadFile(createAndSaveUploadFile(user))
-                .build();
+        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+
+        ProfileImages profileImage = ProfileImageFixture.from(
+                user,
+                uploadFile
+        );
 
         ProfileImages savedProfileImage = profileImagesRepository.save(profileImage);
 
@@ -65,7 +65,6 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
         ProfileImages foundProfileImage = profileImagesRepository.findById(profileImage.getId())
                 .orElseThrow();
 
-        // then
         assertThat(foundProfileImage).isNotSameAs(savedProfileImage);
         assertThat(foundProfileImage.getId()).isEqualTo(savedProfileImage.getId());
         assertThat(foundProfileImage.getUploadFile()).isEqualTo(savedProfileImage.getUploadFile());
@@ -76,14 +75,14 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
 
     @Test
     void 유저_프로필이미지_엔티티를_유저의_이미지만_모두_삭제한다() {
-        // given
-        Users user = createAndSaveUser();
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        ProfileImages profileImage = ProfileImages.builder()
-                .user(user)
-                .uploadFile(createAndSaveUploadFile(user))
-                .build();
+        UploadFiles uploadFile = uploadFilesRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
+
+        ProfileImages profileImage = ProfileImageFixture.from(
+                user,
+                uploadFile
+        );
 
         profileImagesRepository.save(profileImage);
 
@@ -93,29 +92,7 @@ class ProfileImagesRepositoryTest extends AbstractDataJpaTestContext {
 
         boolean exists = profileImagesRepository.existsById(user.getId());
 
-        // then
         assertThat(exists).isFalse();
-    }
-
-    private Users createAndSaveUser() {
-        Users user = Users.builder()
-                .nickname("sinbom")
-                .email("dev.sinbom@gmail.com")
-                .build();
-
-        return usersRepository.save(user);
-    }
-
-    private UploadFiles createAndSaveUploadFile(Users user) {
-        UploadFiles uploadFile = UploadFiles.builder()
-                .fileType(PROFILE_IMAGE)
-                .url("https://avatars.githubusercontent.com/u/52724515")
-                .contentType(IMAGE_JPEG)
-                .contentLength(1048576L)
-                .uploader(user)
-                .build();
-
-        return uploadFilesRepository.save(uploadFile);
     }
 
 }

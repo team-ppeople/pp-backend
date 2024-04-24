@@ -4,6 +4,8 @@ import com.pp.api.entity.UploadFiles;
 import com.pp.api.entity.Users;
 import com.pp.api.entity.enums.UploadFileContentTypes;
 import com.pp.api.entity.enums.UploadFileTypes;
+import com.pp.api.fixture.UploadFileFixture;
+import com.pp.api.fixture.UserFixture;
 import com.pp.api.repository.UploadFilesRepository;
 import com.pp.api.repository.UsersRepository;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,26 +31,20 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
             UploadFileTypes fileType,
             UploadFileContentTypes contentType
     ) {
-        // given
-        String url = "https://avatars.githubusercontent.com/u/52724515";
-        long contentLength = 1048576L;
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        UploadFiles uploadFile = UploadFiles.builder()
-                .fileType(fileType)
-                .url(url)
-                .contentType(contentType)
-                .contentLength(contentLength)
-                .uploader(createAndSaveUser())
-                .build();
+        UploadFiles uploadFile = UploadFileFixture.fromFileTypeAndContentType(
+                fileType,
+                contentType,
+                user
+        );
 
         UploadFiles savedUploadFile = uploadFilesRepository.save(uploadFile);
 
-        // then
         assertThat(savedUploadFile.getId()).isNotNull();
         assertThat(savedUploadFile.getFileType()).isSameAs(fileType);
         assertThat(savedUploadFile.getContentType()).isSameAs(contentType);
-        assertThat(savedUploadFile.getContentLength()).isEqualTo(contentLength);
+        assertThat(savedUploadFile.getContentLength()).isEqualTo(uploadFile.getContentLength());
         assertThat(savedUploadFile.getUploader()).isEqualTo(uploadFile.getUploader());
         assertThat(savedUploadFile.getCreatedDate()).isNotNull();
         assertThat(savedUploadFile.getUpdatedDate()).isNotNull();
@@ -60,18 +56,13 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
             UploadFileTypes fileType,
             UploadFileContentTypes contentType
     ) {
-        // given
-        String url = "https://avatars.githubusercontent.com/u/52724515";
-        long contentLength = 1048576L;
+        Users user = usersRepository.save(UserFixture.of());
 
-        // when
-        UploadFiles uploadFile = UploadFiles.builder()
-                .fileType(fileType)
-                .url(url)
-                .contentType(contentType)
-                .contentLength(contentLength)
-                .uploader(createAndSaveUser())
-                .build();
+        UploadFiles uploadFile = UploadFileFixture.fromFileTypeAndContentType(
+                fileType,
+                contentType,
+                user
+        );
 
         UploadFiles savedUploadFile = uploadFilesRepository.save(uploadFile);
 
@@ -80,7 +71,6 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
         UploadFiles foundUploadFile = uploadFilesRepository.findById(savedUploadFile.getId())
                 .orElseThrow();
 
-        // then
         assertThat(foundUploadFile).isNotSameAs(savedUploadFile);
         assertThat(foundUploadFile.getId()).isEqualTo(savedUploadFile.getId());
         assertThat(foundUploadFile.getFileType()).isSameAs(savedUploadFile.getFileType());
@@ -90,15 +80,6 @@ class UploadFilesRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundUploadFile.getUploader()).isEqualTo(savedUploadFile.getUploader());
         assertThat(foundUploadFile.getCreatedDate()).isEqualTo(savedUploadFile.getCreatedDate());
         assertThat(foundUploadFile.getUpdatedDate()).isEqualTo(savedUploadFile.getUpdatedDate());
-    }
-
-    Users createAndSaveUser() {
-        Users user = Users.builder()
-                .nickname("sinbom")
-                .email("dev.sinbom@gmail.com")
-                .build();
-
-        return usersRepository.save(user);
     }
 
     static Stream<Arguments> generateFileTypeAndContentType() {

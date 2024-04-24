@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-public interface Oauth2FrameworkAuthorizationRepository extends JpaRepository<OauthFrameworkAuthorization, String>,
+public interface OauthFrameworkAuthorizationRepository extends JpaRepository<OauthFrameworkAuthorization, String>,
         CustomOauth2FrameworkAuthorizationRepository {
 
     @Transactional(readOnly = true)

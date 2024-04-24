@@ -49,7 +49,6 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_idToken으로_회원등록여부를_확인한다(OauthUserClient client) {
-        // given
         IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
                 client.name().toLowerCase(),
                 randomUUID().toString()
@@ -63,7 +62,6 @@ class OauthUsersServiceTest {
 
         Jwt jwt = mock(Jwt.class);
 
-        // when
         when(registeredClientRepository.findById(query.getClient()))
                 .thenReturn(registeredClient);
 
@@ -79,7 +77,6 @@ class OauthUsersServiceTest {
         when(oauthUsersRepository.existsByClientSubject(query.getOauthUserClient().parseClientSubject(subject)))
                 .thenReturn(true);
 
-        // then
         boolean registered = oauthUsersService.isRegistered(query);
 
         assertThat(registered).isTrue();
@@ -88,17 +85,14 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_유저클라이언트가_존재하지않아_idToken으로_회원등록여부를_확인할수없다(OauthUserClient client) {
-        // given
         IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
 
-        // when
         when(registeredClientRepository.findById(query.getClient()))
                 .thenReturn(null);
 
-        // then
         assertThatThrownBy(() -> oauthUsersService.isRegistered(query))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -106,28 +100,19 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_유저클라이언트의_JWTDecoder생성에_실패하여_idToken으로_회원등록여부를_확인할수없다(OauthUserClient client) {
-        // given
         IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
 
-        String subject = randomUUID().toString();
-
         RegisteredClient registeredClient = mock(RegisteredClient.class);
 
-        JwtDecoder jwtDecoder = mock(JwtDecoder.class);
-
-        Jwt jwt = mock(Jwt.class);
-
-        // when
         when(registeredClientRepository.findById(query.getClient()))
                 .thenReturn(registeredClient);
 
         when(jwtDecoderFactory.createDecoder(registeredClient))
                 .thenThrow(OAuth2AuthenticationException.class);
 
-        // then
         assertThatThrownBy(() -> oauthUsersService.isRegistered(query))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -135,21 +120,15 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_회원의_인증토큰_유효하지않아_idToken으로_회원등록여부를_확인할수없다(OauthUserClient client) {
-        // given
         IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
 
-        String subject = randomUUID().toString();
-
         RegisteredClient registeredClient = mock(RegisteredClient.class);
 
         JwtDecoder jwtDecoder = mock(JwtDecoder.class);
 
-        Jwt jwt = mock(Jwt.class);
-
-        // when
         when(registeredClientRepository.findById(query.getClient()))
                 .thenReturn(registeredClient);
 
@@ -159,7 +138,6 @@ class OauthUsersServiceTest {
         when(jwtDecoder.decode(query.getIdToken()))
                 .thenThrow(JwtException.class);
 
-        // then
         assertThatThrownBy(() -> oauthUsersService.isRegistered(query))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -167,33 +145,30 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_subject로_회원등록정보를_조회한다(OauthUserClient client) {
-        // given
         String subject = randomUUID().toString();
+
         String clientSubject = client.parseClientSubject(subject);
+
         OauthUsers oauthUser = mock(OauthUsers.class);
 
-        // when
         when(oauthUsersRepository.findByClientSubject(clientSubject))
                 .thenReturn(Optional.of(oauthUser));
 
         OauthUsers foundOauthUser = oauthUsersService.findByClientSubject(clientSubject);
 
-        // then
         assertThat(foundOauthUser).isSameAs(oauthUser);
     }
 
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인으로_등록하지않은_회원은_subject로_회원등록정보를_조회할수없다(OauthUserClient client) {
-        // given
         String subject = randomUUID().toString();
+
         String clientSubject = client.parseClientSubject(subject);
 
-        // when
         when(oauthUsersRepository.findByClientSubject(clientSubject))
                 .thenReturn(Optional.empty());
 
-        // then
         assertThatThrownBy(() -> oauthUsersService.findByClientSubject(clientSubject))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -201,10 +176,12 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인으로_회원을_등록한다(OauthUserClient client) {
-        // given
         String subject = randomUUID().toString();
+
         String nickname = "sinbom";
+
         String email = "dev.sinbom@gmail.com";
+
         String clientSubject = client.parseClientSubject(subject);
 
         RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
@@ -214,13 +191,11 @@ class OauthUsersServiceTest {
                 email
         );
 
-        // when
         when(oauthUsersRepository.existsByClientSubject(clientSubject))
                 .thenReturn(false);
 
         oauthUsersService.registerIfNotRegistered(command);
 
-        // then
         verify(usersRepository, times(1)).save(any());
         verify(oauthUsersRepository, times(1)).save(any());
     }
@@ -228,10 +203,12 @@ class OauthUsersServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인으로_이미_등록된_회원은_등록하지않는다(OauthUserClient client) {
-        // given
         String subject = randomUUID().toString();
+
         String nickname = "sinbom";
+
         String email = "dev.sinbom@gmail.com";
+
         String clientSubject = client.parseClientSubject(subject);
 
         RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
@@ -241,13 +218,11 @@ class OauthUsersServiceTest {
                 email
         );
 
-        // when
         when(oauthUsersRepository.existsByClientSubject(clientSubject))
                 .thenReturn(true);
 
         oauthUsersService.registerIfNotRegistered(command);
 
-        // then
         verify(usersRepository, never()).save(any());
         verify(oauthUsersRepository, never()).save(any());
     }

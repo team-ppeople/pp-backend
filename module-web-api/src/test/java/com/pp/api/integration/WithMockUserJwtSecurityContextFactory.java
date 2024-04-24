@@ -1,5 +1,6 @@
-package com.pp.api.config;
+package com.pp.api.integration;
 
+import com.pp.api.util.JwtTestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,10 +15,10 @@ public class WithMockUserJwtSecurityContextFactory implements WithSecurityContex
 
     private static final String SCOPE_PREFIX = "SCOPE_";
 
-    private final JwtTestUtils jwtTestUtils;
+    private final JwtTestUtil jwtTestUtil;
 
-    public WithMockUserJwtSecurityContextFactory(JwtTestUtils jwtTestUtils) {
-        this.jwtTestUtils = jwtTestUtils;
+    public WithMockUserJwtSecurityContextFactory(JwtTestUtil jwtTestUtil) {
+        this.jwtTestUtil = jwtTestUtil;
     }
 
     @Override
@@ -42,7 +43,7 @@ public class WithMockUserJwtSecurityContextFactory implements WithSecurityContex
 
     private Authentication createAuthentication(WithMockUserJwt withUser) {
         return new JwtAuthenticationToken(
-                jwtTestUtils.createJwt(getSubject(withUser)),
+                jwtTestUtil.createJwt(getSubject(withUser)),
                 createGrantedAuthorities(withUser),
                 getSubject(withUser)
         );

@@ -4,6 +4,9 @@ import com.pp.api.entity.Posts;
 import com.pp.api.entity.UserActionsOfPost;
 import com.pp.api.entity.Users;
 import com.pp.api.entity.enums.UserActions;
+import com.pp.api.fixture.PostFixture;
+import com.pp.api.fixture.UserActionOfPostFixture;
+import com.pp.api.fixture.UserFixture;
 import com.pp.api.repository.PostsRepository;
 import com.pp.api.repository.UserActionsOfPostRepository;
 import com.pp.api.repository.UsersRepository;
@@ -27,16 +30,25 @@ class UserActionsOfPostRepositoryTest extends AbstractDataJpaTestContext {
     @ParameterizedTest
     @EnumSource(value = UserActions.class)
     void 게시글_좋아요_엔티티를_영속화한다(UserActions action) {
-        // when
-        UserActionsOfPost userActionsOfPost = UserActionsOfPost.builder()
-                .post(createAndSavePost())
-                .user(createAndSaveActionUser())
-                .userAction(action)
-                .build();
+        Users user = usersRepository.save(UserFixture.of());
+
+        Posts post = postsRepository.save(PostFixture.ofCreator(user));
+
+        Users actor = usersRepository.save(
+                UserFixture.from(
+                        "피피처돌이",
+                        "pplover@naver.com"
+                )
+        );
+
+        UserActionsOfPost userActionsOfPost = UserActionOfPostFixture.from(
+                post,
+                actor,
+                action
+        );
 
         UserActionsOfPost savedUserActionOfPost = userActionsOfPostRepository.save(userActionsOfPost);
 
-        // then
         assertThat(savedUserActionOfPost.getId()).isNotNull();
         assertThat(savedUserActionOfPost.getPost()).isEqualTo(userActionsOfPost.getPost());
         assertThat(savedUserActionOfPost.getUser()).isEqualTo(userActionsOfPost.getUser());
@@ -48,12 +60,22 @@ class UserActionsOfPostRepositoryTest extends AbstractDataJpaTestContext {
     @ParameterizedTest
     @EnumSource(value = UserActions.class)
     void 게시글_좋아요_엔티티를_조회한다(UserActions action) {
-        // when
-        UserActionsOfPost userActionsOfPost = UserActionsOfPost.builder()
-                .post(createAndSavePost())
-                .user(createAndSaveActionUser())
-                .userAction(action)
-                .build();
+        Users user = usersRepository.save(UserFixture.of());
+
+        Posts post = postsRepository.save(PostFixture.ofCreator(user));
+
+        Users actor = usersRepository.save(
+                UserFixture.from(
+                        "피피처돌이",
+                        "pplover@naver.com"
+                )
+        );
+
+        UserActionsOfPost userActionsOfPost = UserActionOfPostFixture.from(
+                post,
+                actor,
+                action
+        );
 
         UserActionsOfPost savedUserActionsOfPost = userActionsOfPostRepository.save(userActionsOfPost);
 
@@ -62,7 +84,6 @@ class UserActionsOfPostRepositoryTest extends AbstractDataJpaTestContext {
         UserActionsOfPost foundUserActionsOfPost = userActionsOfPostRepository.findById(savedUserActionsOfPost.getId())
                 .orElseThrow();
 
-        // then
         assertThat(foundUserActionsOfPost).isNotSameAs(savedUserActionsOfPost);
         assertThat(foundUserActionsOfPost.getId()).isEqualTo(savedUserActionsOfPost.getId());
         assertThat(foundUserActionsOfPost.getPost()).isEqualTo(savedUserActionsOfPost.getPost());
@@ -70,34 +91,6 @@ class UserActionsOfPostRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundUserActionsOfPost.getUserAction()).isSameAs(savedUserActionsOfPost.getUserAction());
         assertThat(foundUserActionsOfPost.getCreatedDate()).isEqualTo(savedUserActionsOfPost.getCreatedDate());
         assertThat(foundUserActionsOfPost.getUpdatedDate()).isEqualTo(savedUserActionsOfPost.getUpdatedDate());
-    }
-
-    Users createAndSaveUser() {
-        Users user = Users.builder()
-                .nickname("sinbom")
-                .email("dev.sinbom@gmail.com")
-                .build();
-
-        return usersRepository.save(user);
-    }
-
-    Users createAndSaveActionUser() {
-        Users user = Users.builder()
-                .nickname("피피처돌이")
-                .email("pplover@naver.com")
-                .build();
-
-        return usersRepository.save(user);
-    }
-
-    Posts createAndSavePost() {
-        Posts post = Posts.builder()
-                .title("[HBD] 🎂저의 29번째 생일을 축하합니다.🥳")
-                .content("yo~ 모두들 10002 10002 축하해주세요 😄")
-                .creator(createAndSaveUser())
-                .build();
-
-        return postsRepository.save(post);
     }
 
 }

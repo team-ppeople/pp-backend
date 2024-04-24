@@ -1,6 +1,7 @@
 package com.pp.api.controller;
 
 import com.pp.api.controller.dto.IsRegisteredOauthUserResponse;
+import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.controller.validator.AllowedOauthUserClient;
 import com.pp.api.service.OauthUsersService;
 import com.pp.api.service.command.IsRegisteredOauthUserQuery;
@@ -36,7 +37,9 @@ public class OauthUsersController {
 
         boolean isRegistered = oauthUsersService.isRegistered(query);
 
-        return ResponseEntity.ok(IsRegisteredOauthUserResponse.from(isRegistered));
+        IsRegisteredOauthUserResponse response = IsRegisteredOauthUserResponse.from(isRegistered);
+
+        return ResponseEntity.ok(RestResponseWrapper.from(response));
     }
 
 

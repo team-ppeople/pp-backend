@@ -1,4 +1,4 @@
-package com.pp.api.config;
+package com.pp.api.integration;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.security.test.context.support.TestExecutionEvent;

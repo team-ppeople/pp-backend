@@ -55,9 +55,10 @@ class UsersServiceTest {
 
     @Test
     void 유저_정보를_수정한다() {
-        // given
         Long userId = 1L;
+
         String nickname = "바다거북맘";
+
         Long profileImageFileUploadId = 1L;
 
         UpdateUserCommand command = UpdateUserCommand.of(
@@ -65,7 +66,6 @@ class UsersServiceTest {
                 profileImageFileUploadId
         );
 
-        // when
         Users user = Users.builder()
                 .build();
 
@@ -84,7 +84,6 @@ class UsersServiceTest {
                 command
         );
 
-        // then
         assertThat(user.getNickname()).isEqualTo(nickname);
         verify(profileImagesRepository, times(1)).deleteByUserId(userId);
         verify(profileImagesRepository, times(1)).save(any());
@@ -92,7 +91,6 @@ class UsersServiceTest {
 
     @Test
     void 수정되는_내용이_없으면_유저_정보는_수정되지_않는다() {
-        // given
         Long userId = 1L;
 
         UpdateUserCommand command = UpdateUserCommand.of(
@@ -100,7 +98,6 @@ class UsersServiceTest {
                 null
         );
 
-        // when
         Users user = mock(Users.class);
 
         when(usersRepository.findById(userId))
@@ -111,7 +108,6 @@ class UsersServiceTest {
                 command
         );
 
-        // then
         verify(user, never()).updateNickname(any());
         verify(uploadFilesRepository, never()).findById(any());
         verify(profileImagesRepository, never()).deleteByUserId(any());
@@ -120,9 +116,10 @@ class UsersServiceTest {
 
     @Test
     void 권한이_없는_유저는_유저_정보를_수정할수없다() {
-        // given
         Long userId = 1L;
+
         String nickname = "바다거북맘";
+
         Long profileImageFileUploadId = 1L;
 
         UpdateUserCommand command = UpdateUserCommand.of(
@@ -130,11 +127,9 @@ class UsersServiceTest {
                 profileImageFileUploadId
         );
 
-        // when
         jwtAuthenticationUtils.when(() -> checkUserPermission(userId))
                 .thenThrow(AccessDeniedException.class);
 
-        // then
         assertThatThrownBy(
                 () -> usersService.update(
                         userId,
@@ -146,9 +141,10 @@ class UsersServiceTest {
 
     @Test
     void 존재하지않는_유저의_정보를_수정할수없다() {
-        // given
         Long userId = 1L;
+
         String nickname = "바다거북맘";
+
         Long profileImageFileUploadId = 1L;
 
         UpdateUserCommand command = UpdateUserCommand.of(
@@ -156,11 +152,9 @@ class UsersServiceTest {
                 profileImageFileUploadId
         );
 
-        // when
         when(usersRepository.findById(userId))
                 .thenReturn(Optional.empty());
 
-        // then
         assertThatThrownBy(
                 () -> usersService.update(
                         userId,
@@ -172,9 +166,10 @@ class UsersServiceTest {
 
     @Test
     void 존재하지않는_파일을_프로필_이미지로_수정할수없다() {
-        // given
         Long userId = 1L;
+
         String nickname = "바다거북맘";
+
         Long profileImageFileUploadId = 1L;
 
         UpdateUserCommand command = UpdateUserCommand.of(
@@ -182,7 +177,6 @@ class UsersServiceTest {
                 profileImageFileUploadId
         );
 
-        // when
         Users user = Users.builder()
                 .build();
 
@@ -192,7 +186,6 @@ class UsersServiceTest {
         when(uploadFilesRepository.findById(profileImageFileUploadId))
                 .thenReturn(Optional.empty());
 
-        // then
         assertThatThrownBy(
                 () -> usersService.update(
                         userId,
@@ -204,9 +197,10 @@ class UsersServiceTest {
 
     @Test
     void 권한이_없는_파일을_프로필_이미지로_수정할수없다() {
-        // given
         Long userId = 1L;
+
         String nickname = "바다거북맘";
+
         Long profileImageFileUploadId = 1L;
 
         UpdateUserCommand command = UpdateUserCommand.of(
@@ -214,7 +208,6 @@ class UsersServiceTest {
                 profileImageFileUploadId
         );
 
-        // when
         Users user = Users.builder()
                 .build();
 
@@ -232,7 +225,6 @@ class UsersServiceTest {
                 .thenAnswer(invocationOnMock -> null)
                 .thenThrow(IllegalArgumentException.class);
 
-        // then
         assertThatThrownBy(
                 () -> usersService.update(
                         userId,
