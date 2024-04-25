@@ -1,7 +1,7 @@
 package com.pp.api.service;
 
 import com.pp.api.repository.PostRepository;
-import com.pp.api.service.command.FindPostOfListByNoOffsetQuery;
+import com.pp.api.service.command.FindPostsByNoOffsetQuery;
 import com.pp.api.service.domain.PostOfList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostOfList> findPostOfListByCreateId(
             Long createId,
-            FindPostOfListByNoOffsetQuery query
+            FindPostsByNoOffsetQuery query
     ) {
         return postsRepository.findByCreatorId(
                         createId,

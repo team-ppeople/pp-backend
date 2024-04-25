@@ -1,10 +1,10 @@
 package com.pp.api.facade;
 
-import com.pp.api.controller.dto.FindUserCreatedPostRequest;
-import com.pp.api.controller.dto.FindUserCreatedPostResponse;
+import com.pp.api.controller.dto.FindUserCreatedPostsRequest;
+import com.pp.api.controller.dto.FindUserCreatedPostsResponse;
 import com.pp.api.controller.dto.UserCreatedPostResponse;
 import com.pp.api.service.PostService;
-import com.pp.api.service.command.FindPostOfListByNoOffsetQuery;
+import com.pp.api.service.command.FindPostsByNoOffsetQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,16 +16,16 @@ public class FindUserCreatedPostsFacade {
 
     private final PostService postService;
 
-    public FindUserCreatedPostResponse findUserCreatedPosts(
+    public FindUserCreatedPostsResponse findUserCreatedPosts(
             Long userId,
-            FindUserCreatedPostRequest request
+            FindUserCreatedPostsRequest request
     ) {
-        FindPostOfListByNoOffsetQuery query = FindPostOfListByNoOffsetQuery.of(
+        FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.of(
                 request.lastId(),
                 request.limit() != null ? request.limit() : 20
         );
 
-        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreateId(
+        List<UserCreatedPostResponse> userCreatedPostsRespons = postService.findPostOfListByCreateId(
                         userId,
                         query
                 )
@@ -38,7 +38,7 @@ public class FindUserCreatedPostsFacade {
                 ))
                 .toList();
 
-        return new FindUserCreatedPostResponse(userCreatedPostResponses);
+        return new FindUserCreatedPostsResponse(userCreatedPostsRespons);
     }
 
 }

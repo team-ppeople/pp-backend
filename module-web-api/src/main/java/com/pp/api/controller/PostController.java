@@ -1,7 +1,7 @@
 package com.pp.api.controller;
 
-import com.pp.api.controller.dto.FindUserCreatedPostRequest;
-import com.pp.api.controller.dto.FindUserCreatedPostResponse;
+import com.pp.api.controller.dto.FindUserCreatedPostsRequest;
+import com.pp.api.controller.dto.FindUserCreatedPostsResponse;
 import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.facade.FindUserCreatedPostsFacade;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,9 @@ public class PostController {
     )
     public ResponseEntity<?> findUserProfile(
             @PathVariable(name = "userId") Long userId,
-            FindUserCreatedPostRequest request
+            FindUserCreatedPostsRequest request
     ) {
-        FindUserCreatedPostResponse response = findUserCreatedPostsFacade.findUserCreatedPosts(
+        FindUserCreatedPostsResponse response = findUserCreatedPostsFacade.findUserCreatedPosts(
                 userId,
                 request
         );
