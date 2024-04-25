@@ -33,8 +33,8 @@ public class UserController {
             @RequestBody @Valid UpdateUserRequest request
     ) {
         UpdateUserCommand command = UpdateUserCommand.of(
-                request.getNickname(),
-                request.getProfileImageFileUploadId()
+                request.nickname(),
+                request.profileImageFileUploadId()
         );
 
         userService.update(
