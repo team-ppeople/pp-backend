@@ -4,7 +4,7 @@ import com.pp.api.controller.dto.FindUserProfileResponse;
 import com.pp.api.controller.dto.UserCreatedPostResponse;
 import com.pp.api.service.PostService;
 import com.pp.api.service.UserService;
-import com.pp.api.service.command.FindPostOfListByNoOffsetQuery;
+import com.pp.api.service.command.FindPostsByNoOffsetQuery;
 import com.pp.api.service.domain.UserWithProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class FindUserProfileFacade {
 
         long postCount = postService.countByCreateId(userId);
 
-        FindPostOfListByNoOffsetQuery query = FindPostOfListByNoOffsetQuery.firstPage(20);
+        FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.firstPage(20);
 
         List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreateId(
                         userId,
