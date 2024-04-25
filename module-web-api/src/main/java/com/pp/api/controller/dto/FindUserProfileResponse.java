@@ -8,6 +8,6 @@ public record FindUserProfileResponse(
         String profileImageUrl,
         long postCount,
         long thumbsUpCount,
-        List<UserCreatedPostResponse> post
+        List<UserCreatedPostResponse> posts
 ) {
 }
