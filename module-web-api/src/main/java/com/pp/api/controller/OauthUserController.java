@@ -37,7 +37,7 @@ public class OauthUserController {
 
         boolean isRegistered = oauthUserService.isRegistered(query);
 
-        IsRegisteredOauthUserResponse response = IsRegisteredOauthUserResponse.from(isRegistered);
+        IsRegisteredOauthUserResponse response = new IsRegisteredOauthUserResponse(isRegistered);
 
         return ResponseEntity.ok(RestResponseWrapper.from(response));
     }

@@ -1,7 +1,7 @@
 package com.pp.api.facade;
 
 import com.pp.api.controller.dto.FindUserProfileResponse;
-import com.pp.api.controller.dto.FindUserProfileResponse.UserCreatedPostResponse;
+import com.pp.api.controller.dto.UserCreatedPostResponse;
 import com.pp.api.service.PostService;
 import com.pp.api.service.UserService;
 import com.pp.api.service.command.FindPostOfListByNoOffsetQuery;
