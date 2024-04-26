@@ -2,8 +2,8 @@ package com.pp.api.util;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.pp.api.configuration.property.Oauth2KeyProperty;
-import com.pp.api.configuration.property.Oauth2KeyProperty.Oauth2Key;
+import com.pp.api.configuration.oauth.property.Oauth2KeyProperty;
+import com.pp.api.configuration.oauth.property.Oauth2KeyProperty.Oauth2Key;
 import com.pp.api.entity.User;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
