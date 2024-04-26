@@ -1,6 +1,6 @@
 package com.pp.api.unit.repository;
 
-import com.pp.api.configuration.JpaConfiguration;
+import com.pp.api.configuration.database.JpaConfiguration;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;

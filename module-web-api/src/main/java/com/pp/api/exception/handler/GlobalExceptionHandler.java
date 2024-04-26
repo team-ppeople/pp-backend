@@ -1,5 +1,6 @@
 package com.pp.api.exception.handler;
 
+import com.pp.api.exception.handler.dto.ProblemDetailFieldError;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
