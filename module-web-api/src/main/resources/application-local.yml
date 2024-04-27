@@ -41,6 +41,7 @@ spring:
             token-endpoint-authentication-signing-algorithm: RS256
             jwk-set-uri: https://kauth.kakao.com/.well-known/jwks.json
             token:
+              access-token-time-to-live: 1h
               reuse-refresh-tokens: false
               refresh-token-time-to-live: 30d
           apple:
@@ -62,6 +63,7 @@ spring:
             token-endpoint-authentication-signing-algorithm: RS256
             jwk-set-uri: https://appleid.apple.com/auth/oauth2/v2/keys
             token:
+              access-token-time-to-live: 1h
               reuse-refresh-tokens: false
               refresh-token-time-to-live: 30d
 
