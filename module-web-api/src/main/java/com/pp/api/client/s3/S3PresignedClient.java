@@ -1,5 +1,6 @@
-package com.pp.api.client;
+package com.pp.api.client.s3;
 
+import com.pp.api.controller.dto.PresignedUploadUrlRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -19,10 +21,12 @@ public class S3PresignedClient {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    public String createPutPresignedUrl(String keyName) {
+    public PresignedURL createPutPresignedUrl(PresignedUploadUrlRequest request) {
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(keyName)
+                .key(request.toFileKeyObjectPath() + UUID.randomUUID())
+                .contentLength(request.fileContentLength())
+                .contentType(request.uploadFileContentTypes().getType())
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
@@ -31,9 +35,7 @@ public class S3PresignedClient {
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
-        String myURL = presignedRequest.url().toString();
-
-        return presignedRequest.url().toExternalForm();
+        return new PresignedURL(presignedRequest.url());
     }
 
 
