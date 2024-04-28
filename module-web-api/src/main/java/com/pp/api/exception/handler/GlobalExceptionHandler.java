@@ -1,6 +1,5 @@
 package com.pp.api.exception.handler;
 
-import com.pp.api.exception.handler.dto.ProblemDetailFieldError;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.EMPTY;
 import static org.springframework.http.HttpStatus.*;
@@ -30,14 +27,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request
     ) {
-        ProblemDetail body = ex.getBody();
-
-        List<ProblemDetailFieldError> fieldErrors = ex.getFieldErrors()
+        ex.getFieldErrors()
                 .stream()
-                .map(ProblemDetailFieldError::from)
-                .toList();
-
-        body.setProperty("fieldErrors", fieldErrors);
+                .findFirst()
+                .ifPresent(fieldError -> ex.getBody()
+                        .setDetail(fieldError.getDefaultMessage())
+                );
 
         return super.handleMethodArgumentNotValid(
                 ex,

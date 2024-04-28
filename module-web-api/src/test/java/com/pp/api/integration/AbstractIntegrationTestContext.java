@@ -12,6 +12,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.localstack.LocalStackContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -25,12 +28,17 @@ import static com.nimbusds.jose.jwk.Curve.P_256;
 import static java.security.KeyPairGenerator.getInstance;
 import static java.util.UUID.randomUUID;
 import static org.springframework.security.oauth2.jose.jws.SignatureAlgorithm.RS256;
+import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
 @Disabled
 @AutoConfigureMockMvc
 @SpringBootTest
 @ActiveProfiles(value = "test")
 public abstract class AbstractIntegrationTestContext {
+
+    private static final LocalStackContainer LOCAL_STACK_CONTAINER;
+
+    private static final GenericContainer<?> REDIS_CONTAINER;
 
     @Autowired
     protected MockMvc mockMvc;
@@ -44,6 +52,18 @@ public abstract class AbstractIntegrationTestContext {
     @Autowired
     private DatabaseCleanUtil databaseCleanUtil;
 
+    static {
+        REDIS_CONTAINER = new GenericContainer<>(DockerImageName.parse("redis:7.0"))
+                .withExposedPorts(6379);
+
+        REDIS_CONTAINER.start();
+
+        LOCAL_STACK_CONTAINER = new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.4"))
+                .withServices(S3);
+
+        LOCAL_STACK_CONTAINER.start();
+    }
+
     @AfterEach
     void tearDown() {
         databaseCleanUtil.clear();
@@ -51,8 +71,16 @@ public abstract class AbstractIntegrationTestContext {
 
     @DynamicPropertySource
     static void registerDynamicProperty(DynamicPropertyRegistry registry) {
+        registerRedisProperty(registry);
         registerOauth2JwkProperty(registry);
         registerApplePrivateKeyProperty(registry);
+    }
+
+    static void registerRedisProperty(DynamicPropertyRegistry registry) {
+        registry.add(
+                "spring.redis.port",
+                () -> REDIS_CONTAINER.getFirstMappedPort() + ""
+        );
     }
 
     static void registerOauth2JwkProperty(DynamicPropertyRegistry registry) {
