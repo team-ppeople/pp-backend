@@ -4,6 +4,7 @@ import com.pp.api.controller.dto.FindUserCreatedPostsRequest;
 import com.pp.api.controller.dto.FindUserCreatedPostsResponse;
 import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.facade.FindUserCreatedPostsFacade;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +27,7 @@ public class PostController {
     )
     public ResponseEntity<?> findUserProfile(
             @PathVariable(name = "userId") Long userId,
-            FindUserCreatedPostsRequest request
+            @Valid FindUserCreatedPostsRequest request
     ) {
         FindUserCreatedPostsResponse response = findUserCreatedPostsFacade.findUserCreatedPosts(
                 userId,
