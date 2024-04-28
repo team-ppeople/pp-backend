@@ -1,10 +1,12 @@
 package com.pp.api.controller.dto;
 
-import org.hibernate.validator.constraints.Range;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 public record FindUserCreatedPostsRequest(
         Long lastId,
-        @Range(min = 10, max = 100, message = "조회 허용 갯수는 최소 {min}개 최대 {max}개 입니다.")
+        @Min(value = 10, message = "조회 허용 갯수는 최소 {value}개 입니다.")
+        @Max(value = 100, message = "조회 허용 갯수는 최대 {value}개 입니다.")
         Integer limit
 ) {
 }
