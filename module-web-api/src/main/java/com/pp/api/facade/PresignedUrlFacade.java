@@ -1,6 +1,5 @@
 package com.pp.api.facade;
 
-import com.pp.api.client.s3.S3PresignedClient;
 import com.pp.api.controller.dto.PresignedUploadFile;
 import com.pp.api.controller.dto.PresignedUploadUrlRequest;
 import com.pp.api.controller.dto.PresignedUploadUrlResponse;
@@ -14,8 +13,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class PresignedUrlFacade {
-
-    private final S3PresignedClient s3PresignedClient;
 
     private final UploadFileService uploadFileService;
 

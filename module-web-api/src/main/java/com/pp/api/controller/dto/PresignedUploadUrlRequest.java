@@ -7,19 +7,19 @@ import jakarta.validation.constraints.NotBlank;
 
 public record PresignedUploadUrlRequest(
 
-        UploadFileContentType uploadFileContentTypes,
+        UploadFileContentType fileContentType,
 
         @NotBlank(message = "파일이름은 필수입니다.")
         String fileName,
 
-        @Min(1)
+        @Min(value = 1, message = "파일 사이즈는 0보다 커야합니다.")
         long fileContentLength,
 
-        UploadFileType uploadFileTypes
+        UploadFileType fileType
 ) {
 
         public String toFileKeyObjectPath() {
-                return uploadFileTypes.name().toLowerCase() + "/";
+                return fileType.name().toLowerCase() + "/";
         }
 
 }

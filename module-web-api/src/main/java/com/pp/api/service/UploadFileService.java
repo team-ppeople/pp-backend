@@ -29,13 +29,12 @@ public class UploadFileService {
         Long uploaderId = JwtAuthenticationUtil.getAuthenticatedUserId()
                 .orElseThrow(() -> new IllegalArgumentException("인증된 유저가 아닙니다"));
 
-        User user = userRepository.findById(uploaderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        User user = userRepository.getReferenceById(uploaderId);
 
         UploadFile uploadFile = UploadFile.builder()
-                .fileType(request.uploadFileTypes())
+                .fileType(request.fileType())
                 .url(presignedURL.getFileUrl())
-                .contentType(request.uploadFileContentTypes())
+                .contentType(request.fileContentType())
                 .contentLength(request.fileContentLength())
                 .uploader(user)
                 .build();

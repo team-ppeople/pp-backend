@@ -26,7 +26,7 @@ public class S3PresignedClient {
                 .bucket(bucketName)
                 .key(request.toFileKeyObjectPath() + UUID.randomUUID())
                 .contentLength(request.fileContentLength())
-                .contentType(request.uploadFileContentTypes().getType())
+                .contentType(request.fileContentType().getType())
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
