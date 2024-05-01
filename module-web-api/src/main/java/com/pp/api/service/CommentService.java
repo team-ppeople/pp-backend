@@ -24,14 +24,11 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void create(
-            Long postId,
-            CreateCommentCommand command
-    ) {
+    public void create(CreateCommentCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findById(command.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
         Comment comment = Comment.builder()

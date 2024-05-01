@@ -4,8 +4,8 @@ import com.pp.api.client.apple.AppleClient;
 import com.pp.api.client.apple.dto.AppleTokenResponse;
 import com.pp.api.configuration.oauth.converter.JwtClientAssertionOauth2ClientCredentialsAuthenticationToken;
 import com.pp.api.entity.enums.OauthUserClient;
-import com.pp.api.service.OauthUserTokensService;
 import com.pp.api.service.OauthUserService;
+import com.pp.api.service.OauthUserTokensService;
 import com.pp.api.service.command.RegisterOauthUserCommand;
 import com.pp.api.service.command.SaveOauthUserTokenCommand;
 import lombok.RequiredArgsConstructor;
@@ -78,7 +78,7 @@ public class AppleJwtClientAssertionOauth2UserRegisterProcessor implements JwtCl
                 subject.indexOf(".")
         );
 
-        SaveOauthUserTokenCommand saveOauthUserTokenCommand = SaveOauthUserTokenCommand.of(
+        SaveOauthUserTokenCommand saveOauthUserTokenCommand = new SaveOauthUserTokenCommand(
                 client,
                 subject,
                 token.getAccessToken(),
@@ -86,7 +86,7 @@ public class AppleJwtClientAssertionOauth2UserRegisterProcessor implements JwtCl
                 token.getRefreshToken()
         );
 
-        RegisterOauthUserCommand registerOauthUserCommand = RegisterOauthUserCommand.of(
+        RegisterOauthUserCommand registerOauthUserCommand = new RegisterOauthUserCommand(
                 client,
                 subject,
                 nickname,

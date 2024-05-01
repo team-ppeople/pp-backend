@@ -49,7 +49,7 @@ class OauthUserServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_idToken으로_회원등록여부를_확인한다(OauthUserClient client) {
-        IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
+        IsRegisteredOauthUserQuery query = new IsRegisteredOauthUserQuery(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
@@ -85,7 +85,7 @@ class OauthUserServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_유저클라이언트가_존재하지않아_idToken으로_회원등록여부를_확인할수없다(OauthUserClient client) {
-        IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
+        IsRegisteredOauthUserQuery query = new IsRegisteredOauthUserQuery(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
@@ -100,7 +100,7 @@ class OauthUserServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_유저클라이언트의_JWTDecoder생성에_실패하여_idToken으로_회원등록여부를_확인할수없다(OauthUserClient client) {
-        IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
+        IsRegisteredOauthUserQuery query = new IsRegisteredOauthUserQuery(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
@@ -120,7 +120,7 @@ class OauthUserServiceTest {
     @ParameterizedTest
     @EnumSource(value = OauthUserClient.class)
     void Oauth_로그인_회원의_인증토큰_유효하지않아_idToken으로_회원등록여부를_확인할수없다(OauthUserClient client) {
-        IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
+        IsRegisteredOauthUserQuery query = new IsRegisteredOauthUserQuery(
                 client.name().toLowerCase(),
                 randomUUID().toString()
         );
@@ -184,7 +184,7 @@ class OauthUserServiceTest {
 
         String clientSubject = client.parseClientSubject(subject);
 
-        RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
+        RegisterOauthUserCommand command = new RegisterOauthUserCommand(
                 client,
                 subject,
                 nickname,
@@ -211,7 +211,7 @@ class OauthUserServiceTest {
 
         String clientSubject = client.parseClientSubject(subject);
 
-        RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
+        RegisterOauthUserCommand command = new RegisterOauthUserCommand(
                 client,
                 subject,
                 nickname,

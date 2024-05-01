@@ -50,8 +50,8 @@ public class PostController {
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> createPost(@RequestBody @Valid CreatePostRequest request) {
-        CreatePostCommand command = CreatePostCommand.of(
+    public ResponseEntity<?> create(@RequestBody @Valid CreatePostRequest request) {
+        CreatePostCommand command = new CreatePostCommand(
                 request.title(),
                 request.content(),
                 request.postImageFileUploadIds()
@@ -73,7 +73,7 @@ public class PostController {
             path = "/api/v1/posts/{postId}/report",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> reportPost(@PathVariable(name = "postId") Long postId) {
+    public ResponseEntity<?> report(@PathVariable(name = "postId") Long postId) {
         postService.report(postId);
 
         return ResponseEntity.ok()

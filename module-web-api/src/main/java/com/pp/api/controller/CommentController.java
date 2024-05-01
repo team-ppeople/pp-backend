@@ -26,16 +26,16 @@ public class CommentController {
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> createPost(
+    public ResponseEntity<?> create(
             @PathVariable(name = "postId") Long postId,
             @RequestBody @Valid CreateCommentRequest request
     ) {
-        CreateCommentCommand command = CreateCommentCommand.of(request.content());
-
-        commentService.create(
+        CreateCommentCommand command = new CreateCommentCommand(
                 postId,
-                command
+                request.content()
         );
+
+        commentService.create(command);
 
         return ResponseEntity.ok()
                 .build();

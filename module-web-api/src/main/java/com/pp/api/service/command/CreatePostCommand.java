@@ -18,7 +18,7 @@ public class CreatePostCommand extends CommandSelfValidator<CreatePostCommand> {
     @Size(min = 1, max = 10, message = "이미지는 허용 개숫는 최소 {min}개 최대 {max}개 입니다.")
     private final List<Long> postImageFileUploadIds;
 
-    private CreatePostCommand(
+    public CreatePostCommand(
             String title,
             String content,
             List<Long> postImageFileUploadIds
@@ -27,18 +27,6 @@ public class CreatePostCommand extends CommandSelfValidator<CreatePostCommand> {
         this.content = content;
         this.postImageFileUploadIds = postImageFileUploadIds;
         this.validate();
-    }
-
-    public static CreatePostCommand of(
-            String title,
-            String content,
-            List<Long> postImageFileUploadIds
-    ) {
-        return new CreatePostCommand(
-                title,
-                content,
-                postImageFileUploadIds
-        );
     }
 
 }
