@@ -32,15 +32,13 @@ public class UserController {
             @PathVariable(name = "userId") Long userId,
             @RequestBody @Valid UpdateUserRequest request
     ) {
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 request.nickname(),
                 request.profileImageFileUploadId()
         );
 
-        userService.update(
-                userId,
-                command
-        );
+        userService.update(command);
 
         return ResponseEntity.ok()
                 .build();

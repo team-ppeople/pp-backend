@@ -15,23 +15,13 @@ public class IsRegisteredOauthUserQuery extends CommandSelfValidator<IsRegistere
     @NotBlank(message = "idToken 값이 없습니다.")
     private final String idToken;
 
-    private IsRegisteredOauthUserQuery(
+    public IsRegisteredOauthUserQuery(
             String client,
             String idToken
     ) {
         this.client = client;
         this.idToken = idToken;
         this.validate();
-    }
-
-    public static IsRegisteredOauthUserQuery of(
-            String client,
-            String idToken
-    ) {
-        return new IsRegisteredOauthUserQuery(
-                client,
-                idToken
-        );
     }
 
     public OauthUserClient getOauthUserClient() {

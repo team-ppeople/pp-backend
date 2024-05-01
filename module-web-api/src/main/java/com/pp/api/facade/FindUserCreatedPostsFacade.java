@@ -21,14 +21,12 @@ public class FindUserCreatedPostsFacade {
             FindUserCreatedPostsRequest request
     ) {
         FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.of(
+                userId,
                 request.lastId(),
                 request.limit() != null ? request.limit() : 20
         );
 
-        List<UserCreatedPostResponse> userCreatedPostsRespons = postService.findPostOfListByCreateId(
-                        userId,
-                        query
-                )
+        List<UserCreatedPostResponse> userCreatedPostsResponses = postService.findPostOfListByCreatorId(query)
                 .stream()
                 .map(post -> new UserCreatedPostResponse(
                         post.id(),
@@ -38,7 +36,7 @@ public class FindUserCreatedPostsFacade {
                 ))
                 .toList();
 
-        return new FindUserCreatedPostsResponse(userCreatedPostsRespons);
+        return new FindUserCreatedPostsResponse(userCreatedPostsResponses);
     }
 
 }

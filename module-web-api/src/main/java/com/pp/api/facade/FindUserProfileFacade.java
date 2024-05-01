@@ -24,12 +24,12 @@ public class FindUserProfileFacade {
 
         long postCount = postService.countByCreateId(userId);
 
-        FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.firstPage(20);
+        FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.firstPage(
+                userId,
+                20
+        );
 
-        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreateId(
-                        userId,
-                        query
-                )
+        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreatorId(query)
                 .stream()
                 .map(post -> new UserCreatedPostResponse(
                         post.id(),

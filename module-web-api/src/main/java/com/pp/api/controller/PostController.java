@@ -27,12 +27,12 @@ public class PostController {
 
     private final PostService postService;
 
-    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_post.read')")
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
     @GetMapping(
             path = "/api/v1/users/{userId}/posts",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> findUserProfile(
+    public ResponseEntity<?> findUserCreatedPosts(
             @PathVariable(name = "userId") Long userId,
             @Valid FindUserCreatedPostsRequest request
     ) {
@@ -50,8 +50,8 @@ public class PostController {
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> createPost(@RequestBody @Valid CreatePostRequest request) {
-        CreatePostCommand command = CreatePostCommand.of(
+    public ResponseEntity<?> create(@RequestBody @Valid CreatePostRequest request) {
+        CreatePostCommand command = new CreatePostCommand(
                 request.title(),
                 request.content(),
                 request.postImageFileUploadIds()
@@ -65,6 +65,18 @@ public class PostController {
                 .toUri();
 
         return ResponseEntity.created(location)
+                .build();
+    }
+
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @PostMapping(
+            path = "/api/v1/posts/{postId}/report",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> report(@PathVariable(name = "postId") Long postId) {
+        postService.report(postId);
+
+        return ResponseEntity.ok()
                 .build();
     }
 

@@ -26,13 +26,10 @@ public class UserService {
     private final ProfileImageRepository profileImageRepository;
 
     @Transactional
-    public void update(
-            Long userId,
-            UpdateUserCommand command
-    ) {
-        checkUserPermission(userId);
+    public void update(UpdateUserCommand command) {
+        checkUserPermission(command.getUserId());
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(command.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         if (hasText(command.getNickname())) {
@@ -50,7 +47,7 @@ public class UserService {
                     .uploadFile(uploadFile)
                     .build();
 
-            profileImageRepository.deleteByUserId(userId);
+            profileImageRepository.deleteByUserId(command.getUserId());
 
             profileImageRepository.save(profileImage);
         }

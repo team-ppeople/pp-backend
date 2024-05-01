@@ -61,7 +61,8 @@ class UserServiceTest {
 
         Long profileImageFileUploadId = 1L;
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 nickname,
                 profileImageFileUploadId
         );
@@ -79,10 +80,7 @@ class UserServiceTest {
         when(uploadFileRepository.findById(profileImageFileUploadId))
                 .thenReturn(Optional.of(uploadFile));
 
-        userService.update(
-                userId,
-                command
-        );
+        userService.update(command);
 
         assertThat(user.getNickname()).isEqualTo(nickname);
         verify(profileImageRepository, times(1)).deleteByUserId(userId);
@@ -93,7 +91,8 @@ class UserServiceTest {
     void 수정되는_내용이_없으면_유저_정보는_수정되지_않는다() {
         Long userId = 1L;
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 null,
                 null
         );
@@ -103,10 +102,7 @@ class UserServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        userService.update(
-                userId,
-                command
-        );
+        userService.update(command);
 
         verify(user, never()).updateNickname(any());
         verify(uploadFileRepository, never()).findById(any());
@@ -122,7 +118,8 @@ class UserServiceTest {
 
         Long profileImageFileUploadId = 1L;
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 nickname,
                 profileImageFileUploadId
         );
@@ -131,10 +128,7 @@ class UserServiceTest {
                 .thenThrow(AccessDeniedException.class);
 
         assertThatThrownBy(
-                () -> userService.update(
-                        userId,
-                        command
-                )
+                () -> userService.update(command)
         )
                 .isInstanceOf(AccessDeniedException.class);
     }
@@ -147,7 +141,8 @@ class UserServiceTest {
 
         Long profileImageFileUploadId = 1L;
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 nickname,
                 profileImageFileUploadId
         );
@@ -156,10 +151,7 @@ class UserServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> userService.update(
-                        userId,
-                        command
-                )
+                () -> userService.update(command)
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -172,7 +164,8 @@ class UserServiceTest {
 
         Long profileImageFileUploadId = 1L;
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 nickname,
                 profileImageFileUploadId
         );
@@ -187,10 +180,7 @@ class UserServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> userService.update(
-                        userId,
-                        command
-                )
+                () -> userService.update(command)
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -203,7 +193,8 @@ class UserServiceTest {
 
         Long profileImageFileUploadId = 1L;
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
                 nickname,
                 profileImageFileUploadId
         );
@@ -226,10 +217,7 @@ class UserServiceTest {
                 .thenThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(
-                () -> userService.update(
-                        userId,
-                        command
-                )
+                () -> userService.update(command)
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
