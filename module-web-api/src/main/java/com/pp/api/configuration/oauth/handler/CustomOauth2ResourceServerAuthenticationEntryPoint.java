@@ -30,12 +30,14 @@ public class CustomOauth2ResourceServerAuthenticationEntryPoint implements Authe
     ) throws IOException {
         ProblemDetail body = ProblemDetail.forStatusAndDetail(
                 RESPONSE_STATUS,
-                RESPONSE_STATUS.getReasonPhrase()
+                "로그인이 유효하지 않습니다."
         );
 
         body.setInstance(URI.create(request.getRequestURI()));
 
         response.setContentType(APPLICATION_PROBLEM_JSON_VALUE);
+
+        response.setCharacterEncoding("UTF-8");
 
         response.setStatus(RESPONSE_STATUS.value());
 
