@@ -2,6 +2,7 @@ package com.pp.api.fixture;
 
 import com.pp.api.entity.Comment;
 import com.pp.api.entity.Post;
+import com.pp.api.entity.User;
 
 public class CommentFixture {
 
@@ -9,18 +10,24 @@ public class CommentFixture {
 
     public static Comment from(
             String content,
-            Post post
+            Post post,
+            User creator
     ) {
         return Comment.builder()
                 .content(content)
                 .post(post)
+                .creator(creator)
                 .build();
     }
 
-    public static Comment ofPost(Post post) {
+    public static Comment fromPostAndCreator(
+            Post post,
+            User creator
+    ) {
         return Comment.builder()
                 .content(DEFAULT_CONTENT)
                 .post(post)
+                .creator(creator)
                 .build();
     }
 
