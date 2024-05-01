@@ -20,7 +20,7 @@ public class RegisterOauthUserCommand extends CommandSelfValidator<RegisterOauth
     @NotBlank(message = "email 값이 없습니다.")
     private final String email;
 
-    private RegisterOauthUserCommand(
+    public RegisterOauthUserCommand(
             OauthUserClient client,
             String subject,
             String nickname,
@@ -31,20 +31,6 @@ public class RegisterOauthUserCommand extends CommandSelfValidator<RegisterOauth
         this.nickname = nickname;
         this.email = email;
         this.validate();
-    }
-
-    public static RegisterOauthUserCommand of(
-            OauthUserClient client,
-            String subject,
-            String nickname,
-            String email
-    ) {
-        return new RegisterOauthUserCommand(
-                client,
-                subject,
-                nickname,
-                email
-        );
     }
 
 }

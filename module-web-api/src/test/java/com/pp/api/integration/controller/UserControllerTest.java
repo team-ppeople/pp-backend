@@ -1,5 +1,6 @@
 package com.pp.api.integration.controller;
 
+import com.pp.api.controller.dto.UpdateUserRequest;
 import com.pp.api.entity.UploadFile;
 import com.pp.api.entity.User;
 import com.pp.api.fixture.UploadFileFixture;
@@ -8,7 +9,6 @@ import com.pp.api.integration.AbstractIntegrationTestContext;
 import com.pp.api.integration.WithMockUserJwt;
 import com.pp.api.repository.UploadFileRepository;
 import com.pp.api.repository.UserRepository;
-import com.pp.api.service.command.UpdateUserCommand;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,7 +35,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 uploadFile.getId()
         );
@@ -48,7 +48,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                                 .header(AUTHORIZATION, jwtTestUtil.createBearerToken(user))
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -62,7 +62,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 uploadFile.getId()
         );
@@ -74,7 +74,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                         )
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -89,7 +89,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 uploadFile.getId()
         );
@@ -101,7 +101,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                         )
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -115,7 +115,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 uploadFile.getId()
         );
@@ -128,7 +128,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                                 .header(AUTHORIZATION, jwtTestUtil.createBearerToken(user))
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());
@@ -142,7 +142,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
     void 존재하지않는_유저의_정보를_수정할수없다() throws Exception {
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 MAX_VALUE
         );
@@ -154,7 +154,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                         )
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
@@ -166,7 +166,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 MAX_VALUE
         );
@@ -179,7 +179,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                                 .header(AUTHORIZATION, jwtTestUtil.createBearerToken(user))
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
@@ -200,7 +200,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
 
         String nickname = "신봄";
 
-        UpdateUserCommand command = UpdateUserCommand.of(
+        UpdateUserRequest request = new UpdateUserRequest(
                 nickname,
                 uploadFile.getId()
         );
@@ -213,7 +213,7 @@ class UserControllerTest extends AbstractIntegrationTestContext {
                                 .header(AUTHORIZATION, jwtTestUtil.createBearerToken(user))
                                 .accept(APPLICATION_JSON)
                                 .contentType(APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsBytes(command))
+                                .content(objectMapper.writeValueAsBytes(request))
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());

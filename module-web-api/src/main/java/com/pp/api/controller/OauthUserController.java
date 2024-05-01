@@ -30,7 +30,7 @@ public class OauthUserController {
             @PathVariable(name = "client") @AllowedOauthUserClient String client,
             @RequestParam(name = "idToken") String idToken
     ) {
-        IsRegisteredOauthUserQuery query = IsRegisteredOauthUserQuery.of(
+        IsRegisteredOauthUserQuery query = new IsRegisteredOauthUserQuery(
                 client,
                 idToken
         );

@@ -46,7 +46,7 @@ public class KakaoJwtClientAssertionOauth2UserRegisterProcessor implements JwtCl
 
         String email = jwt.getClaimAsString(EMAIL);
 
-        RegisterOauthUserCommand command = RegisterOauthUserCommand.of(
+        RegisterOauthUserCommand command = new RegisterOauthUserCommand(
                 client,
                 subject,
                 nickname,

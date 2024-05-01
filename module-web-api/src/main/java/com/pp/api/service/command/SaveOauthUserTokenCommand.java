@@ -23,7 +23,7 @@ public class SaveOauthUserTokenCommand extends CommandSelfValidator<SaveOauthUse
     @NotBlank(message = "refreshToken 값이 없습니다.")
     private final String refreshToken;
 
-    private SaveOauthUserTokenCommand(
+    public SaveOauthUserTokenCommand(
             OauthUserClient client,
             String subject,
             String accessToken,
@@ -36,22 +36,6 @@ public class SaveOauthUserTokenCommand extends CommandSelfValidator<SaveOauthUse
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.validate();
-    }
-
-    public static SaveOauthUserTokenCommand of(
-            OauthUserClient client,
-            String subject,
-            String accessToken,
-            Integer expiresIn,
-            String refreshToken
-    ) {
-        return new SaveOauthUserTokenCommand(
-                client,
-                subject,
-                accessToken,
-                expiresIn,
-                refreshToken
-        );
     }
 
 }
