@@ -68,4 +68,16 @@ public class PostController {
                 .build();
     }
 
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @PostMapping(
+            path = "/api/v1/posts/{postId}/report",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> reportPost(@PathVariable(name = "postId") Long postId) {
+        postService.report(postId);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
 }

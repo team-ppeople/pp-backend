@@ -25,7 +25,7 @@ public class FindUserCreatedPostsFacade {
                 request.limit() != null ? request.limit() : 20
         );
 
-        List<UserCreatedPostResponse> userCreatedPostsRespons = postService.findPostOfListByCreateId(
+        List<UserCreatedPostResponse> userCreatedPostsResponses = postService.findPostOfListByCreatorId(
                         userId,
                         query
                 )
@@ -38,7 +38,7 @@ public class FindUserCreatedPostsFacade {
                 ))
                 .toList();
 
-        return new FindUserCreatedPostsResponse(userCreatedPostsRespons);
+        return new FindUserCreatedPostsResponse(userCreatedPostsResponses);
     }
 
 }

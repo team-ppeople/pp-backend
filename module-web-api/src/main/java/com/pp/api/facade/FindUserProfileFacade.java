@@ -26,7 +26,7 @@ public class FindUserProfileFacade {
 
         FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.firstPage(20);
 
-        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreateId(
+        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreatorId(
                         userId,
                         query
                 )
