@@ -7,6 +7,7 @@ import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.facade.FindUserCreatedPostsFacade;
 import com.pp.api.service.PostService;
 import com.pp.api.service.command.CreatePostCommand;
+import com.pp.api.service.domain.CreatedPost;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -56,11 +57,11 @@ public class PostController {
                 request.postImageFileUploadIds()
         );
 
-        postService.create(command);
+        CreatedPost createdPost = postService.create(command);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{postId}")
-                .buildAndExpand(1L)
+                .buildAndExpand(createdPost.id())
                 .toUri();
 
         return ResponseEntity.created(location)
