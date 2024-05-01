@@ -1,4 +1,4 @@
-package com.pp.api.exception.handler.dto;
+package com.pp.api.exception.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

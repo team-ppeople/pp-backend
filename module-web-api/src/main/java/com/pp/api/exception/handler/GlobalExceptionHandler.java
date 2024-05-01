@@ -1,5 +1,6 @@
 package com.pp.api.exception.handler;
 
+import com.pp.api.exception.BaseException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -70,6 +71,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
+    @ExceptionHandler(value = BaseException.class)
+    public ResponseEntity<?> handle(
+            BaseException ex,
+            WebRequest request
+    ) {
+        ProblemDetail body = ex.getBody();
+
+        return super.handleExceptionInternal(
+                ex,
+                body,
+                EMPTY,
+                ex.getStatusCode(),
+                request
+        );
+    }
+
     @ExceptionHandler(value = AccessDeniedException.class)
     public ResponseEntity<?> handle(
             AccessDeniedException ex,
@@ -78,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail body = this.createProblemDetail(
                 ex,
                 FORBIDDEN,
-                FORBIDDEN.getReasonPhrase(),
+                "접근 권한이 없습니다.",
                 null,
                 null,
                 request
