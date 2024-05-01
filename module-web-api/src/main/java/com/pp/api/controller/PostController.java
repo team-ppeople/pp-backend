@@ -27,12 +27,12 @@ public class PostController {
 
     private final PostService postService;
 
-    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_post.read')")
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
     @GetMapping(
             path = "/api/v1/users/{userId}/posts",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> findUserProfile(
+    public ResponseEntity<?> findUserCreatedPosts(
             @PathVariable(name = "userId") Long userId,
             @Valid FindUserCreatedPostsRequest request
     ) {
