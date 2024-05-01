@@ -1,13 +1,7 @@
 package com.pp.api.service;
 
-import com.pp.api.entity.Post;
-import com.pp.api.entity.PostImage;
-import com.pp.api.entity.UploadFile;
-import com.pp.api.entity.User;
-import com.pp.api.repository.PostImageRepository;
-import com.pp.api.repository.PostRepository;
-import com.pp.api.repository.UploadFileRepository;
-import com.pp.api.repository.UserRepository;
+import com.pp.api.entity.*;
+import com.pp.api.repository.*;
 import com.pp.api.service.command.CreatePostCommand;
 import com.pp.api.service.command.FindPostsByNoOffsetQuery;
 import com.pp.api.service.domain.CreatedPost;
@@ -29,7 +23,7 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 @RequiredArgsConstructor
 public class PostService {
 
-    private final PostRepository postsRepository;
+    private final PostRepository postRepository;
 
     private final UserRepository userRepository;
 
@@ -37,17 +31,19 @@ public class PostService {
 
     private final PostImageRepository postImageRepository;
 
-    public long countByCreateId(Long createId) {
-        return postsRepository.countByCreatorId(createId);
+    private final ReportedPostRepository reportedPostRepository;
+
+    public long countByCreateId(Long creatorId) {
+        return postRepository.countByCreatorId(creatorId);
     }
 
     @Transactional(readOnly = true)
-    public List<PostOfList> findPostOfListByCreateId(
-            Long createId,
+    public List<PostOfList> findPostOfListByCreatorId(
+            Long creatorId,
             FindPostsByNoOffsetQuery query
     ) {
-        return postsRepository.findByCreatorId(
-                        createId,
+        return postRepository.findByCreatorId(
+                        creatorId,
                         query.getLastId(),
                         query.getLimit()
                 )
@@ -106,7 +102,7 @@ public class PostService {
                 })
                 .toList();
 
-        postsRepository.save(post);
+        postRepository.save(post);
 
         postImageRepository.saveAll(postImages);
 
@@ -119,6 +115,31 @@ public class PostService {
                 post.getContent(),
                 post.getCreatedDate()
         );
+    }
+
+    @Transactional
+    public void report(Long postId) {
+        User user = userRepository.findById(getAuthenticatedUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        boolean isAlreadyReported = reportedPostRepository.existsByPostIdAndReporterId(
+                post.getId(),
+                user.getId()
+        );
+
+        if (isAlreadyReported) {
+            throw new IllegalArgumentException("이미 신고한 게시글입니다.");
+        }
+
+        ReportedPost reportedPost = ReportedPost.builder()
+                .post(post)
+                .reporter(user)
+                .build();
+
+        reportedPostRepository.save(reportedPost);
     }
 
 }
