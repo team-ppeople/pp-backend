@@ -31,13 +31,17 @@ class CommentRepositoryTest extends AbstractDataJpaTestContext {
 
         Post post = postRepository.save(PostFixture.ofCreator(user));
 
-        Comment comment = CommentFixture.ofPost(post);
+        Comment comment = CommentFixture.fromPostAndCreator(
+                post,
+                user
+        );
 
         Comment savedComment = commentRepository.save(comment);
 
         assertThat(savedComment.getId()).isNotNull();
         assertThat(savedComment.getContent()).isEqualTo(comment.getContent());
         assertThat(savedComment.getPost()).isEqualTo(comment.getPost());
+        assertThat(savedComment.getCreator()).isEqualTo(comment.getCreator());
         assertThat(savedComment.getPost().getComments()).contains(comment);
         assertThat(savedComment.getReports()).isNotNull();
         assertThat(savedComment.getReports()).isEmpty();
@@ -51,7 +55,10 @@ class CommentRepositoryTest extends AbstractDataJpaTestContext {
 
         Post post = postRepository.save(PostFixture.ofCreator(user));
 
-        Comment comment = CommentFixture.ofPost(post);
+        Comment comment = CommentFixture.fromPostAndCreator(
+                post,
+                user
+        );
 
         Comment savedComment = commentRepository.save(comment);
 
@@ -64,6 +71,7 @@ class CommentRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundComment.getId()).isEqualTo(savedComment.getId());
         assertThat(foundComment.getContent()).isEqualTo(savedComment.getContent());
         assertThat(foundComment.getPost()).isEqualTo(savedComment.getPost());
+        assertThat(foundComment.getCreator()).isEqualTo(savedComment.getCreator());
         assertThat(foundComment.getReports()).hasSameElementsAs(savedComment.getReports());
         assertThat(foundComment.getCreatedDate()).isEqualTo(savedComment.getCreatedDate());
         assertThat(foundComment.getUpdatedDate()).isEqualTo(savedComment.getUpdatedDate());

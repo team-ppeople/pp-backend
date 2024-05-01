@@ -27,7 +27,10 @@ public class Comment extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = LAZY, optional = false)
-    public Post post;
+    private Post post;
+
+    @ManyToOne(fetch = LAZY, optional = false)
+    private User creator;
 
     @OneToMany(fetch = LAZY, mappedBy = "comment")
     private List<ReportedComment> reports;
@@ -35,10 +38,12 @@ public class Comment extends BaseEntity {
     @Builder
     private Comment(
             String content,
-            Post post
+            Post post,
+            User creator
     ) {
         this.content = content;
         this.post = post;
+        this.creator = creator;
         this.reports = new ArrayList<>();
 
         this.post.addComment(this);

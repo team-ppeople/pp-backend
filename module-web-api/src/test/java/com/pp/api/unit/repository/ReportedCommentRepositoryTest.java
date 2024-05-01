@@ -37,7 +37,19 @@ class ReportedCommentRepositoryTest extends AbstractDataJpaTestContext {
 
         Post post = postRepository.save(PostFixture.ofCreator(user));
 
-        Comment comment = commentRepository.save(CommentFixture.ofPost(post));
+        User commenter = userRepository.save(
+                UserFixture.from(
+                        "피피처돌이",
+                        "pplover@naver.com"
+                )
+        );
+
+        Comment comment = commentRepository.save(
+                CommentFixture.fromPostAndCreator(
+                        post,
+                        commenter
+                )
+        );
 
         User reporter = userRepository.save(
                 UserFixture.from(
@@ -67,7 +79,19 @@ class ReportedCommentRepositoryTest extends AbstractDataJpaTestContext {
 
         Post post = postRepository.save(PostFixture.ofCreator(user));
 
-        Comment comment = commentRepository.save(CommentFixture.ofPost(post));
+        User commenter = userRepository.save(
+                UserFixture.from(
+                        "피피처돌이",
+                        "pplover@naver.com"
+                )
+        );
+
+        Comment comment = commentRepository.save(
+                CommentFixture.fromPostAndCreator(
+                        post,
+                        commenter
+                )
+        );
 
         User reporter = userRepository.save(
                 UserFixture.from(
