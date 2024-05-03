@@ -41,4 +41,16 @@ public class CommentController {
                 .build();
     }
 
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @PostMapping(
+            path = "/api/v1/comments/{commentId}/report",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> report(@PathVariable(name = "commentId") Long commentId) {
+        commentService.report(commentId);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
 }
