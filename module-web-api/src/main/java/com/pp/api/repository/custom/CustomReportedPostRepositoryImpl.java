@@ -19,7 +19,10 @@ public class CustomReportedPostRepositoryImpl extends QuerydslRepositorySupport
 
     @Transactional(readOnly = true)
     @Override
-    public boolean existsByPostIdAndReporterId(Long postId, Long reporterId) {
+    public boolean existsByPostIdAndReporterId(
+            Long postId,
+            Long reporterId
+    ) {
         Integer selectOne = jpaQueryFactory.selectOne()
                 .from(reportedPost)
                 .where(

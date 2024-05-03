@@ -2,9 +2,11 @@ package com.pp.api.service;
 
 import com.pp.api.entity.Comment;
 import com.pp.api.entity.Post;
+import com.pp.api.entity.ReportedComment;
 import com.pp.api.entity.User;
 import com.pp.api.repository.CommentRepository;
 import com.pp.api.repository.PostRepository;
+import com.pp.api.repository.ReportedCommentRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.CreateCommentCommand;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ public class CommentService {
 
     private final UserRepository userRepository;
 
+    private final ReportedCommentRepository reportedCommentRepository;
+
     @Transactional
     public void create(CreateCommentCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
@@ -38,6 +42,31 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    public void report(Long commentId) {
+        User user = userRepository.findById(getAuthenticatedUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+
+        boolean isAlreadyReported = reportedCommentRepository.existsByCommentIdAndReporterId(
+                comment.getId(),
+                user.getId()
+        );
+
+        if (isAlreadyReported) {
+            throw new IllegalArgumentException("이미 신고한 댓글입니다.");
+        }
+
+        ReportedComment reportedComment = ReportedComment.builder()
+                .comment(comment)
+                .reporter(user)
+                .build();
+
+        reportedCommentRepository.save(reportedComment);
     }
 
 }
