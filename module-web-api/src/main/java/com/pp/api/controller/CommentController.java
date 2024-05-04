@@ -49,7 +49,7 @@ public class CommentController {
             path = "/api/v1/posts/{postId}/comments",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> find(
+    public ResponseEntity<?> findComments(
             @PathVariable(name = "postId") Long postId,
             @Valid FindCommentsRequest request
     ) {

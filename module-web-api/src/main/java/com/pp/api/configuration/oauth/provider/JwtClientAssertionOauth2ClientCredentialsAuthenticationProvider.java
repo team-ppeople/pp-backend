@@ -159,10 +159,11 @@ public final class JwtClientAssertionOauth2ClientCredentialsAuthenticationProvid
         if (generatedAccessToken instanceof ClaimAccessor claimAccessor) {
             authorizationBuilder.token(
                     accessToken,
-                    metadata -> metadata.put(
-                            CLAIMS_METADATA_NAME,
-                            claimAccessor.getClaims()
-                    )
+                    metadata ->
+                            metadata.put(
+                                    CLAIMS_METADATA_NAME,
+                                    claimAccessor.getClaims()
+                            )
             );
         } else {
             authorizationBuilder.accessToken(accessToken);

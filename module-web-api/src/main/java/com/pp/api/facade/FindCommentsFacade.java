@@ -26,7 +26,7 @@ public class FindCommentsFacade {
                 request.limit() != null ? request.limit() : 20
         );
 
-        List<CommentResponse> commentResponses = commentService.findCommentsOfListByPostId(query)
+        List<CommentResponse> commentResponses = commentService.findComments(query)
                 .stream()
                 .map(comment ->
                         new CommentResponse(

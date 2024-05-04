@@ -31,9 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getFieldErrors()
                 .stream()
                 .findFirst()
-                .ifPresent(fieldError -> ex.getBody()
-                        .setDetail(fieldError.getDefaultMessage())
-                );
+                .ifPresent(fieldError -> ex.getBody().setDetail(fieldError.getDefaultMessage()));
 
         return super.handleMethodArgumentNotValid(
                 ex,

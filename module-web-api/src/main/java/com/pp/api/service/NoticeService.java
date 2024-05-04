@@ -14,19 +14,21 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
 
-    public List<NoticeOfList> findNoticeOfList(FindNoticesByNoOffsetQuery query) {
+    public List<NoticeOfList> findNotices(FindNoticesByNoOffsetQuery query) {
         return noticeRepository.find(
                         query.getLastId(),
                         query.getLimit()
                 )
                 .stream()
-                .map(notice -> new NoticeOfList(
-                        notice.getId(),
-                        notice.getTitle(),
-                        notice.getContent(),
-                        notice.getCreatedDate(),
-                        notice.getUpdatedDate()
-                ))
+                .map(notice ->
+                        new NoticeOfList(
+                                notice.getId(),
+                                notice.getTitle(),
+                                notice.getContent(),
+                                notice.getCreatedDate(),
+                                notice.getUpdatedDate()
+                        )
+                )
                 .toList();
     }
 

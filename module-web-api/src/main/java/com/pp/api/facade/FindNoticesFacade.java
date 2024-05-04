@@ -22,14 +22,16 @@ public class FindNoticesFacade {
                 request.limit() != null ? request.limit() : 20
         );
 
-        List<NoticeResponse> noticeResponses = noticeService.findNoticeOfList(query)
+        List<NoticeResponse> noticeResponses = noticeService.findNotices(query)
                 .stream()
-                .map(notice -> new NoticeResponse(
-                        notice.id(),
-                        notice.title(),
-                        notice.content(),
-                        notice.createdDate()
-                ))
+                .map(notice ->
+                        new NoticeResponse(
+                                notice.id(),
+                                notice.title(),
+                                notice.content(),
+                                notice.createdDate()
+                        )
+                )
                 .toList();
 
         return new FindNoticesResponse(noticeResponses);

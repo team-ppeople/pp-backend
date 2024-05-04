@@ -38,7 +38,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostOfList> findPostOfListByCreatorId(FindPostsByNoOffsetQuery query) {
+    public List<PostOfList> findPosts(FindPostsByNoOffsetQuery query) {
         return postRepository.findByCreatorId(
                         query.getCreatorId(),
                         query.getLastId(),
@@ -48,7 +48,10 @@ public class PostService {
                 .map(post ->
                         new PostOfList(
                                 post.getId(),
-                                post.getImages().get(0).getUploadFile().getUrl(),
+                                post.getImages()
+                                        .get(0)
+                                        .getUploadFile()
+                                        .getUrl(),
                                 post.getTitle(),
                                 post.getCreatedDate(),
                                 post.getUpdatedDate()

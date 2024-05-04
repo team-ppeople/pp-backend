@@ -29,14 +29,16 @@ public class FindUserProfileFacade {
                 20
         );
 
-        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreatorId(query)
+        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPosts(query)
                 .stream()
-                .map(post -> new UserCreatedPostResponse(
-                        post.id(),
-                        post.thumbnailUrl(),
-                        post.title(),
-                        post.createdDate()
-                ))
+                .map(post ->
+                        new UserCreatedPostResponse(
+                                post.id(),
+                                post.thumbnailUrl(),
+                                post.title(),
+                                post.createdDate()
+                        )
+                )
                 .toList();
 
         int thumbsUpCount = 0; // TODO 좋아요 구현이후 적용

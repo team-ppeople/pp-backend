@@ -127,9 +127,7 @@ class UserServiceTest {
         jwtAuthenticationUtil.when(() -> checkUserPermission(userId))
                 .thenThrow(AccessDeniedException.class);
 
-        assertThatThrownBy(
-                () -> userService.update(command)
-        )
+        assertThatThrownBy(() -> userService.update(command))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
@@ -150,9 +148,7 @@ class UserServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(
-                () -> userService.update(command)
-        )
+        assertThatThrownBy(() -> userService.update(command))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -179,9 +175,7 @@ class UserServiceTest {
         when(uploadFileRepository.findById(profileImageFileUploadId))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(
-                () -> userService.update(command)
-        )
+        assertThatThrownBy(() -> userService.update(command))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -216,9 +210,7 @@ class UserServiceTest {
                 .thenAnswer(invocationOnMock -> null)
                 .thenThrow(IllegalArgumentException.class);
 
-        assertThatThrownBy(
-                () -> userService.update(command)
-        )
+        assertThatThrownBy(() -> userService.update(command))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

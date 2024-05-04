@@ -48,7 +48,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<CommentOfList> findCommentsOfListByPostId(FindCommentsByNoOffsetQuery query) {
+    public List<CommentOfList> findComments(FindCommentsByNoOffsetQuery query) {
         return commentRepository.findByPostId(
                         query.getPostId(),
                         query.getLastId(),
