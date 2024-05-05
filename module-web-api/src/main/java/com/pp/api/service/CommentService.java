@@ -9,9 +9,13 @@ import com.pp.api.repository.PostRepository;
 import com.pp.api.repository.ReportedCommentRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.CreateCommentCommand;
+import com.pp.api.service.command.FindCommentsByNoOffsetQuery;
+import com.pp.api.service.domain.CommentOfList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
 
@@ -42,6 +46,24 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+    }
+
+    public List<CommentOfList> findComments(FindCommentsByNoOffsetQuery query) {
+        return commentRepository.findByPostId(
+                        query.getPostId(),
+                        query.getLastId(),
+                        query.getLimit()
+                )
+                .stream()
+                .map(comment ->
+                        new CommentOfList(
+                                comment.getId(),
+                                comment.getContent(),
+                                comment.getCreatedDate(),
+                                comment.getUpdatedDate()
+                        )
+                )
+                .toList();
     }
 
     @Transactional

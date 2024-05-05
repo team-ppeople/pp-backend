@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import static com.pp.api.entity.enums.OauthUserClient.KAKAO;
 import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_REQUEST;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
-import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.NICKNAME;
 
 @Component
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class KakaoJwtClientAssertionOauth2UserRegisterProcessor implements JwtCl
 
         String subject = jwt.getSubject();
 
-        String nickname = jwt.getClaimAsString(NICKNAME);
+        String nickname = "유저" + subject;
 
         String email = jwt.getClaimAsString(EMAIL);
 

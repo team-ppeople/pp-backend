@@ -4,7 +4,7 @@ import com.pp.api.controller.dto.FindUserProfileResponse;
 import com.pp.api.controller.dto.UserCreatedPostResponse;
 import com.pp.api.service.PostService;
 import com.pp.api.service.UserService;
-import com.pp.api.service.command.FindPostsByNoOffsetQuery;
+import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
 import com.pp.api.service.domain.UserWithProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,19 +24,21 @@ public class FindUserProfileFacade {
 
         long postCount = postService.countByCreateId(userId);
 
-        FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.firstPage(
+        FindUserCreatedPostsByNoOffsetQuery query = FindUserCreatedPostsByNoOffsetQuery.firstPage(
                 userId,
                 20
         );
 
-        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findPostOfListByCreatorId(query)
+        List<UserCreatedPostResponse> userCreatedPostResponses = postService.findUserCreatedPosts(query)
                 .stream()
-                .map(post -> new UserCreatedPostResponse(
-                        post.id(),
-                        post.thumbnailUrl(),
-                        post.title(),
-                        post.createdDate()
-                ))
+                .map(post ->
+                        new UserCreatedPostResponse(
+                                post.id(),
+                                post.thumbnailUrl(),
+                                post.title(),
+                                post.createdDate()
+                        )
+                )
                 .toList();
 
         int thumbsUpCount = 0; // TODO 좋아요 구현이후 적용

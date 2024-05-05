@@ -17,7 +17,6 @@ public class RegisterOauthUserCommand extends CommandSelfValidator<RegisterOauth
     @NotBlank(message = "nickname 값이 없습니다.")
     private final String nickname;
 
-    @NotBlank(message = "email 값이 없습니다.")
     private final String email;
 
     public RegisterOauthUserCommand(

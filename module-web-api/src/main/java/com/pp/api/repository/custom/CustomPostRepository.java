@@ -14,4 +14,9 @@ public interface CustomPostRepository {
             int limit
     );
 
+    List<Post> find(
+            Long lastId,
+            int limit
+    );
+
 }

@@ -22,7 +22,7 @@ public class NoticeController {
             path = "/api/v1/notices",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> findUserProfile(@Valid FindNoticesRequest request) {
+    public ResponseEntity<?> findNotices(@Valid FindNoticesRequest request) {
         FindNoticesResponse response = findNoticesFacade.findNotices(request);
 
         return ResponseEntity.ok(RestResponseWrapper.from(response));
