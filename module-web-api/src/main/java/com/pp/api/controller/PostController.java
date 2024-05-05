@@ -1,9 +1,7 @@
 package com.pp.api.controller;
 
-import com.pp.api.controller.dto.CreatePostRequest;
-import com.pp.api.controller.dto.FindUserCreatedPostsRequest;
-import com.pp.api.controller.dto.FindUserCreatedPostsResponse;
-import com.pp.api.controller.dto.RestResponseWrapper;
+import com.pp.api.controller.dto.*;
+import com.pp.api.facade.FindPostsFacade;
 import com.pp.api.facade.FindUserCreatedPostsFacade;
 import com.pp.api.service.PostService;
 import com.pp.api.service.command.CreatePostCommand;
@@ -24,6 +22,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class PostController {
 
     private final FindUserCreatedPostsFacade findUserCreatedPostsFacade;
+
+    private final FindPostsFacade findPostsFacade;
 
     private final PostService postService;
 
@@ -66,6 +66,17 @@ public class PostController {
 
         return ResponseEntity.created(location)
                 .build();
+    }
+
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
+    @GetMapping(
+            path = "/api/v1/posts",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> findPosts(@Valid FindPostsRequest request) {
+        FindPostsResponse response = findPostsFacade.findPosts(request);
+
+        return ResponseEntity.ok(RestResponseWrapper.from(response));
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")

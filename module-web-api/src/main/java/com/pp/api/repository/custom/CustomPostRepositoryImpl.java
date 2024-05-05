@@ -44,6 +44,19 @@ public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .fetch();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<Post> find(
+            Long lastId,
+            int limit
+    ) {
+        return from(post)
+                .where(lowerThanLastId(lastId))
+                .orderBy(post.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
     private BooleanExpression lowerThanLastId(Long lastId) {
         if (lastId == null) {
             return null;

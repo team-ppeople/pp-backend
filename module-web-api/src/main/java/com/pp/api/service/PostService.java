@@ -4,6 +4,7 @@ import com.pp.api.entity.*;
 import com.pp.api.repository.*;
 import com.pp.api.service.command.CreatePostCommand;
 import com.pp.api.service.command.FindPostsByNoOffsetQuery;
+import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
 import com.pp.api.service.domain.CreatedPost;
 import com.pp.api.service.domain.PostOfList;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +39,31 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostOfList> findPosts(FindPostsByNoOffsetQuery query) {
+    public List<PostOfList> findUserCreatedPosts(FindUserCreatedPostsByNoOffsetQuery query) {
         return postRepository.findByCreatorId(
                         query.getCreatorId(),
+                        query.getLastId(),
+                        query.getLimit()
+                )
+                .stream()
+                .map(post ->
+                        new PostOfList(
+                                post.getId(),
+                                post.getImages()
+                                        .get(0)
+                                        .getUploadFile()
+                                        .getUrl(),
+                                post.getTitle(),
+                                post.getCreatedDate(),
+                                post.getUpdatedDate()
+                        )
+                )
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostOfList> findPosts(FindPostsByNoOffsetQuery query) {
+        return postRepository.find(
                         query.getLastId(),
                         query.getLimit()
                 )
