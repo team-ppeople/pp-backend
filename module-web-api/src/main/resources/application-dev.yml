@@ -95,7 +95,3 @@ logging:
     org:
       springframework:
         security: DEBUG
-      hibernate:
-        orm:
-          jdbc:
-            bind: TRACE
