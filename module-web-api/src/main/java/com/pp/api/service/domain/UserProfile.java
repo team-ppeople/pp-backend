@@ -2,7 +2,7 @@ package com.pp.api.service.domain;
 
 import java.time.LocalDateTime;
 
-public record UserWithProfile(
+public record UserProfile(
         Long id,
         String nickname,
         String email,

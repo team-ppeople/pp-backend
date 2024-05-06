@@ -6,6 +6,7 @@ import com.pp.api.service.command.CreatePostCommand;
 import com.pp.api.service.command.FindPostsByNoOffsetQuery;
 import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
 import com.pp.api.service.domain.CreatedPost;
+import com.pp.api.service.domain.PostDetail;
 import com.pp.api.service.domain.PostOfList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -83,6 +84,28 @@ public class PostService {
                 .toList();
     }
 
+    public PostDetail findPostDetailById(Long postId) {
+        Post post = postRepository.findWithImagesById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        return new PostDetail(
+                post.getId(),
+                post.getImages()
+                        .stream()
+                        .map(postImage ->
+                                postImage.getUploadFile()
+                                        .getUrl()
+                        )
+                        .toList(),
+                post.getTitle(),
+                post.getContent(),
+                post.getCreatedDate(),
+                post.getUpdatedDate(),
+                post.getCreator()
+                        .getId()
+        );
+    }
+
     @Transactional
     public CreatedPost create(CreatePostCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
@@ -148,6 +171,10 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
+        if (post.getCreator().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인이 작성한 게시글은 신고할 수 없습니다.");
+        }
+
         boolean isAlreadyReported = reportedPostRepository.existsByPostIdAndReporterId(
                 post.getId(),
                 user.getId()
@@ -163,6 +190,10 @@ public class PostService {
                 .build();
 
         reportedPostRepository.save(reportedPost);
+    }
+
+    public boolean isReportedById(Long postId) {
+        return reportedPostRepository.existsByPostId(postId);
     }
 
 }

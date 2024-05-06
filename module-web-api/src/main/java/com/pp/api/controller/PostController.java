@@ -1,6 +1,7 @@
 package com.pp.api.controller;
 
 import com.pp.api.controller.dto.*;
+import com.pp.api.facade.FindPostDetailFacade;
 import com.pp.api.facade.FindPostsFacade;
 import com.pp.api.facade.FindUserCreatedPostsFacade;
 import com.pp.api.service.PostService;
@@ -24,6 +25,8 @@ public class PostController {
     private final FindUserCreatedPostsFacade findUserCreatedPostsFacade;
 
     private final FindPostsFacade findPostsFacade;
+
+    private final FindPostDetailFacade findPostDetailFacade;
 
     private final PostService postService;
 
@@ -75,6 +78,17 @@ public class PostController {
     )
     public ResponseEntity<?> findPosts(@Valid FindPostsRequest request) {
         FindPostsResponse response = findPostsFacade.findPosts(request);
+
+        return ResponseEntity.ok(RestResponseWrapper.from(response));
+    }
+
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
+    @GetMapping(
+            path = "/api/v1/posts/{postId}",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> findPosts(@PathVariable(name = "postId") Long postId) {
+        FindPostDetailResponse response = findPostDetailFacade.findPostDetail(postId);
 
         return ResponseEntity.ok(RestResponseWrapper.from(response));
     }

@@ -3,6 +3,7 @@ package com.pp.api.repository.custom;
 import com.pp.api.entity.Post;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomPostRepository {
 
@@ -18,5 +19,7 @@ public interface CustomPostRepository {
             Long lastId,
             int limit
     );
+
+    Optional<Post> findWithImagesById(Long id);
 
 }
