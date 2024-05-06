@@ -66,6 +66,10 @@ public class CommentService {
                 .toList();
     }
 
+    public long countByPostId(Long postId) {
+        return commentRepository.countByPostId(postId);
+    }
+
     @Transactional
     public void report(Long commentId) {
         User user = userRepository.findById(getAuthenticatedUserId())

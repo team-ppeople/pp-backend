@@ -12,4 +12,6 @@ public interface CustomCommentRepository {
             int limit
     );
 
+    long countByPostId(Long postId);
+
 }

@@ -5,7 +5,7 @@ import com.pp.api.controller.dto.UserCreatedPostResponse;
 import com.pp.api.service.PostService;
 import com.pp.api.service.UserService;
 import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
-import com.pp.api.service.domain.UserWithProfile;
+import com.pp.api.service.domain.UserProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class FindUserProfileFacade {
     private final PostService postService;
 
     public FindUserProfileResponse findUserProfile(Long userId) {
-        UserWithProfile userWithProfile = userService.findWithProfileByUserId(userId);
+        UserProfile userProfile = userService.findUserProfileById(userId);
 
         long postCount = postService.countByCreateId(userId);
 
@@ -44,9 +44,9 @@ public class FindUserProfileFacade {
         int thumbsUpCount = 0; // TODO 좋아요 구현이후 적용
 
         return new FindUserProfileResponse(
-                userWithProfile.id(),
-                userWithProfile.nickname(),
-                userWithProfile.profileImageUrl(),
+                userProfile.id(),
+                userProfile.nickname(),
+                userProfile.profileImageUrl(),
                 postCount,
                 thumbsUpCount,
                 userCreatedPostResponses

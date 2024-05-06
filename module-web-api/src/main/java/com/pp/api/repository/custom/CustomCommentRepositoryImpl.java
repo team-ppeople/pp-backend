@@ -36,6 +36,14 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
                 .fetch();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public long countByPostId(Long postId) {
+        return from(comment)
+                .where(comment.post.id.eq(postId))
+                .fetchCount();
+    }
+
     private BooleanExpression lowerThanLastId(Long lastId) {
         if (lastId == null) {
             return null;

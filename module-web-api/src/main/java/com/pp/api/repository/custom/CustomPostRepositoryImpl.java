@@ -7,8 +7,11 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.pp.api.entity.QPost.post;
+import static com.pp.api.entity.QPostImage.postImage;
+import static com.pp.api.entity.QUploadFile.uploadFile;
 
 public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
 
@@ -55,6 +58,20 @@ public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .orderBy(post.id.desc())
                 .limit(limit)
                 .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Post> findWithImagesById(Long id) {
+        Post entity = from(post)
+                .leftJoin(post.images, postImage)
+                .fetchJoin()
+                .leftJoin(postImage.uploadFile, uploadFile)
+                .fetchJoin()
+                .where(post.id.eq(id))
+                .fetchOne();
+
+        return Optional.ofNullable(entity);
     }
 
     private BooleanExpression lowerThanLastId(Long lastId) {

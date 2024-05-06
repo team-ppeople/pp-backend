@@ -74,7 +74,7 @@ class ProfileImageRepositoryTest extends AbstractDataJpaTestContext {
     }
 
     @Test
-    void 유저_프로필이미지_엔티티를_유저의_이미지만_모두_삭제한다() {
+    void 유저_프로필이미지_엔티티_유저의_이미지만_모두_삭제한다() {
         User user = userRepository.save(UserFixture.of());
 
         UploadFile uploadFile = uploadFileRepository.save(UploadFileFixture.profileImageFileOfUploader(user));
@@ -90,7 +90,7 @@ class ProfileImageRepositoryTest extends AbstractDataJpaTestContext {
 
         profileImageRepository.deleteByUserId(user.getId());
 
-        boolean exists = profileImageRepository.existsById(user.getId());
+        boolean exists = profileImageRepository.existsById(profileImage.getId());
 
         assertThat(exists).isFalse();
     }
