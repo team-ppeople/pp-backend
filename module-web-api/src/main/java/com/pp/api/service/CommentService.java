@@ -78,6 +78,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
+        if (comment.getCreator().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인이 작성한 댓글은 신고할 수 없습니다.");
+        }
+
         boolean isAlreadyReported = reportedCommentRepository.existsByCommentIdAndReporterId(
                 comment.getId(),
                 user.getId()

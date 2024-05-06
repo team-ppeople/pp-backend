@@ -171,6 +171,10 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
+        if (post.getCreator().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("본인이 작성한 게시글은 신고할 수 없습니다.");
+        }
+
         boolean isAlreadyReported = reportedPostRepository.existsByPostIdAndReporterId(
                 post.getId(),
                 user.getId()
