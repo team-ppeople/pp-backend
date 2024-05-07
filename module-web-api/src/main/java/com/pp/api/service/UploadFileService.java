@@ -26,8 +26,7 @@ public class UploadFileService {
 
         PresignedURL presignedURL = s3PresignedClient.createPutPresignedUrl(request);
 
-        Long uploaderId = JwtAuthenticationUtil.getAuthenticatedUserId()
-                .orElseThrow(() -> new IllegalArgumentException("인증된 유저가 아닙니다"));
+        Long uploaderId = JwtAuthenticationUtil.getAuthenticatedUserId();
 
         User user = userRepository.getReferenceById(uploaderId);
 
