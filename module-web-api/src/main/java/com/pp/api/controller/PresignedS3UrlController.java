@@ -18,7 +18,7 @@ public class PresignedS3UrlController {
 
     private final PresignedUrlFacade presignedUrlFacade;
 
-    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.write')")
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_file.write')")
     @PostMapping(path = "/api/v1/presigned-urls/upload")
     public ResponseEntity<?> presignedUploadUrls(@RequestBody @Valid PresignedUploadUrlRequests requests) {
         PresignedUploadUrlResponse response = presignedUrlFacade.createPresignedUrl(requests.presignedUploadUrlRequests());

@@ -1,8 +1,8 @@
 package com.pp.api.client.s3;
 
+import com.pp.api.configuration.aws.property.AwsS3Property;
 import com.pp.api.controller.dto.PresignedUploadUrlRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -18,12 +18,11 @@ public class S3PresignedClient {
 
     private final S3Presigner s3Presigner;
 
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
+    private final AwsS3Property awsS3Property;
 
     public PresignedURL createPutPresignedUrl(PresignedUploadUrlRequest request) {
         PutObjectRequest objectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(awsS3Property.bucket())
                 .key(request.toFileKeyObjectPath() + UUID.randomUUID())
                 .contentLength(request.fileContentLength())
                 .contentType(request.fileContentType().getType())

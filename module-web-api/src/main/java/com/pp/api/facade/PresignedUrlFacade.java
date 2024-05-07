@@ -20,6 +20,7 @@ public class PresignedUrlFacade {
             List<PresignedUploadUrlRequest> requests
     ) {
         List<PresignedUploadFile> presignedUploadFiles = new ArrayList<>();
+
         for (PresignedUploadUrlRequest request : requests) {
             PresignedUploadFile presignedUploadFile = uploadFileService.savePresignedUploadFile(request);
             presignedUploadFiles.add(presignedUploadFile);
