@@ -35,6 +35,8 @@ public class PostService {
 
     private final ReportedPostRepository reportedPostRepository;
 
+    private final PostUserActionRepository postUserActionRepository;
+
     public long countByCreateId(Long creatorId) {
         return postRepository.countByCreatorId(creatorId);
     }
@@ -194,6 +196,30 @@ public class PostService {
 
     public boolean isReportedById(Long postId) {
         return reportedPostRepository.existsByPostId(postId);
+    }
+
+    public void thumbsUp(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        postUserActionRepository.thumbsUp(
+                post.getId(),
+                post.getCreator()
+                        .getId(),
+                getAuthenticatedUserId()
+        );
+    }
+
+    public void thumbsSideways(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        postUserActionRepository.thumbsSideways(
+                post.getId(),
+                post.getCreator()
+                        .getId(),
+                getAuthenticatedUserId()
+        );
     }
 
 }

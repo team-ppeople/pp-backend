@@ -105,4 +105,28 @@ public class PostController {
                 .build();
     }
 
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @PostMapping(
+            path = "/api/v1/posts/{postId}/thumbs-up",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> thumbsUp(@PathVariable(name = "postId") Long postId) {
+        postService.thumbsUp(postId);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @PostMapping(
+            path = "/api/v1/posts/{postId}/thumbs-sideways",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> thumbsSideways(@PathVariable(name = "postId") Long postId) {
+        postService.thumbsSideways(postId);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
 }
