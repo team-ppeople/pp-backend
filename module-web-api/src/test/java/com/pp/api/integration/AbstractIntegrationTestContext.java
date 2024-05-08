@@ -3,7 +3,9 @@ package com.pp.api.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pp.api.util.DatabaseCleanUtil;
 import com.pp.api.util.JwtTestUtil;
+import com.pp.api.util.LocalStackSetUpUtil;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -64,6 +66,11 @@ public abstract class AbstractIntegrationTestContext {
         LOCAL_STACK_CONTAINER.start();
     }
 
+    @BeforeAll
+    static void setUp(@Autowired LocalStackSetUpUtil localStackSetUpUtil) {
+        localStackSetUpUtil.setUp();
+    }
+
     @AfterEach
     void tearDown() {
         databaseCleanUtil.clear();
@@ -74,6 +81,7 @@ public abstract class AbstractIntegrationTestContext {
         registerRedisProperty(registry);
         registerOauth2JwkProperty(registry);
         registerApplePrivateKeyProperty(registry);
+        registerLocalStackProperty(registry);
     }
 
     static void registerRedisProperty(DynamicPropertyRegistry registry) {
@@ -140,6 +148,28 @@ public abstract class AbstractIntegrationTestContext {
                 "client.apple.private-key",
                 () -> Base64.getEncoder()
                         .encodeToString(keyPair.getPrivate().getEncoded())
+        );
+    }
+
+    static void registerLocalStackProperty(DynamicPropertyRegistry registry) {
+        registry.add(
+                "aws.s3.access-key",
+                LOCAL_STACK_CONTAINER::getAccessKey
+        );
+
+        registry.add(
+                "aws.s3.secret-key",
+                LOCAL_STACK_CONTAINER::getSecretKey
+        );
+
+        registry.add(
+                "aws.s3.region",
+                LOCAL_STACK_CONTAINER::getRegion
+        );
+
+        registry.add(
+                "aws.s3.endpoint-override-uri",
+                LOCAL_STACK_CONTAINER::getEndpoint
         );
     }
 
