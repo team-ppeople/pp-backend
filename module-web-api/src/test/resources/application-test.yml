@@ -72,6 +72,10 @@ client:
     read-timeout: 4000
     write-timeout: 3000
 
+aws:
+  s3:
+    bucket: pp-public-bucket
+
 logging:
   level:
     org:
