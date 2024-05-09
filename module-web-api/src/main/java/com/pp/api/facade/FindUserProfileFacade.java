@@ -41,7 +41,7 @@ public class FindUserProfileFacade {
                 )
                 .toList();
 
-        int thumbsUpCount = 0; // TODO 좋아요 구현이후 적용
+        long thumbsUpCount = postService.countUserPostThumbsUpByPostId(userId);
 
         return new FindUserProfileResponse(
                 userProfile.id(),

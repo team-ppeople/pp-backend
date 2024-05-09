@@ -14,4 +14,13 @@ public interface PostUserActionRepository {
             Long actorId
     );
 
+    long countThumbsUpByPostId(Long postId);
+
+    long countUserPostThumbsUpByUserId(Long userId);
+
+    boolean isThumbsUppedByUserId(
+            Long postId,
+            Long actorId
+    );
+
 }

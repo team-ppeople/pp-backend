@@ -222,4 +222,22 @@ public class PostService {
         );
     }
 
+    public long countThumbsUpByPostId(Long postId) {
+        return postUserActionRepository.countThumbsUpByPostId(postId);
+    }
+
+    public long countUserPostThumbsUpByPostId(Long userId) {
+        return postUserActionRepository.countUserPostThumbsUpByUserId(userId);
+    }
+
+    public boolean isThumbsUppedByUserId(
+            Long postId,
+            Long userId
+    ) {
+        return postUserActionRepository.isThumbsUppedByUserId(
+                postId,
+                userId
+        );
+    }
+
 }
