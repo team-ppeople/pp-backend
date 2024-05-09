@@ -10,7 +10,8 @@ import com.pp.api.service.domain.PostDetail;
 import com.pp.api.service.domain.UserProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
+import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +23,6 @@ public class FindPostDetailFacade {
 
     private final UserService userService;
 
-    @Transactional(readOnly = true)
     public FindPostDetailResponse findPostDetail(Long postId) {
         PostDetail postDetail = postService.findPostDetailById(postId);
 
@@ -30,9 +30,12 @@ public class FindPostDetailFacade {
 
         boolean isReported = postService.isReportedById(postId);
 
-        boolean isThumbsUpped = false; // TODO 좋아요 구현 이후 구현
+        boolean isThumbsUpped = postService.isThumbsUppedByUserId(
+                postId,
+                getAuthenticatedUserId()
+        );
 
-        long thumbsUpCount = 0; // TODO 좋아요 구현 이후 구현
+        long thumbsUpCount = postService.countThumbsUpByPostId(postId);
 
         long commentCount = commentService.countByPostId(postId);
 

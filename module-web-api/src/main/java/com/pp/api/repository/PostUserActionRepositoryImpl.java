@@ -6,7 +6,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
+import static java.lang.Boolean.TRUE;
+import static java.util.Arrays.asList;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
     ) {
         stringRedisTemplate.execute(
                 postThumbsUpScript,
-                Arrays.asList(
+                asList(
                         parsePostThumbsUpKey(postId),
                         parseUserPostThumbsUpCountKey(creatorId)
                 ),
@@ -44,12 +45,42 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
     ) {
         stringRedisTemplate.execute(
                 postThumbsSidewaysScript,
-                Arrays.asList(
+                asList(
                         parsePostThumbsUpKey(postId),
                         parseUserPostThumbsUpCountKey(creatorId)
                 ),
                 parsePostThumbsUpValue(actorId)
         );
+    }
+
+    @Override
+    public long countThumbsUpByPostId(Long postId) {
+        Long count = stringRedisTemplate.opsForSet()
+                .size(parsePostThumbsUpKey(postId));
+
+        return count != null ? count : 0;
+    }
+
+    @Override
+    public long countUserPostThumbsUpByUserId(Long userId) {
+        String count = stringRedisTemplate.opsForValue()
+                .get(parseUserPostThumbsUpCountKey(userId));
+
+        return count != null ? Long.parseLong(count) : 0;
+    }
+
+    @Override
+    public boolean isThumbsUppedByUserId(
+            Long postId,
+            Long userId
+    ) {
+        Boolean isThumbsUpped = stringRedisTemplate.opsForSet()
+                .isMember(
+                        parsePostThumbsUpKey(postId),
+                        parsePostThumbsUpValue(userId)
+                );
+
+        return TRUE.equals(isThumbsUpped);
     }
 
     private String parsePostThumbsUpKey(Long postId) {
@@ -60,8 +91,8 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
         return "user:" + creatorId + ":post-thumbs-up-count";
     }
 
-    private String parsePostThumbsUpValue(Long actorId) {
-        return "user_" + actorId;
+    private String parsePostThumbsUpValue(Long userId) {
+        return "user_" + userId;
     }
 
 }
