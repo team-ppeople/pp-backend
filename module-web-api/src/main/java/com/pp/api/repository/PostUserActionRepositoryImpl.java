@@ -83,6 +83,11 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
         return TRUE.equals(isThumbsUpped);
     }
 
+    @Override
+    public void deleteUserPostThumbsUpByUserId(Long userId) {
+        stringRedisTemplate.delete(parseUserPostThumbsUpCountKey(userId));
+    }
+
     private String parsePostThumbsUpKey(Long postId) {
         return "post:" + postId + ":thumbs-up";
     }

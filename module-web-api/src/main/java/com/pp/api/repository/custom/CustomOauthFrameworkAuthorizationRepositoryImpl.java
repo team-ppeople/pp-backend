@@ -10,12 +10,12 @@ import java.util.Optional;
 
 import static com.pp.api.entity.QOauthFrameworkAuthorization.oauthFrameworkAuthorization;
 
-public class CustomOauth2FrameworkAuthorizationRepositoryImpl extends QuerydslRepositorySupport
-        implements CustomOauth2FrameworkAuthorizationRepository {
+public class CustomOauthFrameworkAuthorizationRepositoryImpl extends QuerydslRepositorySupport
+        implements CustomOauthFrameworkAuthorizationRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public CustomOauth2FrameworkAuthorizationRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+    public CustomOauthFrameworkAuthorizationRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         super(QOauthFrameworkAuthorization.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
@@ -36,4 +36,13 @@ public class CustomOauth2FrameworkAuthorizationRepositoryImpl extends QuerydslRe
 
         return Optional.ofNullable(entity);
     }
+
+    @Transactional
+    @Override
+    public void deleteByUserId(Long userId) {
+        delete(oauthFrameworkAuthorization)
+                .where(oauthFrameworkAuthorization.user.id.eq(userId))
+                .execute();
+    }
+
 }
