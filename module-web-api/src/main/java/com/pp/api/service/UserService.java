@@ -54,8 +54,6 @@ public class UserService {
     }
 
     public UserProfile findUserProfileById(Long userId) {
-        checkUserPermission(userId);
-
         User user = userRepository.findWithProfileImagesById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 

@@ -76,7 +76,7 @@ public class PostController {
             path = "/api/v1/posts",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> findPosts(@Valid FindPostsRequest request) {
+    public ResponseEntity<?> findPostDetail(@Valid FindPostsRequest request) {
         FindPostsResponse response = findPostsFacade.findPosts(request);
 
         return ResponseEntity.ok(RestResponseWrapper.from(response));
@@ -87,7 +87,7 @@ public class PostController {
             path = "/api/v1/posts/{postId}",
             produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> findPosts(@PathVariable(name = "postId") Long postId) {
+    public ResponseEntity<?> findPostDetail(@PathVariable(name = "postId") Long postId) {
         FindPostDetailResponse response = findPostDetailFacade.findPostDetail(postId);
 
         return ResponseEntity.ok(RestResponseWrapper.from(response));
