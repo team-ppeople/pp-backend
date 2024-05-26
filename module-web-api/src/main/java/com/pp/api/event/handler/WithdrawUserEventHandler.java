@@ -4,6 +4,7 @@ import com.pp.api.client.apple.AppleClient;
 import com.pp.api.event.WithdrawUserEvent;
 import com.pp.api.service.PostUserActionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -12,6 +13,7 @@ import static org.springframework.security.oauth2.server.authorization.OAuth2Tok
 import static org.springframework.security.oauth2.server.authorization.OAuth2TokenType.REFRESH_TOKEN;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class WithdrawUserEventHandler {
@@ -20,13 +22,15 @@ public class WithdrawUserEventHandler {
 
     private final AppleClient appleClient;
 
-    @Async
+    @Async(value = "withdrawUserEventHandleExecutor")
     @TransactionalEventListener(
             phase = AFTER_COMMIT,
             fallbackExecution = true
     )
     void handle(WithdrawUserEvent event) {
         postUserActionService.deleteUserPostThumbsUpByUserId(event.userId());
+
+        log.info("success deleteUserPostThumbsUpByUserId : {}", event.userId());
 
         if (!event.isAppleOauthUser()) {
             return;
@@ -42,6 +46,8 @@ public class WithdrawUserEventHandler {
                 event.refreshToken(),
                 REFRESH_TOKEN
         );
+
+        log.info("success revoke token of apple oauth user");
     }
 
 }
