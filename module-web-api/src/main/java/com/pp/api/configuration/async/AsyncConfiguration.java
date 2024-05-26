@@ -19,8 +19,8 @@ public class AsyncConfiguration implements AsyncConfigurer {
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
 
-        threadPoolTaskExecutor.setCorePoolSize(10);
-        threadPoolTaskExecutor.setMaxPoolSize(10);
+        threadPoolTaskExecutor.setCorePoolSize(1);
+        threadPoolTaskExecutor.setMaxPoolSize(1);
         threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setAwaitTerminationSeconds(30);
         threadPoolTaskExecutor.setThreadNamePrefix("DEFAULT-EXECUTOR-");
@@ -43,6 +43,20 @@ public class AsyncConfiguration implements AsyncConfigurer {
         threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setAwaitTerminationSeconds(30);
         threadPoolTaskExecutor.setThreadNamePrefix("WITHDRAW-USER-EVENT-HANDLE-EXECUTOR-");
+        threadPoolTaskExecutor.initialize();
+
+        return threadPoolTaskExecutor;
+    }
+
+    @Bean
+    public Executor persistenceLoggingExecutor() {
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+
+        threadPoolTaskExecutor.setCorePoolSize(10);
+        threadPoolTaskExecutor.setMaxPoolSize(10);
+        threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        threadPoolTaskExecutor.setAwaitTerminationSeconds(30);
+        threadPoolTaskExecutor.setThreadNamePrefix("PERSISTENCE-LOGGING-EXECUTOR-");
         threadPoolTaskExecutor.initialize();
 
         return threadPoolTaskExecutor;
