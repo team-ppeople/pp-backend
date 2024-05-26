@@ -74,4 +74,14 @@ public class UserService {
         );
     }
 
+    public void deleteCascadeById(Long userId) {
+        checkUserPermission(userId);
+
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
+
+        userRepository.deleteCascadeById(userId);
+    }
+
 }

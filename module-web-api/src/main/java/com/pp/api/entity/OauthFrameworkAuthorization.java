@@ -3,10 +3,13 @@ package com.pp.api.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 /**
  * @see <a href="https://docs.spring.io/spring-authorization-server/reference/guides/how-to-jpa.html">spring authorization server referernce</a>
@@ -100,5 +103,8 @@ public class OauthFrameworkAuthorization {
 
     @Column(columnDefinition = "TEXT")
     private String deviceCodeMetadata;
+
+    @ManyToOne(fetch = LAZY, optional = false)
+    private User user;
 
 }

@@ -51,7 +51,7 @@ public class AppleClient {
         formData.add("token_type_hint", tokenType.getValue());
 
         appliWebClient.post()
-                .uri(appleClientProperty.tokenEndpoint())
+                .uri(appleClientProperty.revokeEndpoint())
                 .contentType(APPLICATION_FORM_URLENCODED)
                 .bodyValue(formData)
                 .retrieve()

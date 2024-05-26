@@ -1,13 +1,13 @@
 package com.pp.api.repository;
 
 import com.pp.api.entity.OauthFrameworkAuthorization;
-import com.pp.api.repository.custom.CustomOauth2FrameworkAuthorizationRepository;
+import com.pp.api.repository.custom.CustomOauthFrameworkAuthorizationRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
 public interface OauthFrameworkAuthorizationRepository extends JpaRepository<OauthFrameworkAuthorization, String>,
-        CustomOauth2FrameworkAuthorizationRepository {
+        CustomOauthFrameworkAuthorizationRepository {
 
     Optional<OauthFrameworkAuthorization> findByState(String state);
 

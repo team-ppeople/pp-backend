@@ -8,4 +8,6 @@ public interface CustomUserRepository {
 
     Optional<User> findWithProfileImagesById(Long userId);
 
+    void deleteCascadeById(Long userId);
+
 }

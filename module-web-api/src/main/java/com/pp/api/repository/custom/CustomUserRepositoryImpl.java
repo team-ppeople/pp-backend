@@ -5,9 +5,17 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.pp.api.entity.QComment.comment;
+import static com.pp.api.entity.QOauthUser.oauthUser;
+import static com.pp.api.entity.QOauthUserToken.oauthUserToken;
+import static com.pp.api.entity.QPost.post;
+import static com.pp.api.entity.QPostImage.postImage;
 import static com.pp.api.entity.QProfileImage.profileImage;
+import static com.pp.api.entity.QReportedComment.reportedComment;
+import static com.pp.api.entity.QReportedPost.reportedPost;
 import static com.pp.api.entity.QUploadFile.uploadFile;
 import static com.pp.api.entity.QUser.user;
 
@@ -34,6 +42,65 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                 .fetchOne();
 
         return Optional.ofNullable(entity);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCascadeById(Long userId) {
+        delete(reportedPost)
+                .where(reportedPost.reporter.id.eq(userId))
+                .execute();
+
+        delete(reportedComment)
+                .where(reportedComment.reporter.id.eq(userId))
+                .execute();
+
+        delete(comment)
+                .where(comment.creator.id.eq(userId))
+                .execute();
+
+        List<Long> uploadFileIds = jpaQueryFactory.select(uploadFile.id)
+                .from(uploadFile)
+                .where(uploadFile.uploader.id.eq(userId))
+                .fetch();
+
+        delete(postImage)
+                .where(postImage.uploadFile.id.in(uploadFileIds))
+                .execute();
+
+        delete(profileImage)
+                .where(profileImage.uploadFile.id.in(uploadFileIds))
+                .execute();
+
+        delete(uploadFile)
+                .where(uploadFile.id.in(uploadFileIds))
+                .execute();
+
+
+        delete(uploadFile)
+                .where(uploadFile.uploader.id.eq(userId))
+                .execute();
+
+        delete(post)
+                .where(post.creator.id.eq(userId))
+                .execute();
+
+        Long oauthUserId = jpaQueryFactory.select(oauthUser.id)
+                .from(oauthUser)
+                .where(oauthUser.user.id.eq(userId))
+                .fetchOne();
+
+        delete(oauthUserToken)
+                .where(oauthUserToken.oauthUser.id.eq(oauthUserId))
+                .execute();
+
+        delete(oauthUser)
+                .where(oauthUser.id.eq(oauthUserId))
+                .execute();
+
+        delete(user)
+                .where(user.id.eq(userId))
+                .execute();
     }
 
 }

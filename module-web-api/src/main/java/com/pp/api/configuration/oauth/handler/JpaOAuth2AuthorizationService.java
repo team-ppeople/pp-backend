@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pp.api.configuration.oauth.jackson.JwtClientAssertionOauth2AuthorizationServerJackson2Module;
 import com.pp.api.entity.OauthFrameworkAuthorization;
 import com.pp.api.repository.OauthFrameworkAuthorizationRepository;
+import com.pp.api.repository.UserRepository;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -30,6 +31,7 @@ import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenTy
 import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.SERVER_ERROR;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 import static org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames.ID_TOKEN;
+import static org.springframework.security.oauth2.jwt.JwtClaimNames.SUB;
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
@@ -43,6 +45,8 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
 
     private final RegisteredClientRepository registeredClientRepository;
 
+    private final UserRepository userRepository;
+
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModules(getModules(this.getClass().getClassLoader()))
             .registerModule(new OAuth2AuthorizationServerJackson2Module())
@@ -50,12 +54,14 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
 
     public JpaOAuth2AuthorizationService(
             OauthFrameworkAuthorizationRepository authorizationRepository,
-            RegisteredClientRepository registeredClientRepository
+            RegisteredClientRepository registeredClientRepository,
+            UserRepository userRepository
     ) {
         Assert.notNull(authorizationRepository, "authorizationRepository cannot be null");
         Assert.notNull(registeredClientRepository, "registeredClientRepository cannot be null");
         this.authorizationRepository = authorizationRepository;
         this.registeredClientRepository = registeredClientRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -250,6 +256,10 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
 
         if (accessToken != null && accessToken.getToken().getScopes() != null) {
             entity.setAccessTokenScopes(collectionToDelimitedString(accessToken.getToken().getScopes(), ","));
+        }
+
+        if (accessToken != null && accessToken.getClaims() != null) {
+            entity.setUser(userRepository.getReferenceById((Long) accessToken.getClaims().get(SUB)));
         }
 
         Token<OAuth2RefreshToken> refreshToken = authorization.getToken(OAuth2RefreshToken.class);
