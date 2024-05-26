@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <springProfile name="local">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+        <property name="LOG_FILE_LOGGING_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [traceId=%X{traceId}] [%thread] [%logger{40}] - %msg%n"/>
+        <property name="LOG_FILE_BASE_PATH" value="logs"/>
+        <property name="LOG_FILE_NAME" value="application.log"/>
+        <property name="ROLLING_LOG_FILE_NAME_PATTERN" value="application-%d{yyyy-MM-dd}.log"/>
+        <property name="MAX_HISTORY" value="10"/>
+        <property name="MAX_TOTAL_SIZE" value="3GB"/>
+
+        <appender name="ROLLING_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${LOG_FILE_LOGGING_PATTERN}</pattern>
+                <charset>utf8</charset>
+            </encoder>
+
+            <file>${LOG_FILE_BASE_PATH}/${LOG_FILE_NAME}</file>
+
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_FILE_BASE_PATH}/${ROLLING_LOG_FILE_NAME_PATTERN}</fileNamePattern>
+                <maxHistory>${MAX_HISTORY}</maxHistory>
+                <totalSizeCap>${MAX_TOTAL_SIZE}</totalSizeCap>
+            </rollingPolicy>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_LOG_FILE"/>
+        </root>
+    </springProfile>
+</configuration>
