@@ -31,7 +31,7 @@ public final class CustomOauth2TokenCustomizer implements OAuth2TokenCustomizer<
             if (context.getTokenType().equals(ACCESS_TOKEN)) {
                 if (
                         context.getPrincipal() instanceof OAuth2ClientAuthenticationToken authentication &&
-                                authentication.getClientAuthenticationMethod() == PRIVATE_KEY_JWT &&
+                                authentication.getClientAuthenticationMethod().equals(PRIVATE_KEY_JWT) &&
                                 authentication.getCredentials() instanceof Jwt jwt
                 ) {
                     String subject = jwt.getSubject();
