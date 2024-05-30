@@ -44,6 +44,19 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
         return Optional.ofNullable(entity);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> findWithProfileImagesByIds(List<Long> userIds) {
+        return from(user)
+                .distinct()
+                .leftJoin(user.profileImages, profileImage)
+                .fetchJoin()
+                .leftJoin(profileImage.uploadFile, uploadFile)
+                .fetchJoin()
+                .where(user.id.in(userIds))
+                .fetch();
+    }
+
     @Transactional
     @Override
     public void deleteCascadeById(Long userId) {

@@ -60,7 +60,9 @@ public class CommentService {
                                 comment.getId(),
                                 comment.getContent(),
                                 comment.getCreatedDate(),
-                                comment.getUpdatedDate()
+                                comment.getUpdatedDate(),
+                                comment.getCreator()
+                                        .getId()
                         )
                 )
                 .toList();

@@ -12,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.pp.api.util.JwtAuthenticationUtil.checkUserPermission;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
@@ -57,6 +60,31 @@ public class UserService {
         User user = userRepository.findWithProfileImagesById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
+        return mapToUserProfile(user);
+    }
+
+    public List<UserProfile> findUserProfilesByIds(List<Long> userIds) {
+        if (isEmpty(userIds)) {
+            return List.of();
+        }
+
+        return userRepository.findWithProfileImagesByIds(userIds)
+                .stream()
+                .map(this::mapToUserProfile)
+                .toList();
+    }
+
+    public void deleteCascadeById(Long userId) {
+        checkUserPermission(userId);
+
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
+
+        userRepository.deleteCascadeById(userId);
+    }
+
+    private UserProfile mapToUserProfile(User user) {
         String profileImageUrl = user.getProfileImages()
                 .stream()
                 .limit(1)
@@ -72,16 +100,6 @@ public class UserService {
                 user.getCreatedDate(),
                 user.getUpdatedDate()
         );
-    }
-
-    public void deleteCascadeById(Long userId) {
-        checkUserPermission(userId);
-
-        if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
-
-        userRepository.deleteCascadeById(userId);
     }
 
 }

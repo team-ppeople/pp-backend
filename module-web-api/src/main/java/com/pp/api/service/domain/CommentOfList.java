@@ -6,6 +6,7 @@ public record CommentOfList(
         Long id,
         String content,
         LocalDateTime createdDate,
-        LocalDateTime updatedDate
+        LocalDateTime updatedDate,
+        Long creatorId
 ) {
 }
