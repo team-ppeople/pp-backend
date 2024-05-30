@@ -13,7 +13,15 @@ public record FindCommentsResponse(
             Long id,
             String content,
             @JsonFormat(pattern = "yyyy.MM.dd")
-            LocalDateTime createDate
+            LocalDateTime createDate,
+            CreatorResponse createdUser
+    ) {
+    }
+
+    public record CreatorResponse(
+            Long id,
+            String nickname,
+            String profileImageUrl
     ) {
     }
 
