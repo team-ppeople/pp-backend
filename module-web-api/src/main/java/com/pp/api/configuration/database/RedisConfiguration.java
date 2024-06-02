@@ -11,8 +11,8 @@ import org.springframework.scripting.support.ResourceScriptSource;
 public class RedisConfiguration {
 
     @Bean
-    public RedisScript<Void> postThumbsUpScript() {
-        ClassPathResource classPathResource = new ClassPathResource("script/lua/post-thumbs-up.lua");
+    public RedisScript<Void> thumbsUpPostScript() {
+        ClassPathResource classPathResource = new ClassPathResource("script/lua/thumbs-up-post.lua");
 
         ResourceScriptSource resourceScriptSource = new ResourceScriptSource(classPathResource);
 
@@ -25,8 +25,22 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public RedisScript<Void> postThumbsSidewaysScript() {
-        ClassPathResource classPathResource = new ClassPathResource("script/lua/post-thumbs-sideways.lua");
+    public RedisScript<Void> thumbsSidewaysPostScript() {
+        ClassPathResource classPathResource = new ClassPathResource("script/lua/thumbs-sideways-post.lua");
+
+        ResourceScriptSource resourceScriptSource = new ResourceScriptSource(classPathResource);
+
+        DefaultRedisScript<Void> redisScript = new DefaultRedisScript<>();
+
+        redisScript.setScriptSource(resourceScriptSource);
+        redisScript.setResultType(Void.class);
+
+        return redisScript;
+    }
+
+    @Bean
+    public RedisScript<Void> deleteThumbsUpPostScript() {
+        ClassPathResource classPathResource = new ClassPathResource("script/lua/delete-thumbs-up-post.lua");
 
         ResourceScriptSource resourceScriptSource = new ResourceScriptSource(classPathResource);
 

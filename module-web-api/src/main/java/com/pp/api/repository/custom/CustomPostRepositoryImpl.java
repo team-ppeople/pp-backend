@@ -9,8 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.pp.api.entity.QComment.comment;
 import static com.pp.api.entity.QPost.post;
 import static com.pp.api.entity.QPostImage.postImage;
+import static com.pp.api.entity.QReportedComment.reportedComment;
+import static com.pp.api.entity.QReportedPost.reportedPost;
 import static com.pp.api.entity.QUploadFile.uploadFile;
 
 public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
@@ -72,6 +75,48 @@ public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .fetchOne();
 
         return Optional.ofNullable(entity);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCascadeById(Long id) {
+        delete(reportedPost)
+                .where(reportedPost.post.id.eq(id))
+                .execute();
+
+        List<Long> commentIds = jpaQueryFactory.select(comment.id)
+                .from(comment)
+                .where(comment.post.id.eq(id))
+                .fetch();
+
+        if (!commentIds.isEmpty()) {
+            delete(reportedComment)
+                    .where(reportedComment.comment.id.in(commentIds))
+                    .execute();
+
+            delete(comment)
+                    .where(comment.id.in(commentIds))
+                    .execute();
+        }
+
+        List<Long> uploadFileIds = jpaQueryFactory.select(postImage.uploadFile.id)
+                .from(postImage)
+                .where(postImage.post.id.eq(id))
+                .fetch();
+
+        if (!uploadFileIds.isEmpty()) {
+            delete(postImage)
+                    .where(postImage.post.id.eq(id))
+                    .execute();
+
+            delete(uploadFile)
+                    .where(uploadFile.id.in(uploadFileIds))
+                    .execute();
+        }
+
+        delete(post)
+                .where(post.id.eq(id))
+                .execute();
     }
 
     private BooleanExpression lowerThanLastId(Long lastId) {
