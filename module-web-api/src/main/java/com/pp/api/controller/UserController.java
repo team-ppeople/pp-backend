@@ -58,7 +58,7 @@ public class UserController {
         return ResponseEntity.ok(RestResponseWrapper.from(response));
     }
 
-    @PreAuthorize(value = "isAuthenticated()")
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
     @DeleteMapping(path = "/api/v1/users/{userId}")
     public ResponseEntity<?> withdraw(@PathVariable(name = "userId") Long userId) {
         withdrawUserFacade.withdraw(userId);

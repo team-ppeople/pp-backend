@@ -71,7 +71,7 @@ public class PostController {
                 .build();
     }
 
-    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read') && hasAuthority('SCOPE_post.write')")
     @DeleteMapping(
             path = "/api/v1/posts/{postId}",
             produces = APPLICATION_JSON_VALUE
