@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.pp.api.entity.QComment.comment;
+import static com.pp.api.entity.QOauthFrameworkAuthorization.oauthFrameworkAuthorization;
 import static com.pp.api.entity.QOauthUser.oauthUser;
 import static com.pp.api.entity.QOauthUserToken.oauthUserToken;
 import static com.pp.api.entity.QPost.post;
@@ -77,22 +78,19 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(uploadFile.uploader.id.eq(userId))
                 .fetch();
 
-        delete(postImage)
-                .where(postImage.uploadFile.id.in(uploadFileIds))
-                .execute();
+        if (!uploadFileIds.isEmpty()) {
+            delete(postImage)
+                    .where(postImage.uploadFile.id.in(uploadFileIds))
+                    .execute();
 
-        delete(profileImage)
-                .where(profileImage.uploadFile.id.in(uploadFileIds))
-                .execute();
+            delete(profileImage)
+                    .where(profileImage.uploadFile.id.in(uploadFileIds))
+                    .execute();
 
-        delete(uploadFile)
-                .where(uploadFile.id.in(uploadFileIds))
-                .execute();
-
-
-        delete(uploadFile)
-                .where(uploadFile.uploader.id.eq(userId))
-                .execute();
+            delete(uploadFile)
+                    .where(uploadFile.id.in(uploadFileIds))
+                    .execute();
+        }
 
         delete(post)
                 .where(post.creator.id.eq(userId))
@@ -103,12 +101,18 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(oauthUser.user.id.eq(userId))
                 .fetchOne();
 
-        delete(oauthUserToken)
-                .where(oauthUserToken.oauthUser.id.eq(oauthUserId))
-                .execute();
+        if (oauthUserId != null) {
+            delete(oauthUserToken)
+                    .where(oauthUserToken.oauthUser.id.eq(oauthUserId))
+                    .execute();
 
-        delete(oauthUser)
-                .where(oauthUser.id.eq(oauthUserId))
+            delete(oauthUser)
+                    .where(oauthUser.id.eq(oauthUserId))
+                    .execute();
+        }
+
+        delete(oauthFrameworkAuthorization)
+                .where(oauthFrameworkAuthorization.user.id.eq(userId))
                 .execute();
 
         delete(user)

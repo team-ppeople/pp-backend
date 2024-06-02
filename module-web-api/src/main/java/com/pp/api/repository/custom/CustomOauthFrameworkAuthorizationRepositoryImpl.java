@@ -37,12 +37,4 @@ public class CustomOauthFrameworkAuthorizationRepositoryImpl extends QuerydslRep
         return Optional.ofNullable(entity);
     }
 
-    @Transactional
-    @Override
-    public void deleteByUserId(Long userId) {
-        delete(oauthFrameworkAuthorization)
-                .where(oauthFrameworkAuthorization.user.id.eq(userId))
-                .execute();
-    }
-
 }

@@ -1,7 +1,6 @@
 package com.pp.api.facade;
 
 import com.pp.api.event.WithdrawUserEvent;
-import com.pp.api.service.OauthFrameworkAuthorizationService;
 import com.pp.api.service.OauthUserTokensService;
 import com.pp.api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ public class WithdrawUserFacade {
     private final UserService userService;
 
     private final OauthUserTokensService oauthUserTokensService;
-
-    private final OauthFrameworkAuthorizationService oauthFrameworkAuthorizationService;
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -36,8 +33,6 @@ public class WithdrawUserFacade {
                                 )
                         )
                 );
-
-        oauthFrameworkAuthorizationService.deleteByUserId(userId);
 
         userService.deleteCascadeById(userId);
     }

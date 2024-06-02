@@ -8,6 +8,4 @@ public interface CustomOauthFrameworkAuthorizationRepository {
 
     Optional<OauthFrameworkAuthorization> findByAnyToken(String token);
 
-    void deleteByUserId(Long userId);
-
 }
