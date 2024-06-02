@@ -23,6 +23,11 @@ public interface PostUserActionRepository {
             Long actorId
     );
 
+    void deleteThumbsUp(
+            Long postId,
+            Long creatorId
+    );
+
     void deleteUserPostThumbsUpByUserId(Long userId);
 
 }

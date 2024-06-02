@@ -15,11 +15,14 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    @Qualifier(value = "postThumbsUpScript")
-    private final RedisScript<Void> postThumbsUpScript;
+    @Qualifier(value = "thumbsUpPostScript")
+    private final RedisScript<Void> thumbsUpPostScript;
 
-    @Qualifier(value = "postThumbsSidewaysScript")
-    private final RedisScript<Void> postThumbsSidewaysScript;
+    @Qualifier(value = "thumbsSidewaysPostScript")
+    private final RedisScript<Void> thumbsSidewaysPostScript;
+
+    @Qualifier(value = "deleteThumbsUpPostScript")
+    private final RedisScript<Void> deleteThumbsUpPostScript;
 
     @Override
     public void thumbsUp(
@@ -28,7 +31,7 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
             Long actorId
     ) {
         stringRedisTemplate.execute(
-                postThumbsUpScript,
+                thumbsUpPostScript,
                 asList(
                         parsePostThumbsUpKey(postId),
                         parseUserPostThumbsUpCountKey(creatorId)
@@ -44,12 +47,23 @@ public class PostUserActionRepositoryImpl implements PostUserActionRepository {
             Long actorId
     ) {
         stringRedisTemplate.execute(
-                postThumbsSidewaysScript,
+                thumbsSidewaysPostScript,
                 asList(
                         parsePostThumbsUpKey(postId),
                         parseUserPostThumbsUpCountKey(creatorId)
                 ),
                 parsePostThumbsUpValue(actorId)
+        );
+    }
+
+    @Override
+    public void deleteThumbsUp(Long postId, Long creatorId) {
+        stringRedisTemplate.execute(
+                deleteThumbsUpPostScript,
+                asList(
+                        parsePostThumbsUpKey(postId),
+                        parseUserPostThumbsUpCountKey(creatorId)
+                )
         );
     }
 

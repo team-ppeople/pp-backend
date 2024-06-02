@@ -22,4 +22,6 @@ public interface CustomPostRepository {
 
     Optional<Post> findWithImagesById(Long id);
 
+    void deleteCascadeById(Long userId);
+
 }

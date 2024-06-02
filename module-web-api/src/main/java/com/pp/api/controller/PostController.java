@@ -71,6 +71,18 @@ public class PostController {
                 .build();
     }
 
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
+    @DeleteMapping(
+            path = "/api/v1/posts/{postId}",
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> delete(@PathVariable(name = "postId") Long postId) {
+        postService.deleteById(postId);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
     @GetMapping(
             path = "/api/v1/posts",

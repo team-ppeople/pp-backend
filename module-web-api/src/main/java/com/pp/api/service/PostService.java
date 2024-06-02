@@ -166,6 +166,22 @@ public class PostService {
     }
 
     @Transactional
+    public void deleteById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        checkUserPermission(post.getCreator().getId());
+
+        postRepository.deleteCascadeById(postId);
+
+        postUserActionRepository.deleteThumbsUp(
+                postId,
+                post.getCreator()
+                        .getId()
+        );
+    }
+
+    @Transactional
     public void report(Long postId) {
         User user = userRepository.findById(getAuthenticatedUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
