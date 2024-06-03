@@ -4,7 +4,6 @@ import com.pp.api.controller.dto.FindUserProfileResponse;
 import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.controller.dto.UpdateUserRequest;
 import com.pp.api.facade.FindUserProfileFacade;
-import com.pp.api.facade.WithdrawUserFacade;
 import com.pp.api.service.UserService;
 import com.pp.api.service.command.UpdateUserCommand;
 import jakarta.validation.Valid;
@@ -22,8 +21,6 @@ public class UserController {
     private final UserService userService;
 
     private final FindUserProfileFacade findUserProfileFacade;
-
-    private final WithdrawUserFacade withdrawUserFacade;
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
     @PatchMapping(
@@ -61,7 +58,7 @@ public class UserController {
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
     @DeleteMapping(path = "/api/v1/users/{userId}")
     public ResponseEntity<?> withdraw(@PathVariable(name = "userId") Long userId) {
-        withdrawUserFacade.withdraw(userId);
+        userService.withdraw(userId);
 
         return ResponseEntity.ok()
                 .build();

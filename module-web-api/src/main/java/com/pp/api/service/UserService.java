@@ -1,14 +1,19 @@
 package com.pp.api.service;
 
+import com.pp.api.entity.OauthUserToken;
 import com.pp.api.entity.ProfileImage;
 import com.pp.api.entity.UploadFile;
 import com.pp.api.entity.User;
+import com.pp.api.event.WithdrawOauthUserEvent;
+import com.pp.api.event.WithdrawUserEvent;
+import com.pp.api.repository.OauthUserTokenRepository;
 import com.pp.api.repository.ProfileImageRepository;
 import com.pp.api.repository.UploadFileRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.UpdateUserCommand;
 import com.pp.api.service.domain.UserProfile;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +32,10 @@ public class UserService {
     private final UploadFileRepository uploadFileRepository;
 
     private final ProfileImageRepository profileImageRepository;
+
+    private final OauthUserTokenRepository oauthUserTokenRepository;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void update(UpdateUserCommand command) {
@@ -74,14 +83,40 @@ public class UserService {
                 .toList();
     }
 
-    public void deleteCascadeById(Long userId) {
+    @Transactional
+    public void withdraw(Long userId) {
         checkUserPermission(userId);
 
-        if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        publishWithdrawUserEvent(user);
+
+        oauthUserTokenRepository.findByUserId(userId)
+                .ifPresent(this::publishWithdrawOauthUserEvent);
 
         userRepository.deleteCascadeById(userId);
+    }
+
+    private void publishWithdrawUserEvent(User user) {
+        WithdrawUserEvent event = new WithdrawUserEvent(
+                user.getId()
+        );
+
+        applicationEventPublisher.publishEvent(event);
+    }
+
+    private void publishWithdrawOauthUserEvent(OauthUserToken oauthUserToken) {
+        WithdrawOauthUserEvent event = new WithdrawOauthUserEvent(
+                oauthUserToken.getOauthUser()
+                        .getUser()
+                        .getId(),
+                oauthUserToken.getAccessToken(),
+                oauthUserToken.getRefreshToken(),
+                oauthUserToken.getClient()
+        );
+
+        applicationEventPublisher.publishEvent(event);
     }
 
     private UserProfile mapToUserProfile(User user) {

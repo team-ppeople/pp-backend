@@ -1,6 +1,7 @@
 package com.pp.api.event.handler;
 
 import com.pp.api.client.apple.AppleClient;
+import com.pp.api.event.WithdrawOauthUserEvent;
 import com.pp.api.event.WithdrawUserEvent;
 import com.pp.api.service.PostUserActionService;
 import lombok.RequiredArgsConstructor;
@@ -28,26 +29,49 @@ public class WithdrawUserEventHandler {
             fallbackExecution = true
     )
     void handle(WithdrawUserEvent event) {
+        log.info(
+                "handle WithdrawUserEvent (userId : {})",
+                event.userId()
+        );
+
         postUserActionService.deleteUserPostThumbsUpByUserId(event.userId());
 
-        log.info("success deleteUserPostThumbsUpByUserId : {}", event.userId());
+        log.info(
+                "success deleteUserPostThumbsUpByUserId (userId : {})",
+                event.userId()
+        );
+    }
 
+    @Async(value = "withdrawUserEventHandleExecutor")
+    @TransactionalEventListener(
+            phase = AFTER_COMMIT,
+            fallbackExecution = true
+    )
+    void handle(WithdrawOauthUserEvent event) {
+        log.info(
+                "handle WithdrawOauthUserEvent (client: {})",
+                event.client()
+        );
+
+        // 애플 oauth 로그인 유저는 회원 탈퇴시에 엑세스 토큰 및 리프레시 토큰의 revoke 요청을 하지 않으면 심사가 통과되지 않는다고 한다.
         if (!event.isAppleOauthUser()) {
             return;
         }
 
-        // 애플 oauth 로그인 유저는 회원 탈퇴시에 엑세스 토큰 및 리프레시 토큰의 revoke 요청을 하지 않으면 심사가 통과되지 않는다고 한다.
         appleClient.revoke(
-                event.accessToken(),
+                event.oauthUserAccessToken(),
                 ACCESS_TOKEN
         );
 
         appleClient.revoke(
-                event.refreshToken(),
+                event.oauthUserRefreshToken(),
                 REFRESH_TOKEN
         );
 
-        log.info("success revoke token of apple oauth user");
+        log.info(
+                "success revoke token of oauth user (client: {})",
+                event.client()
+        );
     }
 
 }
