@@ -5,12 +5,9 @@ import com.pp.api.entity.OauthUserToken;
 import com.pp.api.repository.OauthUserRepository;
 import com.pp.api.repository.OauthUserTokenRepository;
 import com.pp.api.service.command.SaveOauthUserTokenCommand;
-import com.pp.api.service.domain.OauthUserAuthenticatedToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,24 +46,6 @@ public class OauthUserTokensService {
 
                             oauthUserTokenRepository.save(oauthUserToken);
                         }
-                );
-    }
-
-    public Optional<OauthUserAuthenticatedToken> findByUserId(Long userId) {
-        return oauthUserTokenRepository.findByUserId(userId)
-                .map(oauthUserToken ->
-                        new OauthUserAuthenticatedToken(
-                                oauthUserToken.getId(),
-                                oauthUserToken.getClient(),
-                                oauthUserToken.getAccessToken(),
-                                oauthUserToken.getRefreshToken(),
-                                oauthUserToken.getExpiresIn(),
-                                oauthUserToken.getOauthUser()
-                                        .getId(),
-                                oauthUserToken.getOauthUser()
-                                        .getUser()
-                                        .getId()
-                        )
                 );
     }
 
