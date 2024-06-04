@@ -1,13 +1,14 @@
 package com.pp.api.fixture;
 
 import com.pp.api.entity.OauthFrameworkAuthorization;
+import com.pp.api.entity.User;
 
 import static java.time.Instant.now;
 import static java.util.UUID.randomUUID;
 
 public class OauthFrameworkAuthorizationFixture {
 
-    public static OauthFrameworkAuthorization of() {
+    public static OauthFrameworkAuthorization ofUser(User user) {
         OauthFrameworkAuthorization oauthFrameworkAuthorization = new OauthFrameworkAuthorization();
 
         oauthFrameworkAuthorization.setId(randomUUID().toString());
@@ -44,6 +45,7 @@ public class OauthFrameworkAuthorizationFixture {
         oauthFrameworkAuthorization.setUserCodeIssuedAt(now());
         oauthFrameworkAuthorization.setUserCodeExpiresAt(now());
         oauthFrameworkAuthorization.setDeviceCodeMetadata(randomUUID().toString());
+        oauthFrameworkAuthorization.setUser(user);
 
         return oauthFrameworkAuthorization;
     }
