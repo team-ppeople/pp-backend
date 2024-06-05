@@ -1,8 +1,11 @@
 package com.pp.api.unit.repository;
 
 import com.pp.api.entity.OauthFrameworkAuthorization;
+import com.pp.api.entity.User;
 import com.pp.api.fixture.OauthFrameworkAuthorizationFixture;
+import com.pp.api.fixture.UserFixture;
 import com.pp.api.repository.OauthFrameworkAuthorizationRepository;
+import com.pp.api.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,11 +16,16 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
     @Autowired
     private OauthFrameworkAuthorizationRepository oauthFrameworkAuthorizationRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void Oauth_framework_authorization_엔티티를_영속화한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
 
-        OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.save(oauthFrameworkAuthorization);
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
+
+        OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
         assertThat(savedOauthFrameworkAuthorization.getId()).isNotNull();
         assertThat(savedOauthFrameworkAuthorization.getRegisteredClientId()).isEqualTo(oauthFrameworkAuthorization.getRegisteredClientId());
@@ -57,7 +65,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_id으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -104,7 +114,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_여러조건으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -151,7 +163,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_state으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -198,7 +212,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_authorization_code_value으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -245,7 +261,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_access_token_value으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -292,7 +310,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_refresh_token_value으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -339,7 +359,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_oidc_token_value으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -386,7 +408,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_user_code_value으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
@@ -433,7 +457,9 @@ class OauthFrameworkAuthorizationRepositoryTest extends AbstractDataJpaTestConte
 
     @Test
     void Oauth_framework_authorization_엔티티를_device_code_value으로_조회한다() {
-        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.of();
+        User user = userRepository.save(UserFixture.of());
+
+        OauthFrameworkAuthorization oauthFrameworkAuthorization = OauthFrameworkAuthorizationFixture.ofUser(user);
 
         OauthFrameworkAuthorization savedOauthFrameworkAuthorization = oauthFrameworkAuthorizationRepository.saveAndFlush(oauthFrameworkAuthorization);
 
