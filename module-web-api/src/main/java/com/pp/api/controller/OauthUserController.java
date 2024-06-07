@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.pp.api.controller.dto.RestResponseWrapper.from;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class OauthUserController {
 
         IsRegisteredOauthUserResponse response = new IsRegisteredOauthUserResponse(isRegistered);
 
-        return ResponseEntity.ok(RestResponseWrapper.from(response));
+        return ok(from(response));
     }
 
 

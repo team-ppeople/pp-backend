@@ -13,7 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static com.pp.api.controller.dto.RestResponseWrapper.empty;
+import static com.pp.api.controller.dto.RestResponseWrapper.from;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,8 +43,7 @@ public class CommentController {
 
         commentService.create(command);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
@@ -58,7 +60,7 @@ public class CommentController {
                 request
         );
 
-        return ResponseEntity.ok(RestResponseWrapper.from(response));
+        return ok(from(response));
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
@@ -69,8 +71,7 @@ public class CommentController {
     public ResponseEntity<?> report(@PathVariable(name = "commentId") Long commentId) {
         commentService.report(commentId);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
 }
