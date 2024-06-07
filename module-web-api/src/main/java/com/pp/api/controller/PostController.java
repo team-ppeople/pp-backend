@@ -16,7 +16,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import static com.pp.api.controller.dto.RestResponseWrapper.empty;
+import static com.pp.api.controller.dto.RestResponseWrapper.from;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,7 +48,7 @@ public class PostController {
                 request
         );
 
-        return ResponseEntity.ok(RestResponseWrapper.from(response));
+        return ok(from(response));
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
@@ -67,8 +71,8 @@ public class PostController {
                 .buildAndExpand(createdPost.id())
                 .toUri();
 
-        return ResponseEntity.created(location)
-                .build();
+        return created(location)
+                .body(empty());
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read') && hasAuthority('SCOPE_post.write')")
@@ -79,8 +83,7 @@ public class PostController {
     public ResponseEntity<?> delete(@PathVariable(name = "postId") Long postId) {
         postService.deleteById(postId);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
@@ -91,7 +94,7 @@ public class PostController {
     public ResponseEntity<?> findPostDetail(@Valid FindPostsRequest request) {
         FindPostsResponse response = findPostsFacade.findPosts(request);
 
-        return ResponseEntity.ok(RestResponseWrapper.from(response));
+        return ok(from(response));
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.read')")
@@ -102,7 +105,7 @@ public class PostController {
     public ResponseEntity<?> findPostDetail(@PathVariable(name = "postId") Long postId) {
         FindPostDetailResponse response = findPostDetailFacade.findPostDetail(postId);
 
-        return ResponseEntity.ok(RestResponseWrapper.from(response));
+        return ok(from(response));
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
@@ -113,8 +116,7 @@ public class PostController {
     public ResponseEntity<?> report(@PathVariable(name = "postId") Long postId) {
         postService.report(postId);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
@@ -125,8 +127,7 @@ public class PostController {
     public ResponseEntity<?> thumbsUp(@PathVariable(name = "postId") Long postId) {
         postService.thumbsUp(postId);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_post.write')")
@@ -137,8 +138,7 @@ public class PostController {
     public ResponseEntity<?> thumbsSideways(@PathVariable(name = "postId") Long postId) {
         postService.thumbsSideways(postId);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
 }

@@ -1,7 +1,6 @@
 package com.pp.api.controller;
 
 import com.pp.api.controller.dto.FindUserProfileResponse;
-import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.controller.dto.UpdateUserRequest;
 import com.pp.api.facade.FindUserProfileFacade;
 import com.pp.api.service.UserService;
@@ -12,7 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static com.pp.api.controller.dto.RestResponseWrapper.empty;
+import static com.pp.api.controller.dto.RestResponseWrapper.from;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,8 +42,7 @@ public class UserController {
 
         userService.update(command);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read')")
@@ -52,7 +53,7 @@ public class UserController {
     public ResponseEntity<?> findUserProfile(@PathVariable(name = "userId") Long userId) {
         FindUserProfileResponse response = findUserProfileFacade.findUserProfile(userId);
 
-        return ResponseEntity.ok(RestResponseWrapper.from(response));
+        return ok(from(response));
     }
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
@@ -60,8 +61,7 @@ public class UserController {
     public ResponseEntity<?> withdraw(@PathVariable(name = "userId") Long userId) {
         userService.withdraw(userId);
 
-        return ResponseEntity.ok()
-                .build();
+        return ok(empty());
     }
 
 

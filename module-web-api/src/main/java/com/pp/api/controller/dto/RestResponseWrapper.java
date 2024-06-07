@@ -3,6 +3,8 @@ package com.pp.api.controller.dto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @Getter
@@ -13,6 +15,10 @@ public class RestResponseWrapper<T> {
 
     public static <T> RestResponseWrapper<T> from(T data) {
         return new RestResponseWrapper<>(data);
+    }
+
+    public static RestResponseWrapper<?> empty() {
+        return new RestResponseWrapper<>(Map.of());
     }
 
 }
