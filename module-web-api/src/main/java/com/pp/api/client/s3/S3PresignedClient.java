@@ -23,7 +23,7 @@ public class S3PresignedClient {
     public PresignedURL createPutPresignedUrl(PresignedUploadUrlRequest request) {
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(awsS3Property.bucket())
-                .key(request.toFileKeyObjectPath() + UUID.randomUUID())
+                .key(request.appendObjectKey(String.valueOf(UUID.randomUUID())))
                 .contentLength(request.fileContentLength())
                 .contentType(request.fileContentType().getType())
                 .build();
