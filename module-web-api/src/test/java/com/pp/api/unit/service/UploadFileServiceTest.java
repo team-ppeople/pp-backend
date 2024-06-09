@@ -53,6 +53,7 @@ public class UploadFileServiceTest extends AbstractIntegrationTestContext {
         // then
         assertThat(fileUrl.contains(request.toFileKeyObjectPath())).isTrue();
         assertThat(uploadUrl.contains(request.toFileKeyObjectPath())).isTrue();
+        assertThat(fileUrl.endsWith(request.fileContentType().getValue())).isTrue();
     }
 
     @Test

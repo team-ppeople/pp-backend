@@ -11,12 +11,14 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum UploadFileContentType {
 
-    IMAGE_PNG("image/png"),
-    IMAGE_GIF("image/gif"),
-    IMAGE_JPEG("image/jpeg");
+    IMAGE_PNG("image/png", "png"),
+    IMAGE_GIF("image/gif", "gif"),
+    IMAGE_JPEG("image/jpeg", "jpeg");
 
     @JsonValue
     private final String type;
+
+    private final String value;
 
     @JsonCreator
     public static UploadFileContentType fromType(String type) {
