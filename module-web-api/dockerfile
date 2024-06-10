@@ -1,0 +1,18 @@
+FROM eclipse-temurin:17-jdk-alpine as builder
+WORKDIR /workspace
+COPY module-web-api/build/libs/module-web-api.jar application.jar
+RUN mkdir extracted && (java -Djarmode=layertools -jar application.jar extract --destination extracted)
+
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /workspace
+RUN addgroup -S app && adduser -S app -G app
+RUN mkdir -p /workspace/logs && chown -R app:app /workspace/logs
+VOLUME /workspace/logs
+ARG EXTRACTED=/workspace/extracted
+COPY --from=builder ${EXTRACTED}/dependencies/ ./
+COPY --from=builder ${EXTRACTED}/spring-boot-loader/ ./
+COPY --from=builder ${EXTRACTED}/snapshot-dependencies/ ./
+COPY --from=builder ${EXTRACTED}/application/ ./
+USER app
+WORKDIR /workspace
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
