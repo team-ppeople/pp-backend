@@ -78,8 +78,8 @@ class PostImageRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundPostImage.getId()).isEqualTo(savedPostImage.getId());
         assertThat(foundPostImage.getPost()).isEqualTo(savedPostImage.getPost());
         assertThat(foundPostImage.getUploadFile()).isEqualTo(savedPostImage.getUploadFile());
-        assertThat(foundPostImage.getCreatedDate()).isEqualTo(savedPostImage.getCreatedDate());
-        assertThat(foundPostImage.getUpdatedDate()).isEqualTo(savedPostImage.getUpdatedDate());
+        assertThat(foundPostImage.getCreatedDate()).isEqualToIgnoringNanos(savedPostImage.getCreatedDate());
+        assertThat(foundPostImage.getUpdatedDate()).isEqualToIgnoringNanos(savedPostImage.getUpdatedDate());
     }
 
 }

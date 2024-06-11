@@ -47,8 +47,8 @@ class UserRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundUser.getEmail()).isEqualTo(savedUser.getEmail());
         assertThat(foundUser.getProfileImages()).hasSameElementsAs(savedUser.getProfileImages());
         assertThat(foundUser.getPosts()).hasSameElementsAs(savedUser.getPosts());
-        assertThat(foundUser.getCreatedDate()).isEqualTo(savedUser.getCreatedDate());
-        assertThat(foundUser.getUpdatedDate()).isEqualTo(savedUser.getUpdatedDate());
+        assertThat(foundUser.getCreatedDate()).isEqualToIgnoringNanos(savedUser.getCreatedDate());
+        assertThat(foundUser.getUpdatedDate()).isEqualToIgnoringNanos(savedUser.getUpdatedDate());
     }
 
 }

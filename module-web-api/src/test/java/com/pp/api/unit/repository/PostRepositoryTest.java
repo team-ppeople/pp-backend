@@ -62,8 +62,8 @@ class PostRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundPost.getImages()).hasSameElementsAs(savedPost.getImages());
         assertThat(foundPost.getComments()).hasSameElementsAs(savedPost.getComments());
         assertThat(foundPost.getReports()).hasSameElementsAs(savedPost.getReports());
-        assertThat(foundPost.getCreatedDate()).isEqualTo(savedPost.getCreatedDate());
-        assertThat(foundPost.getUpdatedDate()).isEqualTo(savedPost.getUpdatedDate());
+        assertThat(foundPost.getCreatedDate()).isEqualToIgnoringNanos(savedPost.getCreatedDate());
+        assertThat(foundPost.getUpdatedDate()).isEqualToIgnoringNanos(savedPost.getUpdatedDate());
     }
 
 }

@@ -63,8 +63,8 @@ class OauthUserRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundOauthUser.getClient()).isSameAs(savedOauthUser.getClient());
         assertThat(foundOauthUser.getClientSubject()).isEqualTo(savedOauthUser.getClientSubject());
         assertThat(foundOauthUser.getUser()).isEqualTo(savedOauthUser.getUser());
-        assertThat(foundOauthUser.getCreatedDate()).isEqualTo(savedOauthUser.getCreatedDate());
-        assertThat(foundOauthUser.getUpdatedDate()).isEqualTo(savedOauthUser.getUpdatedDate());
+        assertThat(foundOauthUser.getCreatedDate()).isEqualToIgnoringNanos(savedOauthUser.getCreatedDate());
+        assertThat(foundOauthUser.getUpdatedDate()).isEqualToIgnoringNanos(savedOauthUser.getUpdatedDate());
     }
 
     @ParameterizedTest

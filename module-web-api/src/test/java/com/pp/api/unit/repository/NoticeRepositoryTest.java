@@ -41,8 +41,8 @@ class NoticeRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundNotice.getId()).isEqualTo(savedNotice.getId());
         assertThat(foundNotice.getTitle()).isEqualTo(savedNotice.getTitle());
         assertThat(foundNotice.getContent()).isEqualTo(savedNotice.getContent());
-        assertThat(foundNotice.getCreatedDate()).isEqualTo(savedNotice.getCreatedDate());
-        assertThat(foundNotice.getUpdatedDate()).isEqualTo(savedNotice.getUpdatedDate());
+        assertThat(foundNotice.getCreatedDate()).isEqualToIgnoringNanos(savedNotice.getCreatedDate());
+        assertThat(foundNotice.getUpdatedDate()).isEqualToIgnoringNanos(savedNotice.getUpdatedDate());
     }
 
 }

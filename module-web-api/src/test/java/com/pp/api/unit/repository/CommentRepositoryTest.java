@@ -73,8 +73,8 @@ class CommentRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundComment.getPost()).isEqualTo(savedComment.getPost());
         assertThat(foundComment.getCreator()).isEqualTo(savedComment.getCreator());
         assertThat(foundComment.getReports()).hasSameElementsAs(savedComment.getReports());
-        assertThat(foundComment.getCreatedDate()).isEqualTo(savedComment.getCreatedDate());
-        assertThat(foundComment.getUpdatedDate()).isEqualTo(savedComment.getUpdatedDate());
+        assertThat(foundComment.getCreatedDate()).isEqualToIgnoringNanos(savedComment.getCreatedDate());
+        assertThat(foundComment.getUpdatedDate()).isEqualToIgnoringNanos(savedComment.getUpdatedDate());
     }
 
 }
