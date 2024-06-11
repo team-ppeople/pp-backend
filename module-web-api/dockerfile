@@ -5,6 +5,7 @@ RUN mkdir extracted && (java -Djarmode=layertools -jar application.jar extract -
 
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /workspace
+RUN apk --no-cache add curl
 RUN addgroup -S app && adduser -S app -G app
 RUN mkdir -p /workspace/logs && chown -R app:app /workspace/logs
 VOLUME /workspace/logs
