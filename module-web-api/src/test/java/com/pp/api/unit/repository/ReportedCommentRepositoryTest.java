@@ -116,8 +116,8 @@ class ReportedCommentRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundReportedComment.getId()).isEqualTo(savedReportedComment.getId());
         assertThat(foundReportedComment.getComment()).isEqualTo(savedReportedComment.getComment());
         assertThat(foundReportedComment.getReporter()).isEqualTo(savedReportedComment.getReporter());
-        assertThat(foundReportedComment.getCreatedDate()).isEqualTo(savedReportedComment.getCreatedDate());
-        assertThat(foundReportedComment.getUpdatedDate()).isEqualTo(savedReportedComment.getUpdatedDate());
+        assertThat(foundReportedComment.getCreatedDate()).isEqualToIgnoringNanos(savedReportedComment.getCreatedDate());
+        assertThat(foundReportedComment.getUpdatedDate()).isEqualToIgnoringNanos(savedReportedComment.getUpdatedDate());
     }
 
 }

@@ -87,8 +87,8 @@ class OauthUserTokenRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundOauthUserToken.getRefreshToken()).isEqualTo(savedOauthUserToken.getRefreshToken());
         assertThat(foundOauthUserToken.getExpiresIn()).isEqualTo(savedOauthUserToken.getExpiresIn());
         assertThat(foundOauthUserToken.getOauthUser()).isEqualTo(savedOauthUserToken.getOauthUser());
-        assertThat(foundOauthUserToken.getCreatedDate()).isEqualTo(savedOauthUserToken.getCreatedDate());
-        assertThat(foundOauthUserToken.getUpdatedDate()).isEqualTo(savedOauthUserToken.getUpdatedDate());
+        assertThat(foundOauthUserToken.getCreatedDate()).isEqualToIgnoringNanos(savedOauthUserToken.getCreatedDate());
+        assertThat(foundOauthUserToken.getUpdatedDate()).isEqualToIgnoringNanos(savedOauthUserToken.getUpdatedDate());
     }
 
 }

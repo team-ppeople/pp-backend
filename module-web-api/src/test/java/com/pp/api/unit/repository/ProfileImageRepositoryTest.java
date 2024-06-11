@@ -69,8 +69,8 @@ class ProfileImageRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundProfileImage.getId()).isEqualTo(savedProfileImage.getId());
         assertThat(foundProfileImage.getUploadFile()).isEqualTo(savedProfileImage.getUploadFile());
         assertThat(foundProfileImage.getUser()).isEqualTo(savedProfileImage.getUser());
-        assertThat(foundProfileImage.getCreatedDate()).isEqualTo(savedProfileImage.getCreatedDate());
-        assertThat(foundProfileImage.getUpdatedDate()).isEqualTo(savedProfileImage.getUpdatedDate());
+        assertThat(foundProfileImage.getCreatedDate()).isEqualToIgnoringNanos(savedProfileImage.getCreatedDate());
+        assertThat(foundProfileImage.getUpdatedDate()).isEqualToIgnoringNanos(savedProfileImage.getUpdatedDate());
     }
 
     @Test

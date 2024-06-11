@@ -78,8 +78,8 @@ class UploadFileRepositoryTest extends AbstractDataJpaTestContext {
         assertThat(foundUploadFile.getContentType()).isSameAs(savedUploadFile.getContentType());
         assertThat(foundUploadFile.getContentLength()).isEqualTo(savedUploadFile.getContentLength());
         assertThat(foundUploadFile.getUploader()).isEqualTo(savedUploadFile.getUploader());
-        assertThat(foundUploadFile.getCreatedDate()).isEqualTo(savedUploadFile.getCreatedDate());
-        assertThat(foundUploadFile.getUpdatedDate()).isEqualTo(savedUploadFile.getUpdatedDate());
+        assertThat(foundUploadFile.getCreatedDate()).isEqualToIgnoringNanos(savedUploadFile.getCreatedDate());
+        assertThat(foundUploadFile.getUpdatedDate()).isEqualToIgnoringNanos(savedUploadFile.getUpdatedDate());
     }
 
     static Stream<Arguments> generateFileTypeAndContentType() {
