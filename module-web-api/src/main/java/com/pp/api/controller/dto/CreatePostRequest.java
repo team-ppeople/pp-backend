@@ -10,7 +10,7 @@ public record CreatePostRequest(
         String title,
         @NotBlank(message = "내용이 없습니다.")
         String content,
-        @Size(min = 1, max = 10, message = "이미지는 허용 개숫는 최소 {min}개 최대 {max}개 입니다.")
+        @Size(max = 10, message = "이미지 허용 갯수는 최대 {max}개 입니다.")
         List<Long> postImageFileUploadIds
 ) {
 }

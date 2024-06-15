@@ -20,6 +20,7 @@ import static com.pp.api.util.JwtAuthenticationUtil.checkUserPermission;
 import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toUnmodifiableMap;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -52,10 +53,7 @@ public class PostService {
                 .map(post ->
                         new PostOfList(
                                 post.getId(),
-                                post.getImages()
-                                        .get(0)
-                                        .getUploadFile()
-                                        .getUrl(),
+                                determineThumbnailUrl(post),
                                 post.getTitle(),
                                 post.getCreatedDate(),
                                 post.getUpdatedDate()
@@ -74,10 +72,7 @@ public class PostService {
                 .map(post ->
                         new PostOfList(
                                 post.getId(),
-                                post.getImages()
-                                        .get(0)
-                                        .getUploadFile()
-                                        .getUrl(),
+                                determineThumbnailUrl(post),
                                 post.getTitle(),
                                 post.getCreatedDate(),
                                 post.getUpdatedDate()
@@ -119,46 +114,46 @@ public class PostService {
                 .creator(user)
                 .build();
 
-        Map<Long, UploadFile> uploadFiles = uploadFileRepository.findAllById(command.getPostImageFileUploadIds())
-                .stream()
-                .collect(
-                        toUnmodifiableMap(
-                                UploadFile::getId,
-                                identity()
-                        )
-                );
-
-        List<PostImage> postImages = command.getPostImageFileUploadIds()
-                .stream()
-                .map(uploadId -> {
-                    UploadFile uploadFile = uploadFiles.get(uploadId);
-
-                    if (uploadFile == null) {
-                        throw new IllegalArgumentException("업로드하지 않은 게시글 이미지가 존재합니다.");
-                    }
-
-                    if (uploadFile.getFileType() != POST_IMAGE) {
-                        throw new IllegalArgumentException("게시글 이미지에 사용할 수 없는 이미지가 존재합니다.");
-                    }
-
-                    checkUserPermission(uploadFile.getUploader().getId());
-
-                    return PostImage.builder()
-                            .post(post)
-                            .uploadFile(uploadFile)
-                            .build();
-                })
-                .toList();
-
         postRepository.save(post);
 
-        postImageRepository.saveAll(postImages);
+        if (!isEmpty(command.getPostImageFileUploadIds())) {
+            Map<Long, UploadFile> uploadFiles = uploadFileRepository.findAllById(command.getPostImageFileUploadIds())
+                    .stream()
+                    .collect(
+                            toUnmodifiableMap(
+                                    UploadFile::getId,
+                                    identity()
+                            )
+                    );
+
+            List<PostImage> postImages = command.getPostImageFileUploadIds()
+                    .stream()
+                    .map(uploadId -> {
+                        UploadFile uploadFile = uploadFiles.get(uploadId);
+
+                        if (uploadFile == null) {
+                            throw new IllegalArgumentException("업로드하지 않은 게시글 이미지가 존재합니다.");
+                        }
+
+                        if (uploadFile.getFileType() != POST_IMAGE) {
+                            throw new IllegalArgumentException("게시글 이미지에 사용할 수 없는 이미지가 존재합니다.");
+                        }
+
+                        checkUserPermission(uploadFile.getUploader().getId());
+
+                        return PostImage.builder()
+                                .post(post)
+                                .uploadFile(uploadFile)
+                                .build();
+                    })
+                    .toList();
+
+            postImageRepository.saveAll(postImages);
+        }
 
         return new CreatedPost(
                 post.getId(),
-                postImages.get(0)
-                        .getUploadFile()
-                        .getUrl(),
+                determineThumbnailUrl(post),
                 post.getTitle(),
                 post.getContent(),
                 post.getCreatedDate()
@@ -254,6 +249,15 @@ public class PostService {
                 postId,
                 userId
         );
+    }
+
+    private String determineThumbnailUrl(Post post) {
+        return post.getImages()
+                .stream()
+                .limit(1)
+                .map(postImage -> postImage.getUploadFile().getUrl())
+                .findFirst()
+                .orElse(null);
     }
 
 }
