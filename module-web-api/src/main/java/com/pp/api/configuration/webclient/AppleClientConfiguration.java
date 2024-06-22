@@ -16,6 +16,7 @@ import java.util.function.Function;
 
 import static io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Configuration
@@ -32,8 +33,17 @@ public class AppleClientConfiguration {
                         appleClientProperty.connectionTimeout()
                 )
                 .doOnConnected(
-                        conn -> conn.addHandlerLast(new ReadTimeoutHandler(appleClientProperty.readTimeout()))
-                                .addHandlerLast(new WriteTimeoutHandler(appleClientProperty.writeTimeout()))
+                        conn -> conn.addHandlerLast(
+                                        new ReadTimeoutHandler(
+                                                appleClientProperty.readTimeout(),
+                                                MILLISECONDS
+                                        )
+                                )
+                                .addHandlerLast(
+                                        new WriteTimeoutHandler(
+                                                appleClientProperty.writeTimeout(),
+                                                MILLISECONDS
+                                        ))
                 );
 
         return new ReactorClientHttpConnector(resourceFactory, mapper);
