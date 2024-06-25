@@ -11,16 +11,16 @@ import java.time.LocalDateTime;
 @Getter
 public class LoggingRequestResponseCommand extends CommandSelfValidator<LoggingRequestResponseCommand> {
 
-    @NotBlank(message = "요청 traceId가 없습니다.")
+    @NotBlank(message = "요청 traceId가 없어요")
     private final String traceId;
 
-    @NotBlank(message = "요청 url이 없습니다.")
+    @NotBlank(message = "요청 url이 없어요")
     private final String url;
 
-    @NotNull(message = "요청 method가 없습니다.")
+    @NotNull(message = "요청 method가 없어요")
     private final HttpMethod method;
 
-    @NotNull(message = "응답 status가 없습니다.")
+    @NotNull(message = "응답 status가 없어요")
     private final HttpStatus status;
 
     private final String requestHeader;
@@ -31,10 +31,10 @@ public class LoggingRequestResponseCommand extends CommandSelfValidator<LoggingR
 
     private final String responsePayload;
 
-    @NotNull(message = "요청 시간이 없습니다.")
+    @NotNull(message = "요청 시간이 없어요")
     private final LocalDateTime requestTime;
 
-    @NotNull(message = "응답 시간이 없습니다.")
+    @NotNull(message = "응답 시간이 없어요")
     private final LocalDateTime responseTime;
 
     public LoggingRequestResponseCommand(

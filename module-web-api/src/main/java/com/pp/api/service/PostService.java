@@ -1,6 +1,7 @@
 package com.pp.api.service;
 
 import com.pp.api.entity.*;
+import com.pp.api.exception.*;
 import com.pp.api.repository.*;
 import com.pp.api.service.command.CreatePostCommand;
 import com.pp.api.service.command.FindPostsByNoOffsetQuery;
@@ -83,7 +84,7 @@ public class PostService {
 
     public PostDetail findPostDetailById(Long postId) {
         Post post = postRepository.findWithImagesById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(PostNotExistsException::new);
 
         return new PostDetail(
                 post.getId(),
@@ -106,7 +107,7 @@ public class PostService {
     @Transactional
     public CreatedPost create(CreatePostCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         Post post = Post.builder()
                 .title(command.getTitle())
@@ -132,11 +133,11 @@ public class PostService {
                         UploadFile uploadFile = uploadFiles.get(uploadId);
 
                         if (uploadFile == null) {
-                            throw new IllegalArgumentException("업로드하지 않은 게시글 이미지가 존재합니다.");
+                            throw new UploadFileNotExistsException("업로드하지 않은 게시글 이미지가 존재해요");
                         }
 
                         if (uploadFile.getFileType() != POST_IMAGE) {
-                            throw new IllegalArgumentException("게시글 이미지에 사용할 수 없는 이미지가 존재합니다.");
+                            throw new UploadFileTypeNotMatchedException("게시글 이미지로 사용할 수 없는 이미지가 존재해요");
                         }
 
                         checkUserPermission(uploadFile.getUploader().getId());
@@ -163,7 +164,7 @@ public class PostService {
     @Transactional
     public void deleteById(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(PostNotExistsException::new);
 
         checkUserPermission(post.getCreator().getId());
 
@@ -179,13 +180,13 @@ public class PostService {
     @Transactional
     public void report(Long postId) {
         User user = userRepository.findById(getAuthenticatedUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(PostNotExistsException::new);
 
         if (post.getCreator().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("본인이 작성한 게시글은 신고할 수 없습니다.");
+            throw new PostCanNotReportMySelfException();
         }
 
         boolean isAlreadyReported = reportedPostRepository.existsByPostIdAndReporterId(
@@ -194,7 +195,7 @@ public class PostService {
         );
 
         if (isAlreadyReported) {
-            throw new IllegalArgumentException("이미 신고한 게시글입니다.");
+            throw new PostAlreadyReportedException();
         }
 
         ReportedPost reportedPost = ReportedPost.builder()
@@ -211,7 +212,7 @@ public class PostService {
 
     public void thumbsUp(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(PostNotExistsException::new);
 
         postUserActionRepository.thumbsUp(
                 post.getId(),
@@ -223,7 +224,7 @@ public class PostService {
 
     public void thumbsSideways(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(PostNotExistsException::new);
 
         postUserActionRepository.thumbsSideways(
                 post.getId(),

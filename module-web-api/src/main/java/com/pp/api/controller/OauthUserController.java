@@ -1,8 +1,8 @@
 package com.pp.api.controller;
 
 import com.pp.api.controller.dto.IsRegisteredOauthUserResponse;
-import com.pp.api.controller.dto.RestResponseWrapper;
-import com.pp.api.controller.validator.AllowedOauthUserClient;
+import com.pp.api.controller.validator.EnumMatch;
+import com.pp.api.entity.enums.OauthUserClient;
 import com.pp.api.service.OauthUserService;
 import com.pp.api.service.command.IsRegisteredOauthUserQuery;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class OauthUserController {
             produces = APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> isRegistered(
-            @PathVariable(name = "client") @AllowedOauthUserClient String client,
+            @PathVariable(name = "client") @EnumMatch(message = "지원하지 않는 로그인 방식이에요", enumClass = OauthUserClient.class) String client,
             @RequestParam(name = "idToken") String idToken
     ) {
         IsRegisteredOauthUserQuery query = new IsRegisteredOauthUserQuery(

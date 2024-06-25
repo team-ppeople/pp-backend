@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public class CreateCommentCommand extends CommandSelfValidator<CreateCommentCommand> {
 
-    @NotNull(message = "게시글 id가 없습니다.")
+    @NotNull(message = "게시글 id가 없어요")
     private final Long postId;
 
-    @NotBlank(message = "내용이 없습니다.")
+    @NotBlank(message = "내용이 없어요")
     private final String content;
 
     public CreateCommentCommand(

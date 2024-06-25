@@ -27,7 +27,7 @@ public final class JwtAuthenticationUtil {
 
     public static Long getAuthenticatedUserId() {
         return getAuthenticatedUserIdIfPresent()
-                .orElseThrow(NotAuthenticatedUserAccessException::ofDefaultMessage);
+                .orElseThrow(NotAuthenticatedUserAccessException::new);
     }
 
     public static void checkUserPermission(Long userId) {
@@ -37,7 +37,7 @@ public final class JwtAuthenticationUtil {
             return;
         }
 
-        throw NotPermittedUserAccessException.ofDefaultMessage();
+        throw new NotPermittedUserAccessException();
     }
 
 }

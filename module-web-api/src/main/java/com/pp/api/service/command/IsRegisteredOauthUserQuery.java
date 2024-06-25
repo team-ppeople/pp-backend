@@ -1,6 +1,6 @@
 package com.pp.api.service.command;
 
-import com.pp.api.controller.validator.AllowedOauthUserClient;
+import com.pp.api.controller.validator.EnumMatch;
 import com.pp.api.entity.enums.OauthUserClient;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -8,11 +8,14 @@ import lombok.Getter;
 @Getter
 public class IsRegisteredOauthUserQuery extends CommandSelfValidator<IsRegisteredOauthUserQuery> {
 
-    @AllowedOauthUserClient
-    @NotBlank(message = "Oauth 유저 클라이언트 값이 없습니다.")
+    @EnumMatch(
+            message = "지원하지 않는 로그인 방식이에요",
+            enumClass = OauthUserClient.class
+    )
+    @NotBlank(message = "클라이언트 값이 없어요")
     private final String client;
 
-    @NotBlank(message = "idToken 값이 없습니다.")
+    @NotBlank(message = "idToken 값이 없어요")
     private final String idToken;
 
     public IsRegisteredOauthUserQuery(

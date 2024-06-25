@@ -2,6 +2,7 @@ package com.pp.api.service;
 
 import com.pp.api.entity.OauthUser;
 import com.pp.api.entity.OauthUserToken;
+import com.pp.api.exception.OauthUserServiceException;
 import com.pp.api.repository.OauthUserRepository;
 import com.pp.api.repository.OauthUserTokenRepository;
 import com.pp.api.service.command.SaveOauthUserTokenCommand;
@@ -23,7 +24,7 @@ public class OauthUserTokensService {
                 .parseClientSubject(command.getSubject());
 
         OauthUser oauthUser = oauthUserRepository.findByClientSubject(clientSubject)
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 Oauth 인증 로그인 회원입니다."));
+                .orElseThrow(() -> new OauthUserServiceException("등록되지 않은 회원이에요"));
 
         oauthUserTokenRepository.findByOauthUserIdAndClient(
                         oauthUser.getId(),

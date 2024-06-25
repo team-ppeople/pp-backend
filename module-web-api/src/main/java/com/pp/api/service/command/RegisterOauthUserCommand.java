@@ -8,13 +8,13 @@ import lombok.Getter;
 @Getter
 public class RegisterOauthUserCommand extends CommandSelfValidator<RegisterOauthUserCommand> {
 
-    @NotNull(message = "Oauth 유저 클라이언트 값이 없습니다.")
+    @NotNull(message = "Oauth 유저 클라이언트 값이 없어요")
     private final OauthUserClient client;
 
-    @NotBlank(message = "subject 값이 없습니다.")
+    @NotBlank(message = "subject 값이 없어요")
     private final String subject;
 
-    @NotBlank(message = "nickname 값이 없습니다.")
+    @NotBlank(message = "nickname 값이 없어요")
     private final String nickname;
 
     private final String email;

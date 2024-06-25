@@ -10,15 +10,18 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
-import java.net.URI;
 
+import static java.net.URI.create;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.http.ProblemDetail.forStatusAndDetail;
 
 @RequiredArgsConstructor
 public class CustomOauth2ResourceServerAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final HttpStatus RESPONSE_STATUS = UNAUTHORIZED;
+
+    private static final String RESPONSE_MESSAGE = "로그인이 유효하지 않아요";
 
     private final ObjectMapper objectMapper;
 
@@ -28,12 +31,12 @@ public class CustomOauth2ResourceServerAuthenticationEntryPoint implements Authe
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
-        ProblemDetail body = ProblemDetail.forStatusAndDetail(
+        ProblemDetail body = forStatusAndDetail(
                 RESPONSE_STATUS,
-                "로그인이 유효하지 않습니다."
+                RESPONSE_MESSAGE
         );
 
-        body.setInstance(URI.create(request.getRequestURI()));
+        body.setInstance(create(request.getRequestURI()));
 
         response.setContentType(APPLICATION_PROBLEM_JSON_VALUE);
 

@@ -12,13 +12,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(value = RUNTIME)
 @Target(value = {FIELD, PARAMETER})
-@Constraint(validatedBy = AllowedOauthUserClientValidator.class)
-public @interface AllowedOauthUserClient {
+@Constraint(validatedBy = EnumMatchValidator.class)
+public @interface EnumMatch {
 
-    String message() default "허용되지 않은 Oauth 유저 클라이언트입니다.";
+    String message() default "지원하지 않는 방식이에요";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    Class<? extends Enum<?>> enumClass();
+
+    boolean ignoreCase() default true;
 
 }

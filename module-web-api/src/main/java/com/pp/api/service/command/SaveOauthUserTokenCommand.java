@@ -8,19 +8,19 @@ import lombok.Getter;
 @Getter
 public class SaveOauthUserTokenCommand extends CommandSelfValidator<SaveOauthUserTokenCommand> {
 
-    @NotNull(message = "Oauth 유저 클라이언트 값이 없습니다.")
+    @NotNull(message = "Oauth 유저 클라이언트 값이 없어요")
     private final OauthUserClient client;
 
-    @NotBlank(message = "subject 값이 없습니다.")
+    @NotBlank(message = "subject 값이 없어요")
     private final String subject;
 
-    @NotBlank(message = "accessToken 값이 없습니다.")
+    @NotBlank(message = "accessToken 값이 없어요")
     private final String accessToken;
 
-    @NotNull(message = "expiresIn 값이 없습니다.")
+    @NotNull(message = "expiresIn 값이 없어요")
     private final Integer expiresIn;
 
-    @NotBlank(message = "refreshToken 값이 없습니다.")
+    @NotBlank(message = "refreshToken 값이 없어요")
     private final String refreshToken;
 
     public SaveOauthUserTokenCommand(

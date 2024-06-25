@@ -10,15 +10,18 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
-import java.net.URI;
 
+import static java.net.URI.create;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
+import static org.springframework.http.ProblemDetail.forStatusAndDetail;
 
 @RequiredArgsConstructor
 public class CustomOauth2ResourceServerAccessDeniedHandler implements AccessDeniedHandler {
 
     private static final HttpStatus RESPONSE_STATUS = FORBIDDEN;
+
+    private static final String RESPONSE_MESSAGE = "접근 권한이 없어요";
 
     private final ObjectMapper objectMapper;
 
@@ -28,12 +31,12 @@ public class CustomOauth2ResourceServerAccessDeniedHandler implements AccessDeni
             HttpServletResponse response,
             AccessDeniedException accessDeniedException
     ) throws IOException {
-        ProblemDetail body = ProblemDetail.forStatusAndDetail(
+        ProblemDetail body = forStatusAndDetail(
                 RESPONSE_STATUS,
-                "접근 권한이 없습니다."
+                RESPONSE_MESSAGE
         );
 
-        body.setInstance(URI.create(request.getRequestURI()));
+        body.setInstance(create(request.getRequestURI()));
 
         response.setContentType(APPLICATION_PROBLEM_JSON_VALUE);
 

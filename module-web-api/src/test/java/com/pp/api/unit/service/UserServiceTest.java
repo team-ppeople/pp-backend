@@ -2,6 +2,8 @@ package com.pp.api.unit.service;
 
 import com.pp.api.entity.UploadFile;
 import com.pp.api.entity.User;
+import com.pp.api.exception.UploadFileNotExistsException;
+import com.pp.api.exception.UserNotExistsException;
 import com.pp.api.repository.ProfileImageRepository;
 import com.pp.api.repository.UploadFileRepository;
 import com.pp.api.repository.UserRepository;
@@ -149,7 +151,7 @@ class UserServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.update(command))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(UserNotExistsException.class);
     }
 
     @Test
@@ -176,7 +178,7 @@ class UserServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.update(command))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(UploadFileNotExistsException.class);
     }
 
     @Test

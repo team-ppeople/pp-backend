@@ -1,30 +1,33 @@
 package com.pp.api.exception;
 
+import lombok.Getter;
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.ErrorResponse;
 
-public class BaseException extends RuntimeException implements ErrorResponse {
+@Getter
+public class BaseException extends NestedRuntimeException implements ErrorResponse {
 
-    private final HttpStatusCode httpStatusCode;
+    private final HttpStatusCode statusCode;
 
     private final ProblemDetail body;
 
     public BaseException(
-            HttpStatusCode httpStatusCode,
+            HttpStatusCode statusCode,
             String message
     ) {
         super(message);
 
-        this.httpStatusCode = httpStatusCode;
+        this.statusCode = statusCode;
         this.body = ProblemDetail.forStatusAndDetail(
-                httpStatusCode,
+                statusCode,
                 message
         );
     }
 
     public BaseException(
-            HttpStatusCode httpStatusCode,
+            HttpStatusCode statusCode,
             String message,
             Throwable cause
     ) {
@@ -33,21 +36,11 @@ public class BaseException extends RuntimeException implements ErrorResponse {
                 cause
         );
 
-        this.httpStatusCode = httpStatusCode;
+        this.statusCode = statusCode;
         this.body = ProblemDetail.forStatusAndDetail(
-                httpStatusCode,
+                statusCode,
                 message
         );
-    }
-
-    @Override
-    public HttpStatusCode getStatusCode() {
-        return this.httpStatusCode;
-    }
-
-    @Override
-    public ProblemDetail getBody() {
-        return this.body;
     }
 
 }
