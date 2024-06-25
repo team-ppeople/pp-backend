@@ -19,6 +19,7 @@ import static com.pp.api.entity.QReportedComment.reportedComment;
 import static com.pp.api.entity.QReportedPost.reportedPost;
 import static com.pp.api.entity.QUploadFile.uploadFile;
 import static com.pp.api.entity.QUser.user;
+import static com.querydsl.jpa.JPAExpressions.selectOne;
 
 public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implements CustomUserRepository {
 
@@ -88,7 +89,15 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                     .execute();
 
             delete(uploadFile)
-                    .where(uploadFile.id.in(uploadFileIds))
+                    .where(
+                            uploadFile.id.in(uploadFileIds)
+                                    .and(
+                                            selectOne().from(profileImage)
+                                                    .where(profileImage.uploadFile.id.eq(uploadFile.id))
+                                                    .notExists()
+
+                                    )
+                    )
                     .execute();
         }
 

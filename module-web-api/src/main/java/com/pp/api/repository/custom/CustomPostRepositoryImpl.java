@@ -15,6 +15,7 @@ import static com.pp.api.entity.QPostImage.postImage;
 import static com.pp.api.entity.QReportedComment.reportedComment;
 import static com.pp.api.entity.QReportedPost.reportedPost;
 import static com.pp.api.entity.QUploadFile.uploadFile;
+import static com.querydsl.jpa.JPAExpressions.selectOne;
 
 public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
 
@@ -110,7 +111,14 @@ public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implemen
                     .execute();
 
             delete(uploadFile)
-                    .where(uploadFile.id.in(uploadFileIds))
+                    .where(
+                            uploadFile.id.in(uploadFileIds)
+                                    .and(
+                                            selectOne().from(postImage)
+                                                    .where(postImage.uploadFile.id.eq(uploadFile.id))
+                                                    .notExists()
+                                    )
+                    )
                     .execute();
         }
 
