@@ -36,7 +36,9 @@ import static org.springframework.util.StreamUtils.copyToString;
 @RequiredArgsConstructor
 public class PersistenceLoggingFilter extends OncePerRequestFilter {
 
-    private static final String TRACE_ID_KEY = "traceId";
+    public static final String TRACE_ID_KEY = "traceId";
+
+    public static final String REQUEST_URI_KEY = "requestURI";
 
     private final RequestResponseLoggingService requestResponseLoggingService;
 
@@ -53,6 +55,11 @@ public class PersistenceLoggingFilter extends OncePerRequestFilter {
         MDC.put(
                 TRACE_ID_KEY,
                 randomUUID().toString()
+        );
+
+        MDC.put(
+                REQUEST_URI_KEY,
+                request.getRequestURI()
         );
 
         HttpServletRequest requestWrapper = wrapByMultipleReadableRequestWrapper(request);

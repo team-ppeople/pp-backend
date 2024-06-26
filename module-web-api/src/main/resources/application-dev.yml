@@ -89,6 +89,13 @@ client:
     connection-timeout: 2000
     read-timeout: 4000
     write-timeout: 3000
+  slack:
+    base-url: https://slack.com/api/chat.postMessage
+    token: ${CLIENT_SLACK_TOKEN}
+    channel-id: ${CLIENT_SLACK_CHANNEL_ID}
+    connection-timeout: 2000
+    read-timeout: 4000
+    write-timeout: 3000
 
 aws:
   s3:

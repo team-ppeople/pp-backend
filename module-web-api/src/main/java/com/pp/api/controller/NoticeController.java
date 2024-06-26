@@ -2,7 +2,6 @@ package com.pp.api.controller;
 
 import com.pp.api.controller.dto.FindNoticesRequest;
 import com.pp.api.controller.dto.FindNoticesResponse;
-import com.pp.api.controller.dto.RestResponseWrapper;
 import com.pp.api.facade.FindNoticesFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
