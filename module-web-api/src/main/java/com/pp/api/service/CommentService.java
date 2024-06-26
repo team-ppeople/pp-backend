@@ -4,6 +4,7 @@ import com.pp.api.entity.Comment;
 import com.pp.api.entity.Post;
 import com.pp.api.entity.ReportedComment;
 import com.pp.api.entity.User;
+import com.pp.api.exception.*;
 import com.pp.api.repository.CommentRepository;
 import com.pp.api.repository.PostRepository;
 import com.pp.api.repository.ReportedCommentRepository;
@@ -34,10 +35,10 @@ public class CommentService {
     @Transactional
     public void create(CreateCommentCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         Post post = postRepository.findById(command.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(PostNotExistsException::new);
 
         Comment comment = Comment.builder()
                 .content(command.getContent())
@@ -75,13 +76,13 @@ public class CommentService {
     @Transactional
     public void report(Long commentId) {
         User user = userRepository.findById(getAuthenticatedUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+                .orElseThrow(CommentNotExistsException::new);
 
         if (comment.getCreator().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("본인이 작성한 댓글은 신고할 수 없습니다.");
+            throw new CommentCanNotReportMySelfException();
         }
 
         boolean isAlreadyReported = reportedCommentRepository.existsByCommentIdAndReporterId(
@@ -90,7 +91,7 @@ public class CommentService {
         );
 
         if (isAlreadyReported) {
-            throw new IllegalArgumentException("이미 신고한 댓글입니다.");
+            throw new CommentAlreadyReportedException();
         }
 
         ReportedComment reportedComment = ReportedComment.builder()

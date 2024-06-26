@@ -2,6 +2,7 @@ package com.pp.api.unit.service;
 
 import com.pp.api.entity.OauthUser;
 import com.pp.api.entity.enums.OauthUserClient;
+import com.pp.api.exception.OauthUserServiceException;
 import com.pp.api.repository.OauthUserRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.OauthUserService;
@@ -94,7 +95,7 @@ class OauthUserServiceTest {
                 .thenReturn(null);
 
         assertThatThrownBy(() -> oauthUserService.isRegistered(query))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OauthUserServiceException.class);
     }
 
     @ParameterizedTest
@@ -114,7 +115,7 @@ class OauthUserServiceTest {
                 .thenThrow(OAuth2AuthenticationException.class);
 
         assertThatThrownBy(() -> oauthUserService.isRegistered(query))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OAuth2AuthenticationException.class);
     }
 
     @ParameterizedTest
@@ -139,7 +140,7 @@ class OauthUserServiceTest {
                 .thenThrow(JwtException.class);
 
         assertThatThrownBy(() -> oauthUserService.isRegistered(query))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OauthUserServiceException.class);
     }
 
     @ParameterizedTest
@@ -170,7 +171,7 @@ class OauthUserServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> oauthUserService.findByClientSubject(clientSubject))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OauthUserServiceException.class);
     }
 
     @ParameterizedTest

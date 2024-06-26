@@ -1,65 +1,32 @@
 package com.pp.api.exception;
 
-import lombok.Getter;
-import org.springframework.http.ProblemDetail;
+import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
-@Getter
 public class NotPermittedUserAccessException extends BaseException {
 
-    private static final String DEFAULT_ERROR_MESSAGE = "권한이 없는 유저입니다.";
+    private static final String DEFAULT_MESSAGE = "권한이 없는 유저에요";
 
-    private final ProblemDetail body;
+    private static final HttpStatus STATUS = FORBIDDEN;
 
-    private NotPermittedUserAccessException(String message) {
+    public NotPermittedUserAccessException() {
+        this(DEFAULT_MESSAGE);
+    }
+
+    public NotPermittedUserAccessException(String message) {
         super(
-                FORBIDDEN,
-                message
-        );
-
-        this.body = ProblemDetail.forStatusAndDetail(
-                this.getStatusCode(),
+                STATUS,
                 message
         );
     }
 
-    private NotPermittedUserAccessException(
+    public NotPermittedUserAccessException(
             String message,
             Throwable cause
     ) {
         super(
-                FORBIDDEN,
-                message,
-                cause
-        );
-
-        this.body = ProblemDetail.forStatusAndDetail(
-                this.getStatusCode(),
-                message
-        );
-    }
-
-    public static NotPermittedUserAccessException ofDefaultMessage() {
-        return new NotPermittedUserAccessException(DEFAULT_ERROR_MESSAGE);
-    }
-
-    public static NotPermittedUserAccessException of(String message) {
-        return new NotPermittedUserAccessException(message);
-    }
-
-    public static NotPermittedUserAccessException of(Throwable cause) {
-        return new NotPermittedUserAccessException(
-                DEFAULT_ERROR_MESSAGE,
-                cause
-        );
-    }
-
-    public static NotPermittedUserAccessException from(
-            String message,
-            Throwable cause
-    ) {
-        return new NotPermittedUserAccessException(
+                STATUS,
                 message,
                 cause
         );

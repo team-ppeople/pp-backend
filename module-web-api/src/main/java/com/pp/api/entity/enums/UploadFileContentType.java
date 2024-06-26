@@ -2,6 +2,7 @@ package com.pp.api.entity.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.pp.api.exception.EnumTypeNotPresentException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,7 @@ public enum UploadFileContentType {
         return Arrays.stream(values())
                 .filter(uploadFileContentType -> uploadFileContentType.getType().equals(type))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new EnumTypeNotPresentException("지원하지 않는 파일 확장자에요"));
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public record PresignedUploadUrlRequests(
         @Valid
-        @NotEmpty(message = "요청 리스트가 비었습니다.")
+        @NotEmpty(message = "요청 내용이 없어요")
         List<PresignedUploadUrlRequest> presignedUploadUrlRequests
 ) {
 }

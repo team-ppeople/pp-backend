@@ -81,7 +81,7 @@ public class CustomErrorController extends AbstractErrorController {
         ProblemDetail body = this.createProblemDetail(
                 (Exception) request.getAttribute(SERVLET_ERROR_EXCEPTION_ATTRIBUTE_NAME),
                 INTERNAL_SERVER_ERROR,
-                INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                "서비스에 문제가 발생했어요. 잠시 후 다시 시도해 주세요",
                 null,
                 null
         );

@@ -10,7 +10,7 @@ public record FindPostDetailResponse(
         List<String> postImageUrls,
         String title,
         String content,
-        @JsonFormat(pattern = "yyyy.MM.dd")
+        @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
         LocalDateTime createdDate,
         long thumbsUpCount,
         long commentCount,

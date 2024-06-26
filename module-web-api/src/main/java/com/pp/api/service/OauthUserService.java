@@ -2,6 +2,7 @@ package com.pp.api.service;
 
 import com.pp.api.entity.OauthUser;
 import com.pp.api.entity.User;
+import com.pp.api.exception.OauthUserServiceException;
 import com.pp.api.repository.OauthUserRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.IsRegisteredOauthUserQuery;
@@ -30,16 +31,10 @@ public class OauthUserService {
         RegisteredClient registeredClient = registeredClientRepository.findById(query.getClient());
 
         if (registeredClient == null) {
-            throw new IllegalArgumentException("등록되지 않은 Oauth 3rd-party 입니다.");
+            throw new OauthUserServiceException("등록 여부를 확인할 수 없는 로그인 방식이에요");
         }
 
-        JwtDecoder decoder;
-
-        try {
-            decoder = jwtDecoderFactory.createDecoder(registeredClient);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Oauth 3rd-party 정보가 잘못되거나 지원하지않아 등록 여부를 확인할 수 없습니다.");
-        }
+        JwtDecoder decoder = jwtDecoderFactory.createDecoder(registeredClient);
 
         String subject;
 
@@ -47,8 +42,8 @@ public class OauthUserService {
             subject = decoder.decode(query.getIdToken())
                     .getSubject();
         } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "Oauth 로그인 인증 토큰이 유효하지 않습니다.",
+            throw new OauthUserServiceException(
+                    "인증 토큰이 유효하지 않아요",
                     e
             );
         }
@@ -61,7 +56,7 @@ public class OauthUserService {
 
     public OauthUser findByClientSubject(String clientSubject) {
         return oauthUserRepository.findByClientSubject(clientSubject)
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 Oauth 인증 로그인 회원입니다."));
+                .orElseThrow(() -> new OauthUserServiceException("등록되지 않은 회원이에요"));
     }
 
     @Transactional

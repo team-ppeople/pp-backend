@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class UpdateUserCommand extends CommandSelfValidator<UpdateUserCommand> {
 
-    @NotNull(message = "유저 id가 없습니다.")
+    @NotNull(message = "유저 id가 없어요")
     private final Long userId;
 
     private final String nickname;

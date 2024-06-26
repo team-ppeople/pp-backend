@@ -6,6 +6,8 @@ import com.pp.api.entity.UploadFile;
 import com.pp.api.entity.User;
 import com.pp.api.event.WithdrawOauthUserEvent;
 import com.pp.api.event.WithdrawUserEvent;
+import com.pp.api.exception.UploadFileNotExistsException;
+import com.pp.api.exception.UserNotExistsException;
 import com.pp.api.repository.OauthUserTokenRepository;
 import com.pp.api.repository.ProfileImageRepository;
 import com.pp.api.repository.UploadFileRepository;
@@ -42,7 +44,7 @@ public class UserService {
         checkUserPermission(command.getUserId());
 
         User user = userRepository.findById(command.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         if (hasText(command.getNickname())) {
             user.updateNickname(command.getNickname());
@@ -50,7 +52,7 @@ public class UserService {
 
         if (command.getProfileImageFileUploadId() != null) {
             UploadFile uploadFile = uploadFileRepository.findById(command.getProfileImageFileUploadId())
-                    .orElseThrow(() -> new IllegalArgumentException("업로드하지 않은 프로필 이미지입니다."));
+                    .orElseThrow(() -> new UploadFileNotExistsException("업로드하지 않은 프로필 이미지에요"));
 
             checkUserPermission(uploadFile.getUploader().getId());
 
@@ -67,7 +69,7 @@ public class UserService {
 
     public UserProfile findUserProfileById(Long userId) {
         User user = userRepository.findWithProfileImagesById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         return mapToUserProfile(user);
     }
@@ -88,7 +90,7 @@ public class UserService {
         checkUserPermission(userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         publishWithdrawUserEvent(user);
 
