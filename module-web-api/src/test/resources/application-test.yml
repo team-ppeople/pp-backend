@@ -64,13 +64,20 @@ spring:
 
 client:
   apple:
-    base-url: https://appleid.apple.com
+    base-url: https://mock-appleid.apple.com
     client-id: apple_client_id
     client-secret-kid: apple_secret_kid
     client-secret-issuer: client_secret_issuer
     client-secret-expiration-days: 30
     token-endpoint: /auth/oauth2/v2/token
     revoke-endpoint: /auth/oauth2/v2/revoke
+    connection-timeout: 2000
+    read-timeout: 4000
+    write-timeout: 3000
+  slack:
+    base-url: https://mock-slack.com/api/chat.postMessage
+    token: slack_token
+    channel-id: slack_channel_id
     connection-timeout: 2000
     read-timeout: 4000
     write-timeout: 3000

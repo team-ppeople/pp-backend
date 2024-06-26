@@ -3,6 +3,7 @@ package com.pp.api.client.apple;
 import com.pp.api.client.apple.dto.AppleTokenResponse;
 import com.pp.api.configuration.webclient.property.AppleClientProperty;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,6 +17,7 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.AU
 @RequiredArgsConstructor
 public class AppleClient {
 
+    @Qualifier(value = "appleWebClient")
     private final WebClient appliWebClient;
 
     private final AppleClientSecretGenerator appleClientSecretGenerator;

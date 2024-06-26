@@ -1,8 +1,12 @@
 package com.pp.api.exception.handler;
 
+import com.pp.api.client.slack.SlackClient;
+import com.pp.api.client.slack.dto.SlackSendErrorMessageRequest;
 import com.pp.api.exception.BaseException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.*;
@@ -29,12 +33,17 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import static com.pp.api.filter.PersistenceLoggingFilter.REQUEST_URI_KEY;
+import static com.pp.api.filter.PersistenceLoggingFilter.TRACE_ID_KEY;
 import static org.springframework.http.HttpHeaders.EMPTY;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final SlackClient slackClient;
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -460,6 +469,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex
         );
 
+        sendErrorAlertMessage(ex);
+
         ProblemDetail body = this.createProblemDetail(
                 ex,
                 INTERNAL_SERVER_ERROR,
@@ -503,6 +514,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setDetail("서비스에 문제가 발생했어요. 잠시 후 다시 시도해 주세요");
 
         return errorResponseEntity;
+    }
+
+    private void sendErrorAlertMessage(Exception exception) {
+        SlackSendErrorMessageRequest request = new SlackSendErrorMessageRequest(
+                MDC.get(REQUEST_URI_KEY),
+                MDC.get(TRACE_ID_KEY),
+                exception
+        );
+
+        slackClient.sendErrorMessage(request);
     }
 
 }
