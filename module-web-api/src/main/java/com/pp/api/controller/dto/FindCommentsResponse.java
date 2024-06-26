@@ -12,7 +12,7 @@ public record FindCommentsResponse(
     public record CommentResponse(
             Long id,
             String content,
-            @JsonFormat(pattern = "yyyy.MM.dd")
+            @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
             LocalDateTime createDate,
             CreatorResponse createdUser
     ) {

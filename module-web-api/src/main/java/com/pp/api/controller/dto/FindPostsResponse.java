@@ -13,7 +13,7 @@ public record FindPostsResponse(
             Long id,
             String thumbnailUrl,
             String title,
-            @JsonFormat(pattern = "yyyy.MM.dd")
+            @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
             LocalDateTime createDate
     ) {
     }
