@@ -21,6 +21,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static com.pp.api.filter.MDCLoggingFilter.TRACE_ID_KEY;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -35,9 +36,16 @@ public class PersistenceLoggingFilter extends OncePerRequestFilter {
 
     public static final int ORDER = MDCLoggingFilter.ORDER + 1;
 
+    public static final Set<String> SKIP_URLS = Set.of("/api/v1/healthcheck");
+
     private final RequestResponseLoggingService requestResponseLoggingService;
 
     private final ObjectMapper objectMapper;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return SKIP_URLS.contains(request.getRequestURI());
+    }
 
     @Override
     protected void doFilterInternal(
