@@ -13,6 +13,7 @@ public record SlackClientProperty(
         @NotBlank String channelId,
         @NotNull Integer connectionTimeout,
         @NotNull Integer readTimeout,
-        @NotNull Integer writeTimeout
+        @NotNull Integer writeTimeout,
+        @NotNull Boolean enabled
 ) {
 }

@@ -96,6 +96,7 @@ client:
     connection-timeout: 2000
     read-timeout: 4000
     write-timeout: 3000
+    enabled: true
 
 aws:
   s3:
