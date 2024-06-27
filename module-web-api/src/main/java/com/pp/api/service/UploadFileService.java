@@ -32,7 +32,7 @@ public class UploadFileService {
 
         UploadFile uploadFile = UploadFile.builder()
                 .fileType(request.fileType())
-                .url(presignedURL.getFileUrl())
+                .url(presignedURL.fileUrl())
                 .contentType(request.fileContentType())
                 .contentLength(request.fileContentLength())
                 .uploader(user)
@@ -43,7 +43,7 @@ public class UploadFileService {
         return new PresignedUploadFile(
                 savedUploadFile.getId(),
                 request.fileName(),
-                presignedURL.getUploadUrl(),
+                presignedURL.uploadUrl(),
                 savedUploadFile.getUrl()
         );
     }

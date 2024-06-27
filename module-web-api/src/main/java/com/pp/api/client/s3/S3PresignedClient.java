@@ -9,8 +9,11 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+import java.net.URL;
 import java.time.Duration;
 import java.util.UUID;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Component
 @RequiredArgsConstructor
@@ -34,8 +37,20 @@ public class S3PresignedClient {
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
-        return new PresignedURL(presignedRequest.url());
+
+        return new PresignedURL(
+                presignedRequest.url()
+                        .toExternalForm(),
+                resolveFileUrl(presignedRequest.url())
+        );
     }
 
+    private String resolveFileUrl(URL url) {
+        if (hasText(awsS3Property.cloudfrontEndpoint())) {
+            return awsS3Property.cloudfrontEndpoint() + url.getPath();
+        }
+
+        return url.getProtocol() + "://" + url.getHost() + url.getPath();
+    }
 
 }

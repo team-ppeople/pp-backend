@@ -46,14 +46,12 @@ public class UploadFileServiceTest extends AbstractIntegrationTestContext {
         );
 
         // when
-        PresignedURL url = s3PresignedClient.createPutPresignedUrl(request);
-        String fileUrl = url.getFileUrl();
-        String uploadUrl = url.getUploadUrl();
+        PresignedURL presignedUrl = s3PresignedClient.createPutPresignedUrl(request);
 
         // then
-        assertThat(fileUrl.contains(request.toFileKeyObjectPath())).isTrue();
-        assertThat(uploadUrl.contains(request.toFileKeyObjectPath())).isTrue();
-        assertThat(fileUrl.endsWith(request.fileContentType().getValue())).isTrue();
+        assertThat(presignedUrl.fileUrl().contains(request.toFileKeyObjectPath())).isTrue();
+        assertThat(presignedUrl.uploadUrl().contains(request.toFileKeyObjectPath())).isTrue();
+        assertThat(presignedUrl.fileUrl().endsWith(request.fileContentType().getValue())).isTrue();
     }
 
     @Test
@@ -71,7 +69,7 @@ public class UploadFileServiceTest extends AbstractIntegrationTestContext {
 
         // when
         String preSignedUploadUrl = s3PresignedClient.createPutPresignedUrl(request)
-                .getUploadUrl();
+                .uploadUrl();
 
         uploadByPreSignedUrl(preSignedUploadUrl, filename);
 

@@ -1,16 +1,7 @@
 package com.pp.api.client.s3;
 
-import java.net.URL;
-
 public record PresignedURL(
-        URL url
+        String uploadUrl,
+        String fileUrl
 ) {
-
-    public String getUploadUrl() {
-        return url.toExternalForm();
-    }
-
-    public String getFileUrl() {
-        return url.getProtocol() + "://" + url.getHost() + url.getPath();
-    }
 }

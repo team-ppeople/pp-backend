@@ -1,5 +1,6 @@
 package com.pp.api.unit.service;
 
+import com.pp.api.configuration.aws.property.AwsS3Property;
 import com.pp.api.entity.UploadFile;
 import com.pp.api.entity.User;
 import com.pp.api.exception.UploadFileNotExistsException;
@@ -41,6 +42,8 @@ class UserServiceTest {
     @Mock
     private UploadFileRepository uploadFileRepository;
 
+    @Mock
+    private AwsS3Property awsS3Property;
 
     @InjectMocks
     private UserService userService;
