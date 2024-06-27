@@ -3,11 +3,13 @@ package com.pp.api.controller;
 import com.pp.api.client.slack.SlackClient;
 import com.pp.api.client.slack.dto.SlackSendErrorMessageRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.net.URI;
 import java.util.List;
 
-import static com.pp.api.filter.PersistenceLoggingFilter.REQUEST_URI_KEY;
-import static com.pp.api.filter.PersistenceLoggingFilter.TRACE_ID_KEY;
+import static com.pp.api.filter.MDCLoggingFilter.REQUEST_URI_KEY;
+import static com.pp.api.filter.MDCLoggingFilter.TRACE_ID_KEY;
+import static java.net.URI.create;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.ResponseEntity.internalServerError;
 
+@Slf4j
 @Controller
 @RequestMapping(path = {"${server.error.path:${error.path:/error}}"})
 public class CustomErrorController extends AbstractErrorController {
@@ -49,24 +53,48 @@ public class CustomErrorController extends AbstractErrorController {
 
     @RequestMapping
     public ResponseEntity<?> error(HttpServletRequest request) {
-        Exception exception = (Exception) request.getAttribute(SERVLET_ERROR_EXCEPTION_ATTRIBUTE_NAME);
+        Exception exception = resolveException(request);
+
+        log.error(
+                "exception : {} handle",
+                exception.getClass().getName(),
+                exception
+        );
 
         sendErrorAlertMessage(exception);
 
         ProblemDetail body = this.createProblemDetail(
                 exception,
-                INTERNAL_SERVER_ERROR,
+                resolveHttpStatus(request),
                 "서비스에 문제가 발생했어요. 잠시 후 다시 시도해 주세요",
                 null,
                 null
         );
 
-        body.setInstance(URI.create((String) request.getAttribute(SERVLET_FORWARD_REQUEST_URI_ATTRIBUTE_NAME)));
+        body.setInstance(resolveRequestURI(request));
 
         return internalServerError().body(body);
     }
 
-    protected ProblemDetail createProblemDetail(
+    private Exception resolveException(HttpServletRequest request) {
+        return (Exception) request.getAttribute(SERVLET_ERROR_EXCEPTION_ATTRIBUTE_NAME);
+    }
+
+    private URI resolveRequestURI(HttpServletRequest request) {
+        return create((String) request.getAttribute(SERVLET_FORWARD_REQUEST_URI_ATTRIBUTE_NAME));
+    }
+
+    private HttpStatus resolveHttpStatus(HttpServletRequest request) {
+        HttpStatus status = this.getStatus(request);
+
+        if (status.is5xxServerError()) {
+            return status;
+        }
+
+        return INTERNAL_SERVER_ERROR;
+    }
+
+    private ProblemDetail createProblemDetail(
             Exception ex,
             HttpStatusCode status,
             String defaultDetail,

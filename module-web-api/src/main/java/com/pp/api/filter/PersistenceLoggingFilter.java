@@ -14,7 +14,6 @@ import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,22 +22,18 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import static com.pp.api.filter.MDCLoggingFilter.TRACE_ID_KEY;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.UUID.randomUUID;
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static org.springframework.util.StreamUtils.copyToString;
 
 @Slf4j
-@Order(value = HIGHEST_PRECEDENCE)
-@Component
+@Order(value = PersistenceLoggingFilter.ORDER)
 @RequiredArgsConstructor
 public class PersistenceLoggingFilter extends OncePerRequestFilter {
 
-    public static final String TRACE_ID_KEY = "traceId";
-
-    public static final String REQUEST_URI_KEY = "requestURI";
+    public static final int ORDER = MDCLoggingFilter.ORDER + 1;
 
     private final RequestResponseLoggingService requestResponseLoggingService;
 
@@ -51,16 +46,6 @@ public class PersistenceLoggingFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         LocalDateTime requestReceivedTime = LocalDateTime.now();
-
-        MDC.put(
-                TRACE_ID_KEY,
-                randomUUID().toString()
-        );
-
-        MDC.put(
-                REQUEST_URI_KEY,
-                request.getRequestURI()
-        );
 
         HttpServletRequest requestWrapper = wrapByMultipleReadableRequestWrapper(request);
 
@@ -80,8 +65,6 @@ public class PersistenceLoggingFilter extends OncePerRequestFilter {
             );
 
             responseWrapper.copyBodyToResponse();
-
-            MDC.clear();
         }
     }
 

@@ -23,7 +23,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.securityMatchers(securityMatcher -> securityMatcher.requestMatchers(requestMatcher()))
-                .authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest.anyRequest().authenticated())
+                .authorizeHttpRequests(authorizeHttpRequest ->
+                        authorizeHttpRequest.requestMatchers("/error")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
