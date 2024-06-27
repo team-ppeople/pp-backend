@@ -46,6 +46,7 @@ spring:
             jwk-set-uri: https://kauth.kakao.com/.well-known/jwks.json
             token:
               reuse-refresh-tokens: false
+              access-token-time-to-live: 1h
               refresh-token-time-to-live: 30d
           apple:
             registration:
@@ -67,6 +68,7 @@ spring:
             jwk-set-uri: https://appleid.apple.com/auth/oauth2/v2/keys
             token:
               reuse-refresh-tokens: false
+              access-token-time-to-live: 1h
               refresh-token-time-to-live: 30d
 
 oauth2:
@@ -96,6 +98,7 @@ client:
     connection-timeout: 2000
     read-timeout: 4000
     write-timeout: 3000
+    enabled: true
 
 aws:
   s3:

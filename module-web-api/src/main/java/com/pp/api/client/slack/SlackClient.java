@@ -24,6 +24,10 @@ public class SlackClient {
     private final SlackClientProperty slackClientProperty;
 
     public void sendMessage(String message) {
+        if (!slackClientProperty.enabled()) {
+            return;
+        }
+
         SlackSendMessageRequest request = new SlackSendMessageRequest(
                 slackClientProperty.channelId(),
                 message
