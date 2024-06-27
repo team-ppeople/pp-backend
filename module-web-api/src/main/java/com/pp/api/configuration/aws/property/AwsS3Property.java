@@ -11,6 +11,7 @@ public record AwsS3Property(
         String secretKey,
         @NotBlank String bucket,
         @NotBlank String region,
-        String endpointOverrideUri
+        String endpointOverrideUri,
+        String cloudfrontEndpoint
 ) {
 }

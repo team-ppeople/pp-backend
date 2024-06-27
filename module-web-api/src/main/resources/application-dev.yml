@@ -104,6 +104,7 @@ aws:
   s3:
     bucket: pp-public-bucket
     region: ap-northeast-2
+    cloudfront-endpoint: https://d2f5nt7fnszam9.cloudfront.net
 
 logging:
   level:

@@ -1,5 +1,6 @@
 package com.pp.api.service;
 
+import com.pp.api.configuration.aws.property.AwsS3Property;
 import com.pp.api.entity.OauthUserToken;
 import com.pp.api.entity.ProfileImage;
 import com.pp.api.entity.UploadFile;
@@ -14,7 +15,6 @@ import com.pp.api.repository.UploadFileRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.UpdateUserCommand;
 import com.pp.api.service.domain.UserProfile;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -38,6 +37,26 @@ public class UserService {
     private final OauthUserTokenRepository oauthUserTokenRepository;
 
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    private final String defaultUserProfileUrl;
+
+    public UserService(
+            UserRepository userRepository,
+            UploadFileRepository uploadFileRepository,
+            ProfileImageRepository profileImageRepository,
+            OauthUserTokenRepository oauthUserTokenRepository,
+            ApplicationEventPublisher applicationEventPublisher,
+            AwsS3Property awsS3Property
+    ) {
+        this.userRepository = userRepository;
+        this.uploadFileRepository = uploadFileRepository;
+        this.profileImageRepository = profileImageRepository;
+        this.oauthUserTokenRepository = oauthUserTokenRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.defaultUserProfileUrl = hasText(awsS3Property.cloudfrontEndpoint()) ?
+                awsS3Property.cloudfrontEndpoint() + "/default/default_profile.png" :
+                "https://" + awsS3Property.bucket() + ".s3.ap-northeast-2.amazonaws.com/default/default_profile.png";
+    }
 
     @Transactional
     public void update(UpdateUserCommand command) {
@@ -127,7 +146,7 @@ public class UserService {
                 .limit(1)
                 .map(profileImage -> profileImage.getUploadFile().getUrl())
                 .findFirst()
-                .orElse("https://pp-public-bucket.s3.ap-northeast-2.amazonaws.com/default/default_profile.png");
+                .orElse(defaultUserProfileUrl);
 
         return new UserProfile(
                 user.getId(),
