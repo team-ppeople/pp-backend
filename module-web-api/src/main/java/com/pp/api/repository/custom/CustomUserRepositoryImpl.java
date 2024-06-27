@@ -101,6 +101,17 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                     .execute();
         }
 
+        delete(comment)
+                .where(
+                        selectOne().from(post)
+                                .where(
+                                        post.creator.id.eq(userId)
+                                                .and(comment.post.id.eq(post.id))
+                                )
+                                .exists()
+                )
+                .execute();
+
         delete(post)
                 .where(post.creator.id.eq(userId))
                 .execute();
