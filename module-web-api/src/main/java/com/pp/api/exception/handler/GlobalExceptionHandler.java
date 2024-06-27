@@ -33,8 +33,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import static com.pp.api.filter.PersistenceLoggingFilter.REQUEST_URI_KEY;
-import static com.pp.api.filter.PersistenceLoggingFilter.TRACE_ID_KEY;
+import static com.pp.api.filter.MDCLoggingFilter.REQUEST_URI_KEY;
+import static com.pp.api.filter.MDCLoggingFilter.TRACE_ID_KEY;
 import static org.springframework.http.HttpHeaders.EMPTY;
 import static org.springframework.http.HttpStatus.*;
 
