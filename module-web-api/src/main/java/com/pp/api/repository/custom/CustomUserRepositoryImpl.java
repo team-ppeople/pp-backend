@@ -70,10 +70,6 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(reportedComment.reporter.id.eq(userId))
                 .execute();
 
-        delete(comment)
-                .where(comment.creator.id.eq(userId))
-                .execute();
-
         List<Long> uploadFileIds = jpaQueryFactory.select(uploadFile.id)
                 .from(uploadFile)
                 .where(uploadFile.uploader.id.eq(userId))
@@ -101,20 +97,39 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                     .execute();
         }
 
-        delete(comment)
-                .where(
-                        selectOne().from(post)
-                                .where(
-                                        post.creator.id.eq(userId)
-                                                .and(comment.post.id.eq(post.id))
-                                )
-                                .exists()
-                )
-                .execute();
+        List<Long> commentIds = jpaQueryFactory.select(comment.id)
+                .from(comment)
+                .where(comment.creator.id.eq(userId))
+                .fetch();
 
-        delete(post)
+        if (!commentIds.isEmpty()) {
+            delete(reportedComment)
+                    .where(reportedComment.comment.id.in(commentIds))
+                    .execute();
+
+            delete(comment)
+                    .where(comment.id.in(commentIds))
+                    .execute();
+        }
+
+        List<Long> postIds = jpaQueryFactory.select(post.id)
+                .from(post)
                 .where(post.creator.id.eq(userId))
-                .execute();
+                .fetch();
+
+        if (!postIds.isEmpty()) {
+            delete(reportedPost)
+                    .where(reportedPost.post.id.in(postIds))
+                    .execute();
+
+            delete(comment)
+                    .where(comment.post.id.in(postIds))
+                    .execute();
+
+            delete(post)
+                    .where(post.id.in(postIds))
+                    .execute();
+        }
 
         Long oauthUserId = jpaQueryFactory.select(oauthUser.id)
                 .from(oauthUser)
