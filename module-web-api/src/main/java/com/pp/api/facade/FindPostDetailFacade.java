@@ -3,6 +3,8 @@ package com.pp.api.facade;
 import com.pp.api.controller.dto.FindPostDetailResponse;
 import com.pp.api.controller.dto.FindPostDetailResponse.CreatorResponse;
 import com.pp.api.controller.dto.FindPostDetailResponse.UserActionHistoryResponse;
+import com.pp.api.exception.CannotAccessBlockUserException;
+import com.pp.api.service.BlockUserService;
 import com.pp.api.service.CommentService;
 import com.pp.api.service.PostService;
 import com.pp.api.service.UserService;
@@ -23,8 +25,14 @@ public class FindPostDetailFacade {
 
     private final UserService userService;
 
+    private final BlockUserService blockUserService;
+
     public FindPostDetailResponse findPostDetail(Long postId) {
         PostDetail postDetail = postService.findPostDetailById(postId);
+
+        if (blockUserService.isBlockedUser(postDetail.creatorId())) {
+            throw CannotAccessBlockUserException.ofAccessPostMessage();
+        }
 
         UserProfile userProfile = userService.findUserProfileById(postDetail.creatorId());
 

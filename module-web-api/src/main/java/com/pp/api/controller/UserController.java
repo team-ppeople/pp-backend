@@ -2,6 +2,7 @@ package com.pp.api.controller;
 
 import com.pp.api.controller.dto.FindUserProfileResponse;
 import com.pp.api.controller.dto.UpdateUserRequest;
+import com.pp.api.service.BlockUserService;
 import com.pp.api.facade.FindUserProfileFacade;
 import com.pp.api.service.UserService;
 import com.pp.api.service.command.UpdateUserCommand;
@@ -23,6 +24,8 @@ public class UserController {
     private final UserService userService;
 
     private final FindUserProfileFacade findUserProfileFacade;
+
+    private final BlockUserService blockUserService;
 
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
     @PatchMapping(
@@ -61,6 +64,28 @@ public class UserController {
     public ResponseEntity<?> withdraw(@PathVariable(name = "userId") Long userId) {
         userService.withdraw(userId);
 
+        return ok(empty());
+    }
+
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
+    @PostMapping(
+            path = "/api/v1/users/{userId}/block",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> block(@PathVariable(name = "userId") Long userId) {
+        blockUserService.block(userId);
+        return ok(empty());
+    }
+
+    @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
+    @PostMapping(
+            path = "/api/v1/users/{userId}/unblock",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> unblock(@PathVariable(name = "userId") Long userId) {
+        blockUserService.unblock(userId);
         return ok(empty());
     }
 
