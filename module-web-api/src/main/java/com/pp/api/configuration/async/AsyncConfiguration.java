@@ -1,6 +1,9 @@
 package com.pp.api.configuration.async;
 
+import com.pp.api.client.slack.SlackClient;
+import com.pp.api.configuration.async.decorator.MDCTaskDecorator;
 import com.pp.api.configuration.async.handler.AsyncExceptionHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +15,10 @@ import java.util.concurrent.Executor;
 
 @EnableAsync
 @Configuration
+@RequiredArgsConstructor
 public class AsyncConfiguration implements AsyncConfigurer {
+
+    private final SlackClient slackClient;
 
     @Bean
     @Override
@@ -24,6 +30,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
         threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setAwaitTerminationSeconds(30);
         threadPoolTaskExecutor.setThreadNamePrefix("DEFAULT-EXECUTOR-");
+        threadPoolTaskExecutor.setTaskDecorator(new MDCTaskDecorator());
         threadPoolTaskExecutor.initialize();
 
         return threadPoolTaskExecutor;
@@ -31,7 +38,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new AsyncExceptionHandler();
+        return new AsyncExceptionHandler(slackClient);
     }
 
     @Bean
@@ -43,6 +50,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
         threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setAwaitTerminationSeconds(30);
         threadPoolTaskExecutor.setThreadNamePrefix("WITHDRAW-USER-EVENT-HANDLE-EXECUTOR-");
+        threadPoolTaskExecutor.setTaskDecorator(new MDCTaskDecorator());
         threadPoolTaskExecutor.initialize();
 
         return threadPoolTaskExecutor;
