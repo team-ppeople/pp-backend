@@ -3,20 +3,21 @@ package com.pp.api.client.slack.dto;
 public record SlackSendErrorMessageRequest(
         String requestURI,
         String traceId,
-        Exception exception
+        Throwable exception
 ) {
 
     public String buildMessage() {
-        return "```" +
+        return "🚨 ERROR\n" +
+                "```" +
                 "requestURI: " +
                 requestURI +
-                "\n" +
+                "\n\n" +
                 "traceId: " +
                 traceId +
-                "\n" +
+                "\n\n" +
                 "exception: " +
                 exception.getClass().getName() +
-                "\n" +
+                "\n\n" +
                 "message: " +
                 exception.getMessage() +
                 "```";
