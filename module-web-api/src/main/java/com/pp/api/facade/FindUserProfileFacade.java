@@ -2,6 +2,7 @@ package com.pp.api.facade;
 
 import com.pp.api.controller.dto.FindUserProfileResponse;
 import com.pp.api.controller.dto.UserCreatedPostResponse;
+import com.pp.api.service.BlockUserService;
 import com.pp.api.service.PostService;
 import com.pp.api.service.UserService;
 import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
@@ -19,6 +20,8 @@ public class FindUserProfileFacade {
 
     private final PostService postService;
 
+    private final BlockUserService blockUserService;
+
     public FindUserProfileResponse findUserProfile(Long userId) {
         UserProfile userProfile = userService.findUserProfileById(userId);
 
@@ -28,6 +31,18 @@ public class FindUserProfileFacade {
                 userId,
                 20
         );
+
+        long thumbsUpCount = postService.countUserPostThumbsUpByPostId(userId);
+
+        if (blockUserService.isBlockedUser(userId)) {
+            return FindUserProfileResponse.blockedUser(
+                    userProfile.id(),
+                    userProfile.nickname(),
+                    userProfile.profileImageUrl(),
+                    postCount,
+                    thumbsUpCount
+            );
+        }
 
         List<UserCreatedPostResponse> userCreatedPostResponses = postService.findUserCreatedPosts(query)
                 .stream()
@@ -41,9 +56,7 @@ public class FindUserProfileFacade {
                 )
                 .toList();
 
-        long thumbsUpCount = postService.countUserPostThumbsUpByPostId(userId);
-
-        return new FindUserProfileResponse(
+        return FindUserProfileResponse.of(
                 userProfile.id(),
                 userProfile.nickname(),
                 userProfile.profileImageUrl(),
