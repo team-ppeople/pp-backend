@@ -20,6 +20,12 @@ public interface CustomPostRepository {
             int limit
     );
 
+    List<Post> findNotInBlockedUsers(
+            Long lastId,
+            int limit,
+            List<Long> blockedUserIds
+    );
+
     Optional<Post> findWithImagesById(Long id);
 
     void deleteCascadeById(Long userId);

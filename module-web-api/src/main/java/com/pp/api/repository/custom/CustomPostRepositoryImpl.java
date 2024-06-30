@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,22 @@ public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implemen
         return from(post)
                 .where(lowerThanLastId(lastId))
                 .orderBy(post.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Post> findNotInBlockedUsers(
+            Long lastId,
+            int limit,
+            List<Long> blockedUserIds
+    ) {
+        return from(post)
+                .where(
+                        lowerThanLastId(lastId),
+                        notInBlockedUserIds(blockedUserIds)
+                ).orderBy(post.id.desc())
                 .limit(limit)
                 .fetch();
     }
@@ -133,6 +150,13 @@ public class CustomPostRepositoryImpl extends QuerydslRepositorySupport implemen
         }
 
         return post.id.lt(lastId);
+    }
+
+    private BooleanExpression notInBlockedUserIds(List<Long> blockedUserIds) {
+        if (CollectionUtils.isEmpty(blockedUserIds)) {
+            return null;
+        }
+        return post.creator.id.notIn(blockedUserIds);
     }
 
 }

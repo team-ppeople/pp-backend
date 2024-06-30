@@ -12,6 +12,18 @@ public interface CustomCommentRepository {
             int limit
     );
 
+    List<Comment> findNotInBlockedUsersByPostId(
+            Long postId,
+            Long lastId,
+            int limit,
+            List<Long> blockedIds
+    );
+
     long countByPostId(Long postId);
+
+    long countNotInBlockedUserByPostId(
+            Long postId,
+            List<Long> blockedIds
+    );
 
 }

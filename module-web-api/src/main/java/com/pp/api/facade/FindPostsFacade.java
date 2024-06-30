@@ -3,12 +3,17 @@ package com.pp.api.facade;
 import com.pp.api.controller.dto.FindPostsRequest;
 import com.pp.api.controller.dto.FindPostsResponse;
 import com.pp.api.controller.dto.FindPostsResponse.PostResponse;
+import com.pp.api.service.BlockUserService;
 import com.pp.api.service.PostService;
 import com.pp.api.service.command.FindPostsByNoOffsetQuery;
+import com.pp.api.service.command.FindPostsNotInBlockedByNoOffsetQuery;
+import com.pp.api.service.domain.PostOfList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
 
 @Component
 @RequiredArgsConstructor
@@ -16,13 +21,10 @@ public class FindPostsFacade {
 
     private final PostService postService;
 
-    public FindPostsResponse findPosts(FindPostsRequest request) {
-        FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.of(
-                request.lastId(),
-                request.limit() != null ? request.limit() : 20
-        );
+    private final BlockUserService blockUserService;
 
-        List<PostResponse> postResponses = postService.findPosts(query)
+    public FindPostsResponse findPosts(FindPostsRequest request) {
+        List<PostResponse> postResponses = findPostOrPostNotInBlockedIfExist(request)
                 .stream()
                 .map(post ->
                         new PostResponse(
@@ -35,6 +37,27 @@ public class FindPostsFacade {
                 .toList();
 
         return new FindPostsResponse(postResponses);
+    }
+
+    private List<PostOfList> findPostOrPostNotInBlockedIfExist(FindPostsRequest request) {
+        List<Long> blockedIds = blockUserService.findBlockedIds(getAuthenticatedUserId());
+
+        if (blockedIds.isEmpty()) {
+            FindPostsByNoOffsetQuery query = FindPostsByNoOffsetQuery.of(
+                    request.lastId(),
+                    request.limit() != null ? request.limit() : 20
+            );
+
+            return postService.findPosts(query);
+        }
+
+        FindPostsNotInBlockedByNoOffsetQuery query = FindPostsNotInBlockedByNoOffsetQuery.of(
+                request.lastId(),
+                request.limit() != null ? request.limit() : 20,
+                blockedIds
+        );
+
+        return postService.findPostsNotInBlockedUsers(query);
     }
 
 }
