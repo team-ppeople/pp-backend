@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
+import static com.pp.api.util.JwtAuthenticationUtil.isAuthenticatedUser;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +20,10 @@ public class BlockUserService {
     private final BlockUserRepository blockUserRepository;
 
     public void block(Long blockedId) {
+        if (isAuthenticatedUser(blockedId)) {
+            return;
+        }
+
         User user = userRepository.findById(blockedId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
@@ -29,6 +34,10 @@ public class BlockUserService {
     }
 
     public void unblock(Long blockedId) {
+        if (isAuthenticatedUser(blockedId)) {
+            return;
+        }
+
         User user = userRepository.findById(blockedId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
@@ -46,6 +55,10 @@ public class BlockUserService {
     }
 
     public boolean isBlockedUser(Long userId) {
+        if (isAuthenticatedUser(userId)) {
+            return false;
+        }
+
         return blockUserRepository.isBlocked(
                 getAuthenticatedUserId(),
                 userId
