@@ -24,7 +24,7 @@ public class FindPostsFacade {
     private final BlockUserService blockUserService;
 
     public FindPostsResponse findPosts(FindPostsRequest request) {
-        List<PostResponse> postResponses = findPostOrPostNotInBlockedIfExist(request)
+        List<PostResponse> postResponses = findPostNotInBlockedIfExist(request)
                 .stream()
                 .map(post ->
                         new PostResponse(
@@ -39,7 +39,7 @@ public class FindPostsFacade {
         return new FindPostsResponse(postResponses);
     }
 
-    private List<PostOfList> findPostOrPostNotInBlockedIfExist(FindPostsRequest request) {
+    private List<PostOfList> findPostNotInBlockedIfExist(FindPostsRequest request) {
         List<Long> blockedIds = blockUserService.findBlockedIds(getAuthenticatedUserId());
 
         if (blockedIds.isEmpty()) {
