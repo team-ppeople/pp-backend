@@ -1,6 +1,6 @@
 package com.pp.api.service;
 
-import com.pp.api.entity.User;
+import com.pp.api.exception.CanNotBlockMySelfException;
 import com.pp.api.exception.UserNotExistsException;
 import com.pp.api.repository.BlockUserRepository;
 import com.pp.api.repository.UserRepository;
@@ -22,29 +22,27 @@ public class BlockUserService {
 
     public void block(Long blockedId) {
         if (isAuthenticatedUser(blockedId)) {
-            return;
+            throw new CanNotBlockMySelfException();
         }
 
-        User user = userRepository.findById(blockedId)
-                .orElseThrow(UserNotExistsException::new);
+        if (!userRepository.existsById(blockedId)) {
+            throw new UserNotExistsException();
+        }
 
         blockUserRepository.block(
                 getAuthenticatedUserId(),
-                user.getId()
+                blockedId
         );
     }
 
     public void unblock(Long blockedId) {
-        if (isAuthenticatedUser(blockedId)) {
-            return;
+        if (!userRepository.existsById(blockedId)) {
+            throw new UserNotExistsException();
         }
-
-        User user = userRepository.findById(blockedId)
-                .orElseThrow(UserNotExistsException::new);
 
         blockUserRepository.unblock(
                 getAuthenticatedUserId(),
-                user.getId()
+                blockedId
         );
     }
 
