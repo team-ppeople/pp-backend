@@ -14,20 +14,12 @@ public class BlockUserRepositoryImpl implements BlockUserRepository {
 
     @Override
     public void block(Long blockerId, Long blockedId) {
-        if (isBlocked(blockerId, blockedId)) {
-            return;
-        }
-
         stringRedisTemplate.opsForSet()
                 .add(getBlockListKey(blockerId), String.valueOf(blockedId));
     }
 
     @Override
     public void unblock(Long blockerId, Long blockedId) {
-        if (!isBlocked(blockerId, blockedId)) {
-            return;
-        }
-
         stringRedisTemplate.opsForSet()
                 .remove(getBlockListKey(blockerId), String.valueOf(blockedId));
     }
@@ -44,6 +36,11 @@ public class BlockUserRepositoryImpl implements BlockUserRepository {
     public Set<String> findBlockedIds(Long blockerId) {
         return stringRedisTemplate.opsForSet()
                 .members(getBlockListKey(blockerId));
+    }
+
+    @Override
+    public void deleteBlockList(Long blockerId) {
+        stringRedisTemplate.delete(getBlockListKey(blockerId));
     }
 
     private String getBlockListKey(Long userId) {

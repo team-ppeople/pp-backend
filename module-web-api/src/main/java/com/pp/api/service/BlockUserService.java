@@ -66,4 +66,8 @@ public class BlockUserService {
         );
     }
 
+    public void deleteBlockedUser(Long userId) {
+        blockUserRepository.deleteBlockList(userId);
+    }
+
 }

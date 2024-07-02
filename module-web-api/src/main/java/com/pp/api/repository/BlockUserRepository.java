@@ -11,4 +11,6 @@ public interface BlockUserRepository {
     boolean isBlocked(Long blockerId, Long blockedId);
 
     Set<String> findBlockedIds(Long blockerId);
+
+    void deleteBlockList(Long blockerId);
 }
