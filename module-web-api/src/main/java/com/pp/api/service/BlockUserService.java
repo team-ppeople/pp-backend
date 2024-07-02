@@ -1,6 +1,7 @@
 package com.pp.api.service;
 
 import com.pp.api.entity.User;
+import com.pp.api.exception.UserNotExistsException;
 import com.pp.api.repository.BlockUserRepository;
 import com.pp.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class BlockUserService {
         }
 
         User user = userRepository.findById(blockedId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         blockUserRepository.block(
                 getAuthenticatedUserId(),
@@ -39,7 +40,7 @@ public class BlockUserService {
         }
 
         User user = userRepository.findById(blockedId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(UserNotExistsException::new);
 
         blockUserRepository.unblock(
                 getAuthenticatedUserId(),
