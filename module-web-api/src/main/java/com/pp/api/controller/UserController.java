@@ -70,7 +70,6 @@ public class UserController {
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
     @PostMapping(
             path = "/api/v1/users/{userId}/block",
-            consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> block(@PathVariable(name = "userId") Long userId) {
@@ -81,7 +80,6 @@ public class UserController {
     @PreAuthorize(value = "isAuthenticated() && hasAuthority('SCOPE_user.read') && hasAuthority('SCOPE_user.write')")
     @PostMapping(
             path = "/api/v1/users/{userId}/unblock",
-            consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> unblock(@PathVariable(name = "userId") Long userId) {

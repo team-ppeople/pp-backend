@@ -34,7 +34,7 @@ public class FindCommentsFacade {
             Long postId,
             FindCommentsRequest request
     ) {
-        List<CommentOfList> comments = findCommentsOrCommentsNotInBlockedIfExist(
+        List<CommentOfList> comments = findCommentsNotInBlockedIfExist(
                 postId,
                 request
         );
@@ -70,7 +70,7 @@ public class FindCommentsFacade {
         return new FindCommentsResponse(commentResponses);
     }
 
-    private List<CommentOfList> findCommentsOrCommentsNotInBlockedIfExist(
+    private List<CommentOfList> findCommentsNotInBlockedIfExist(
             Long postId,
             FindCommentsRequest request
     ) {

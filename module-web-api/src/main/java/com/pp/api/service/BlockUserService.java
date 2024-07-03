@@ -1,6 +1,7 @@
 package com.pp.api.service;
 
-import com.pp.api.entity.User;
+import com.pp.api.exception.CanNotBlockMySelfException;
+import com.pp.api.exception.UserNotExistsException;
 import com.pp.api.repository.BlockUserRepository;
 import com.pp.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
+import static com.pp.api.util.JwtAuthenticationUtil.isAuthenticatedUser;
 
 @Component
 @RequiredArgsConstructor
@@ -19,22 +21,28 @@ public class BlockUserService {
     private final BlockUserRepository blockUserRepository;
 
     public void block(Long blockedId) {
-        User user = userRepository.findById(blockedId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        if (isAuthenticatedUser(blockedId)) {
+            throw new CanNotBlockMySelfException();
+        }
+
+        if (!userRepository.existsById(blockedId)) {
+            throw new UserNotExistsException();
+        }
 
         blockUserRepository.block(
                 getAuthenticatedUserId(),
-                user.getId()
+                blockedId
         );
     }
 
     public void unblock(Long blockedId) {
-        User user = userRepository.findById(blockedId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        if (!userRepository.existsById(blockedId)) {
+            throw new UserNotExistsException();
+        }
 
         blockUserRepository.unblock(
                 getAuthenticatedUserId(),
-                user.getId()
+                blockedId
         );
     }
 
@@ -46,10 +54,18 @@ public class BlockUserService {
     }
 
     public boolean isBlockedUser(Long userId) {
+        if (isAuthenticatedUser(userId)) {
+            return false;
+        }
+
         return blockUserRepository.isBlocked(
                 getAuthenticatedUserId(),
                 userId
         );
+    }
+
+    public void deleteBlockedUser(Long userId) {
+        blockUserRepository.deleteBlockList(userId);
     }
 
 }
