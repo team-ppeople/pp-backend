@@ -27,11 +27,6 @@ public class FindUserProfileFacade {
 
         long postCount = postService.countByCreateId(userId);
 
-        FindUserCreatedPostsByNoOffsetQuery query = FindUserCreatedPostsByNoOffsetQuery.firstPage(
-                userId,
-                20
-        );
-
         long thumbsUpCount = postService.countUserPostThumbsUpByPostId(userId);
 
         if (blockUserService.isBlockedUser(userId)) {
@@ -43,6 +38,11 @@ public class FindUserProfileFacade {
                     thumbsUpCount
             );
         }
+
+        FindUserCreatedPostsByNoOffsetQuery query = FindUserCreatedPostsByNoOffsetQuery.firstPage(
+                userId,
+                20
+        );
 
         List<UserCreatedPostResponse> userCreatedPostResponses = postService.findUserCreatedPosts(query)
                 .stream()
