@@ -5,6 +5,7 @@ import com.pp.api.exception.*;
 import com.pp.api.repository.*;
 import com.pp.api.service.command.CreatePostCommand;
 import com.pp.api.service.command.FindPostsByNoOffsetQuery;
+import com.pp.api.service.command.FindPostsNotInBlockedByNoOffsetQuery;
 import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
 import com.pp.api.service.domain.CreatedPost;
 import com.pp.api.service.domain.PostDetail;
@@ -68,6 +69,26 @@ public class PostService {
         return postRepository.find(
                         query.getLastId(),
                         query.getLimit()
+                )
+                .stream()
+                .map(post ->
+                        new PostOfList(
+                                post.getId(),
+                                determineThumbnailUrl(post),
+                                post.getTitle(),
+                                post.getCreatedDate(),
+                                post.getUpdatedDate()
+                        )
+                )
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostOfList> findPostsNotInBlockedUsers(FindPostsNotInBlockedByNoOffsetQuery query) {
+        return postRepository.findNotInBlockedUsers(
+                        query.getLastId(),
+                        query.getLimit(),
+                        query.getBlockedIds()
                 )
                 .stream()
                 .map(post ->

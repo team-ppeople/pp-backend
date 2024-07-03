@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -38,9 +39,42 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Transactional(readOnly = true)
     @Override
+    public List<Comment> findNotInBlockedUsersByPostId(
+            Long postId,
+            Long lastId,
+            int limit,
+            List<Long> blockedIds
+    ) {
+        return from(comment)
+                .where(
+                        comment.post.id.eq(postId),
+                        lowerThanLastId(lastId),
+                        notInBlockedUserIds(blockedIds)
+                )
+                .orderBy(comment.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public long countByPostId(Long postId) {
         return from(comment)
                 .where(comment.post.id.eq(postId))
+                .fetchCount();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public long countNotInBlockedUserByPostId(
+            Long postId,
+            List<Long> blockedIds
+    ) {
+        return from(comment)
+                .where(
+                        comment.post.id.eq(postId),
+                        notInBlockedUserIds(blockedIds)
+                )
                 .fetchCount();
     }
 
@@ -50,6 +84,13 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
         }
 
         return comment.id.lt(lastId);
+    }
+
+    private BooleanExpression notInBlockedUserIds(List<Long> blockedUserIds) {
+        if (CollectionUtils.isEmpty(blockedUserIds)) {
+            return null;
+        }
+        return comment.creator.id.notIn(blockedUserIds);
     }
 
 }

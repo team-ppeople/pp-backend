@@ -31,13 +31,21 @@ public final class JwtAuthenticationUtil {
     }
 
     public static void checkUserPermission(Long userId) {
-        Long authenticatedUserId = getAuthenticatedUserId();
-
-        if (authenticatedUserId.equals(userId)) {
+        if (isAuthenticatedUser(userId)) {
             return;
         }
 
         throw new NotPermittedUserAccessException();
+    }
+
+    public static boolean isAuthenticatedUser(Long userId) {
+        Long authenticatedUserId = getAuthenticatedUserId();
+
+        if (authenticatedUserId.equals(userId)) {
+            return true;
+        }
+
+        return false;
     }
 
 }
