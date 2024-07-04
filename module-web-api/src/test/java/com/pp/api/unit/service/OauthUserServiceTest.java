@@ -63,13 +63,13 @@ class OauthUserServiceTest {
 
         Jwt jwt = mock(Jwt.class);
 
-        when(registeredClientRepository.findById(query.getClient()))
+        when(registeredClientRepository.findById(query.client()))
                 .thenReturn(registeredClient);
 
         when(jwtDecoderFactory.createDecoder(registeredClient))
                 .thenReturn(jwtDecoder);
 
-        when(jwtDecoder.decode(query.getIdToken()))
+        when(jwtDecoder.decode(query.idToken()))
                 .thenReturn(jwt);
 
         when(jwt.getSubject())
@@ -91,7 +91,7 @@ class OauthUserServiceTest {
                 randomUUID().toString()
         );
 
-        when(registeredClientRepository.findById(query.getClient()))
+        when(registeredClientRepository.findById(query.client()))
                 .thenReturn(null);
 
         assertThatThrownBy(() -> oauthUserService.isRegistered(query))
@@ -108,7 +108,7 @@ class OauthUserServiceTest {
 
         RegisteredClient registeredClient = mock(RegisteredClient.class);
 
-        when(registeredClientRepository.findById(query.getClient()))
+        when(registeredClientRepository.findById(query.client()))
                 .thenReturn(registeredClient);
 
         when(jwtDecoderFactory.createDecoder(registeredClient))
@@ -130,13 +130,13 @@ class OauthUserServiceTest {
 
         JwtDecoder jwtDecoder = mock(JwtDecoder.class);
 
-        when(registeredClientRepository.findById(query.getClient()))
+        when(registeredClientRepository.findById(query.client()))
                 .thenReturn(registeredClient);
 
         when(jwtDecoderFactory.createDecoder(registeredClient))
                 .thenReturn(jwtDecoder);
 
-        when(jwtDecoder.decode(query.getIdToken()))
+        when(jwtDecoder.decode(query.idToken()))
                 .thenThrow(JwtException.class);
 
         assertThatThrownBy(() -> oauthUserService.isRegistered(query))

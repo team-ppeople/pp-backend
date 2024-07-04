@@ -10,14 +10,17 @@ import com.pp.api.service.command.CreateCommentCommand;
 import com.pp.api.service.command.FindCommentsByNoOffsetQuery;
 import com.pp.api.service.command.FindCommentsNotInBlockedByNoOffsetQuery;
 import com.pp.api.service.domain.CommentOfList;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 
 import static com.pp.api.util.JwtAuthenticationUtil.getAuthenticatedUserId;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -33,15 +36,15 @@ public class CommentService {
     private final BlockUserRepository blockUserRepository;
 
     @Transactional
-    public void create(CreateCommentCommand command) {
+    public void create(@Valid CreateCommentCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
                 .orElseThrow(UserNotExistsException::new);
 
-        Post post = postRepository.findById(command.getPostId())
+        Post post = postRepository.findById(command.postId())
                 .orElseThrow(PostNotExistsException::new);
 
         Comment comment = Comment.builder()
-                .content(command.getContent())
+                .content(command.content())
                 .post(post)
                 .creator(user)
                 .build();
@@ -49,11 +52,11 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<CommentOfList> findComments(FindCommentsByNoOffsetQuery query) {
+    public List<CommentOfList> findComments(@Valid FindCommentsByNoOffsetQuery query) {
         return commentRepository.findByPostId(
-                        query.getPostId(),
-                        query.getLastId(),
-                        query.getLimit()
+                        query.postId(),
+                        query.lastId(),
+                        query.limit()
                 )
                 .stream()
                 .map(comment ->
@@ -69,12 +72,12 @@ public class CommentService {
                 .toList();
     }
 
-    public List<CommentOfList> findCommentsNotInBlockedUsers(FindCommentsNotInBlockedByNoOffsetQuery query) {
+    public List<CommentOfList> findCommentsNotInBlockedUsers(@Valid FindCommentsNotInBlockedByNoOffsetQuery query) {
         return commentRepository.findNotInBlockedUsersByPostId(
-                        query.getPostId(),
-                        query.getLastId(),
-                        query.getLimit(),
-                        query.getBlockedIds()
+                        query.postId(),
+                        query.lastId(),
+                        query.limit(),
+                        query.blockedIds()
                 )
                 .stream()
                 .map(comment ->
