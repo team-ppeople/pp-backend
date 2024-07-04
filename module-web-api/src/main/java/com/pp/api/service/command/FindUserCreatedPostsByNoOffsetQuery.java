@@ -3,30 +3,15 @@ package com.pp.api.service.command;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 
-@Getter
-public class FindUserCreatedPostsByNoOffsetQuery extends CommandSelfValidator<FindUserCreatedPostsByNoOffsetQuery> {
-
-    @NotNull(message = "작성자 id가 없어요")
-    private final Long creatorId;
-
-    private final Long lastId;
-
-    @Min(value = 10, message = "조회 허용 갯수는 최소 {value}개에요")
-    @Max(value = 100, message = "조회 허용 갯수는 최대 {value}개에요")
-    private final int limit;
-
-    private FindUserCreatedPostsByNoOffsetQuery(
-            Long creatorId,
-            Long lastId,
-            int limit
-    ) {
-        this.creatorId = creatorId;
-        this.lastId = lastId;
-        this.limit = limit;
-        this.validate();
-    }
+public record FindUserCreatedPostsByNoOffsetQuery(
+        @NotNull(message = "작성자 id가 없어요")
+        Long creatorId,
+        Long lastId,
+        @Min(value = 10, message = "조회 허용 갯수는 최소 {value}개에요")
+        @Max(value = 100, message = "조회 허용 갯수는 최대 {value}개에요")
+        int limit
+) {
 
     public static FindUserCreatedPostsByNoOffsetQuery of(
             Long creatorId,

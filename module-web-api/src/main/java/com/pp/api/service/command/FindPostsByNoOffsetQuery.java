@@ -2,25 +2,13 @@ package com.pp.api.service.command;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Getter;
 
-@Getter
-public class FindPostsByNoOffsetQuery extends CommandSelfValidator<FindPostsByNoOffsetQuery> {
-
-    private final Long lastId;
-
-    @Min(value = 10, message = "조회 허용 갯수는 최소 {value}개에요")
-    @Max(value = 100, message = "조회 허용 갯수는 최대 {value}개에요")
-    private final int limit;
-
-    private FindPostsByNoOffsetQuery(
-            Long lastId,
-            int limit
-    ) {
-        this.lastId = lastId;
-        this.limit = limit;
-        this.validate();
-    }
+public record FindPostsByNoOffsetQuery(
+        Long lastId,
+        @Min(value = 10, message = "조회 허용 갯수는 최소 {value}개에요")
+        @Max(value = 100, message = "조회 허용 갯수는 최대 {value}개에요")
+        int limit
+) {
 
     public static FindPostsByNoOffsetQuery of(
             Long lastId,

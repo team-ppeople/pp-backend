@@ -15,16 +15,19 @@ import com.pp.api.repository.UploadFileRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.UpdateUserCommand;
 import com.pp.api.service.domain.UserProfile;
+import jakarta.validation.Valid;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 
 import static com.pp.api.util.JwtAuthenticationUtil.checkUserPermission;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
+@Validated
 @Service
 public class UserService {
 
@@ -59,23 +62,23 @@ public class UserService {
     }
 
     @Transactional
-    public void update(UpdateUserCommand command) {
-        checkUserPermission(command.getUserId());
+    public void update(@Valid UpdateUserCommand command) {
+        checkUserPermission(command.userId());
 
-        User user = userRepository.findById(command.getUserId())
+        User user = userRepository.findById(command.userId())
                 .orElseThrow(UserNotExistsException::new);
 
-        if (hasText(command.getNickname())) {
-            user.updateNickname(command.getNickname());
+        if (hasText(command.nickname())) {
+            user.updateNickname(command.nickname());
         }
 
-        if (command.getProfileImageFileUploadId() != null) {
-            UploadFile uploadFile = uploadFileRepository.findById(command.getProfileImageFileUploadId())
+        if (command.profileImageFileUploadId() != null) {
+            UploadFile uploadFile = uploadFileRepository.findById(command.profileImageFileUploadId())
                     .orElseThrow(() -> new UploadFileNotExistsException("업로드하지 않은 프로필 이미지에요"));
 
             checkUserPermission(uploadFile.getUploader().getId());
 
-            profileImageRepository.deleteByUserId(command.getUserId());
+            profileImageRepository.deleteByUserId(command.userId());
 
             ProfileImage profileImage = ProfileImage.builder()
                     .user(user)

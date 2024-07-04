@@ -7,6 +7,7 @@ import com.pp.api.repository.OauthUserRepository;
 import com.pp.api.repository.UserRepository;
 import com.pp.api.service.command.IsRegisteredOauthUserQuery;
 import com.pp.api.service.command.RegisterOauthUserCommand;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
@@ -14,7 +15,9 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 public class OauthUserService {
@@ -27,8 +30,8 @@ public class OauthUserService {
 
     private final UserRepository userRepository;
 
-    public boolean isRegistered(IsRegisteredOauthUserQuery query) {
-        RegisteredClient registeredClient = registeredClientRepository.findById(query.getClient());
+    public boolean isRegistered(@Valid IsRegisteredOauthUserQuery query) {
+        RegisteredClient registeredClient = registeredClientRepository.findById(query.client());
 
         if (registeredClient == null) {
             throw new OauthUserServiceException("등록 여부를 확인할 수 없는 로그인 방식이에요");
@@ -39,7 +42,7 @@ public class OauthUserService {
         String subject;
 
         try {
-            subject = decoder.decode(query.getIdToken())
+            subject = decoder.decode(query.idToken())
                     .getSubject();
         } catch (Exception e) {
             throw new OauthUserServiceException(
@@ -60,22 +63,22 @@ public class OauthUserService {
     }
 
     @Transactional
-    public void registerIfNotRegistered(RegisterOauthUserCommand command) {
-        String clientSubject = command.getClient()
-                .parseClientSubject(command.getSubject());
+    public void registerIfNotRegistered(@Valid RegisterOauthUserCommand command) {
+        String clientSubject = command.client()
+                .parseClientSubject(command.subject());
 
         if (oauthUserRepository.existsByClientSubject(clientSubject)) {
             return;
         }
 
         User user = User.builder()
-                .nickname(command.getNickname())
-                .email(command.getEmail())
+                .nickname(command.nickname())
+                .email(command.email())
                 .build();
 
         OauthUser oauthUser = OauthUser.builder()
-                .client(command.getClient())
-                .subject(command.getSubject())
+                .client(command.client())
+                .subject(command.subject())
                 .user(user)
                 .build();
 

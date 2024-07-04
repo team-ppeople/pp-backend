@@ -10,9 +10,11 @@ import com.pp.api.service.command.FindUserCreatedPostsByNoOffsetQuery;
 import com.pp.api.service.domain.CreatedPost;
 import com.pp.api.service.domain.PostDetail;
 import com.pp.api.service.domain.PostOfList;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -45,11 +48,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostOfList> findUserCreatedPosts(FindUserCreatedPostsByNoOffsetQuery query) {
+    public List<PostOfList> findUserCreatedPosts(@Valid FindUserCreatedPostsByNoOffsetQuery query) {
         return postRepository.findByCreatorId(
-                        query.getCreatorId(),
-                        query.getLastId(),
-                        query.getLimit()
+                        query.creatorId(),
+                        query.lastId(),
+                        query.limit()
                 )
                 .stream()
                 .map(post ->
@@ -65,10 +68,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostOfList> findPosts(FindPostsByNoOffsetQuery query) {
+    public List<PostOfList> findPosts(@Valid FindPostsByNoOffsetQuery query) {
         return postRepository.find(
-                        query.getLastId(),
-                        query.getLimit()
+                        query.lastId(),
+                        query.limit()
                 )
                 .stream()
                 .map(post ->
@@ -84,11 +87,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostOfList> findPostsNotInBlockedUsers(FindPostsNotInBlockedByNoOffsetQuery query) {
+    public List<PostOfList> findPostsNotInBlockedUsers(@Valid FindPostsNotInBlockedByNoOffsetQuery query) {
         return postRepository.findNotInBlockedUsers(
-                        query.getLastId(),
-                        query.getLimit(),
-                        query.getBlockedIds()
+                        query.lastId(),
+                        query.limit(),
+                        query.blockedIds()
                 )
                 .stream()
                 .map(post ->
@@ -126,20 +129,20 @@ public class PostService {
     }
 
     @Transactional
-    public CreatedPost create(CreatePostCommand command) {
+    public CreatedPost create(@Valid CreatePostCommand command) {
         User user = userRepository.findById(getAuthenticatedUserId())
                 .orElseThrow(UserNotExistsException::new);
 
         Post post = Post.builder()
-                .title(command.getTitle())
-                .content(command.getContent())
+                .title(command.title())
+                .content(command.content())
                 .creator(user)
                 .build();
 
         postRepository.save(post);
 
-        if (!isEmpty(command.getPostImageFileUploadIds())) {
-            Map<Long, UploadFile> uploadFiles = uploadFileRepository.findAllById(command.getPostImageFileUploadIds())
+        if (!isEmpty(command.postImageFileUploadIds())) {
+            Map<Long, UploadFile> uploadFiles = uploadFileRepository.findAllById(command.postImageFileUploadIds())
                     .stream()
                     .collect(
                             toUnmodifiableMap(
@@ -148,7 +151,7 @@ public class PostService {
                             )
                     );
 
-            List<PostImage> postImages = command.getPostImageFileUploadIds()
+            List<PostImage> postImages = command.postImageFileUploadIds()
                     .stream()
                     .map(uploadId -> {
                         UploadFile uploadFile = uploadFiles.get(uploadId);
