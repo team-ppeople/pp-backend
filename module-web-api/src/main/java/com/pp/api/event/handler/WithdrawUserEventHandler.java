@@ -3,6 +3,7 @@ package com.pp.api.event.handler;
 import com.pp.api.client.apple.AppleClient;
 import com.pp.api.event.WithdrawOauthUserEvent;
 import com.pp.api.event.WithdrawUserEvent;
+import com.pp.api.service.BlockUserService;
 import com.pp.api.service.PostUserActionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ public class WithdrawUserEventHandler {
 
     private final PostUserActionService postUserActionService;
 
+    private final BlockUserService blockUserService;
+
     private final AppleClient appleClient;
 
     @Async(value = "withdrawUserEventHandleExecutor")
@@ -35,6 +38,8 @@ public class WithdrawUserEventHandler {
         );
 
         postUserActionService.deleteUserPostThumbsUpByUserId(event.userId());
+
+        blockUserService.deleteBlockedUser(event.userId());
 
         log.info(
                 "success deleteUserPostThumbsUpByUserId (userId : {})",
