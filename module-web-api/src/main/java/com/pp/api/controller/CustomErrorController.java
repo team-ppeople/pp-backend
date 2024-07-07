@@ -36,6 +36,8 @@ public class CustomErrorController extends AbstractErrorController {
 
     private static final String SERVLET_ERROR_EXCEPTION_ATTRIBUTE_NAME = "jakarta.servlet.error.exception";
 
+    private static final String DISPATCHER_SERVLET_EXCEPTION_ATTRIBUTE_NAME = "org.springframework.web.servlet.DispatcherServlet.EXCEPTION";
+
     private final MessageSource messageSource;
 
     private final SlackClient slackClient;
@@ -77,7 +79,13 @@ public class CustomErrorController extends AbstractErrorController {
     }
 
     private Exception resolveException(HttpServletRequest request) {
-        return (Exception) request.getAttribute(SERVLET_ERROR_EXCEPTION_ATTRIBUTE_NAME);
+        Exception exception = (Exception) request.getAttribute(SERVLET_ERROR_EXCEPTION_ATTRIBUTE_NAME);
+
+        if (exception != null) {
+            return exception;
+        }
+
+        return (Exception) request.getAttribute(DISPATCHER_SERVLET_EXCEPTION_ATTRIBUTE_NAME);
     }
 
     private URI resolveRequestURI(HttpServletRequest request) {
