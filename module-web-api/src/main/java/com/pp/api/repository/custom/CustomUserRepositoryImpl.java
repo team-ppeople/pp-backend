@@ -122,9 +122,20 @@ public class CustomUserRepositoryImpl extends QuerydslRepositorySupport implemen
                     .where(reportedPost.post.id.in(postIds))
                     .execute();
 
-            delete(comment)
+            List<Long> commentIdsInPost = jpaQueryFactory.select(comment.id)
+                    .from(comment)
                     .where(comment.post.id.in(postIds))
-                    .execute();
+                    .fetch();
+
+            if (!commentIdsInPost.isEmpty()) {
+                delete(reportedComment)
+                        .where(reportedComment.comment.id.in(commentIdsInPost))
+                        .execute();
+
+                delete(comment)
+                        .where(comment.id.in(commentIdsInPost))
+                        .execute();
+            }
 
             delete(post)
                     .where(post.id.in(postIds))
