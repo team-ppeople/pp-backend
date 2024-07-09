@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.ErrorResponse;
 
+import static org.springframework.http.ProblemDetail.forStatusAndDetail;
+
 @Getter
 public class BaseException extends NestedRuntimeException implements ErrorResponse {
 
@@ -20,7 +22,7 @@ public class BaseException extends NestedRuntimeException implements ErrorRespon
         super(message);
 
         this.statusCode = statusCode;
-        this.body = ProblemDetail.forStatusAndDetail(
+        this.body = forStatusAndDetail(
                 statusCode,
                 message
         );
@@ -37,7 +39,7 @@ public class BaseException extends NestedRuntimeException implements ErrorRespon
         );
 
         this.statusCode = statusCode;
-        this.body = ProblemDetail.forStatusAndDetail(
+        this.body = forStatusAndDetail(
                 statusCode,
                 message
         );
