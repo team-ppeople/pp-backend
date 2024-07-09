@@ -14,14 +14,14 @@ public class UserNotExistsException extends BaseException {
         this(DEFAULT_MESSAGE);
     }
 
-    private UserNotExistsException(String message) {
+    public UserNotExistsException(String message) {
         super(
                 STATUS,
                 message
         );
     }
 
-    private UserNotExistsException(
+    public UserNotExistsException(
             String message,
             Throwable cause
     ) {
