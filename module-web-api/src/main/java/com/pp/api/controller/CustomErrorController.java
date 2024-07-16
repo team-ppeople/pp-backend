@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorCon
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,6 @@ import static com.pp.api.filter.MDCLoggingFilter.REQUEST_URI_KEY;
 import static com.pp.api.filter.MDCLoggingFilter.TRACE_ID_KEY;
 import static java.net.URI.create;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.ResponseEntity.internalServerError;
 
 @Slf4j
@@ -57,20 +55,13 @@ public class CustomErrorController extends AbstractErrorController {
     public ResponseEntity<?> error(HttpServletRequest request) {
         Exception exception = resolveException(request);
 
-        log.error(
-                "exception : {} handle",
-                exception.getClass().getName(),
-                exception
-        );
+        logErrorMessage(exception);
 
         sendErrorAlertMessage(exception);
 
         ProblemDetail body = this.createProblemDetail(
                 exception,
-                resolveHttpStatus(request),
-                "서비스에 문제가 발생했어요. 잠시 후 다시 시도해 주세요",
-                null,
-                null
+                this.getStatus(request)
         );
 
         body.setInstance(resolveRequestURI(request));
@@ -92,45 +83,42 @@ public class CustomErrorController extends AbstractErrorController {
         return create((String) request.getAttribute(SERVLET_FORWARD_REQUEST_URI_ATTRIBUTE_NAME));
     }
 
-    private HttpStatus resolveHttpStatus(HttpServletRequest request) {
-        HttpStatus status = this.getStatus(request);
-
-        if (status.is5xxServerError()) {
-            return status;
-        }
-
-        return INTERNAL_SERVER_ERROR;
-    }
-
     private ProblemDetail createProblemDetail(
             Exception ex,
-            HttpStatusCode status,
-            String defaultDetail,
-            String detailMessageCode,
-            Object[] detailMessageArguments
+            HttpStatusCode status
     ) {
-        ErrorResponse.Builder builder = ErrorResponse.builder(
-                ex,
-                status,
-                defaultDetail
-        );
+        String detail = status.is5xxServerError() ?
+                "서비스에 문제가 발생했어요. 잠시 후 다시 시도해 주세요" : "잘못된 요청이에요";
 
-        if (detailMessageCode != null) {
-            builder.detailMessageCode(detailMessageCode);
-        }
-
-        if (detailMessageArguments != null) {
-            builder.detailMessageArguments(detailMessageArguments);
-        }
-
-        return builder.build()
+        return ErrorResponse.builder(
+                        ex != null ? ex : new Exception(),
+                        status,
+                        detail
+                )
+                .build()
                 .updateAndGetBody(
                         this.messageSource,
                         getLocale()
                 );
     }
 
+    private void logErrorMessage(Exception exception) {
+        if (exception == null) {
+            return;
+        }
+
+        log.error(
+                "exception : {} handle",
+                exception.getClass().getName(),
+                exception
+        );
+    }
+
     private void sendErrorAlertMessage(Exception exception) {
+        if (exception == null) {
+            return;
+        }
+
         SlackSendErrorMessageRequest request = new SlackSendErrorMessageRequest(
                 MDC.get(REQUEST_URI_KEY),
                 MDC.get(TRACE_ID_KEY),
